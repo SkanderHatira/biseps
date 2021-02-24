@@ -1,0 +1,12 @@
+.not-found-404 {
+    font-size: 300px;
+    padding: 4vw;
+    color: rgba($primary_404_svg, 0.46);
+}
+
+@media (max-width: 992px) {
+    .not-found-404 {
+        padding: 0;
+        font-size: 200px;
+    }
+}

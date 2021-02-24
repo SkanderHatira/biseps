@@ -1,0 +1,21 @@
+.not-found-svg {
+  position: absolute;
+  z-index: -10000;
+  bottom: 0;
+  left: 0;
+  overflow: hidden; /* IE11 required this attribute, reason unknown */
+}
+
+@media (max-width: 1200px) {
+  .not-found-svg {
+    left: calc(calc(100vw - 1200px) / 2);
+    min-width: 1200px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .not-found-svg {
+    bottom: calc(calc(1200px - 100vw) / 5);
+    min-width: 1200px;
+  }
+}

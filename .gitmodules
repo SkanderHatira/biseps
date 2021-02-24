@@ -1,0 +1,3 @@
+[submodule "resources/bissprop"]
+	path = resources/bissprop
+	url = git@forgemia.inra.fr:skander.hatira/bissprop.git
