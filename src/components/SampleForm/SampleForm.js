@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import classnames from "classnames";
 import UnitForm from "../UnitForm/UnitForm";
 import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import Typography from "@material-ui/core/Typography";
@@ -35,15 +36,15 @@ const SampleForm = () => {
   return (
     <Grid container spacing={3}>
       {sampleState.map((val, idx) => {
-        const sampleId = `sample${idx}`;
+        const sampleId = `sample-${idx}`;
         return (
-          <div key={`sample-${idx}`}>
-            <Grid item xs={12} gutterBottom>
+          <Box borderColor="primary.main" border={2} m={1}>
+            <Grid item xs={12} md={6} gutterBottom>
               <FormControl className={classes.formControl}>
                 <TextField
                   id={sampleId}
                   data-idx={idx}
-                  label={`sample-${idx + 1}`}
+                  label={`sample ${idx + 1}`}
                   className={classnames("", {
                     invalid: sampleState.sample,
                   })}
@@ -57,18 +58,21 @@ const SampleForm = () => {
               </FormControl>
             </Grid>
             <UnitForm classes={classes} />
-          </div>
+          </Box>
         );
       })}
-      <Fab
-        size="small"
-        onClick={addSample}
-        value="Add New Sample"
-        color="primary"
-        aria-label="add"
-      >
-        <AddIcon />
-      </Fab>
+      <Grid xs={12} md={6} gutterBottom>
+        <Fab
+          m={1}
+          size="small"
+          onClick={addSample}
+          value="Add New Sample"
+          color="primary"
+          aria-label="add"
+        >
+          <AddIcon />
+        </Fab>{" "}
+      </Grid>
     </Grid>
   );
 };

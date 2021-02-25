@@ -4,6 +4,7 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import Box from "@material-ui/core/Box";
 
 const UnitForm = ({ classes }) => {
   const blankUnit = { r1: "", r2: "" };
@@ -19,15 +20,17 @@ const UnitForm = ({ classes }) => {
   };
   return (
     <Grid item xs={12}>
-      <Fab
-        size="small"
-        onClick={addUnit}
-        value="Add Unit Pair"
-        color="primary"
-        aria-label="add"
-      >
-        <AddIcon />
-      </Fab>{" "}
+      <Box m={1}>
+        <Fab
+          size="small"
+          onClick={addUnit}
+          value="Add Unit Pair"
+          color="primary"
+          aria-label="add"
+        >
+          <AddIcon />
+        </Fab>{" "}
+      </Box>
       {unitState.map((val, idx) => {
         const r1Id = `read1-${idx}`;
         const r2Id = `read2-${idx}`;
