@@ -5,25 +5,25 @@ const { exec } = require("child_process");
 try {
   require("electron-reloader")(module);
 } catch (_) {}
-// exec(
-//   "bash " + path.join(__dirname, "resources/checkConda.sh") + " " + __dirname,
-//   (error, stdout, stderr) => {
-//     if (error) {
-//       console.log(`error: ${error.message}`);
-//       return;
-//     }
-//     if (stderr) {
-//       console.log(`stderr: ${stderr}`);
-//       return;
-//     }
-//     console.log(`stdout: ${stdout}`);
-//   }
-// );
+exec(
+  "bash " + path.join(__dirname, "resources/checkConda.sh") + " " + __dirname,
+  (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.log(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  }
+);
 
-// const mongod = () => {
-//   require(path.join(__dirname, "backend/spawnMongod"));
-// };
-// mongod();
+const mongod = () => {
+  require(path.join(__dirname, "backend/spawnMongod"));
+};
+mongod();
 
 const server = () => {
   require(path.join(__dirname, "backend/server.js"));
