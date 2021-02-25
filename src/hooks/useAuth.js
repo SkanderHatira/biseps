@@ -108,6 +108,7 @@ const useProvideAuth = () => {
       payload: {},
     });
   };
+
   return {
     user,
     signin,

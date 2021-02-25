@@ -51,8 +51,8 @@ router.get("/run", function (req, res) {
                 .send("There was a problem finding the runs.");
         res.status(200).send(users);
     });
-    console.log("get method");
-    launchRun();
+    console.log("GET method");
+    // launchRun();
 });
 
 module.exports = router;

@@ -12,15 +12,7 @@ rules.push({
     {
       loader: "babel-loader",
       options: {
-        presets: [
-          [
-            "@babel/preset-env",
-            {
-              targets: "defaults",
-            },
-          ],
-          "@babel/preset-react",
-        ],
+        presets: ["@babel/preset-env", "@babel/preset-react"],
       },
     },
   ],

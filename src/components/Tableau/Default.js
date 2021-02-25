@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from "./Chart";
 import Deposits from "./Deposits";
-import Orders from "./Orders";
+import Runs from "./Runs";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -23,10 +23,10 @@ const Default = ({ Copyright, classes, fixedHeightPaper }) => {
             <Deposits />
           </Paper>
         </Grid>
-        {/* Recent Orders */}
+        {/* Recent Runs */}
         <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <Orders />
+            <Runs />
           </Paper>
         </Grid>
       </Grid>
