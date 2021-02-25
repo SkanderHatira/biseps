@@ -126,15 +126,14 @@ export default function AddressForm() {
                 <MenuItem value={5}>Upload</MenuItem>
               </label>
             </Select>
-            <FormHelperText>Choose adapters.</FormHelperText>
+            <FormHelperText>Choose adapters</FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
             <InputLabel id="genome">Genome</InputLabel>
             <TextField
               type="file"
-              hidden
               required
               id="genome"
               name="genome"
@@ -146,6 +145,25 @@ export default function AddressForm() {
               autoComplete="family-name"
             />
             <FormHelperText>Choose genome in .fasta Format</FormHelperText>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="outdir">Output</InputLabel>
+            <TextField
+              type="file"
+              required
+              id="outdir"
+              name="outdir"
+              label="Output"
+              inputProps={{
+                directory: "",
+                webkitdirectory: "",
+              }}
+              fullWidth
+              autoComplete="family-name"
+            />
+            <FormHelperText>Choose an output directory</FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -161,7 +179,7 @@ export default function AddressForm() {
               max={100}
               valueLabelDisplay="auto"
             />{" "}
-            <FormHelperText>Choose minimal read length.</FormHelperText>
+            <FormHelperText>Choose minimal read length</FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -200,19 +218,9 @@ export default function AddressForm() {
               valueLabelDisplay="auto"
             />{" "}
             <FormHelperText>
-              Choose k-mer length for alignment. Higher : Slower.
+              Choose k-mer length for alignment. Higher : Slower
             </FormHelperText>
           </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
-            fullWidth
-            autoComplete="shipping country"
-          />
         </Grid>
         <Grid item xs={12}>
           <FormControlLabel

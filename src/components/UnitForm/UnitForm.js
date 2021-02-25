@@ -1,6 +1,11 @@
 import React, { useState } from "react";
+import Grid from "@material-ui/core/Grid";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
-const UnitForm = () => {
+const UnitForm = ({ classes }) => {
   const blankUnit = { r1: "", r2: "" };
   const [unitState, setUnitState] = useState([{ ...blankUnit }]);
 
@@ -13,51 +18,51 @@ const UnitForm = () => {
     setUnitState(updatedUnits);
   };
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col s12 ">
-          <div className="input-field col s12">
-            <input type="button" onClick={addUnit} value="Add Unit Pair" />
-          </div>
-          {unitState.map((val, idx) => {
-            const r1Id = `read1-${idx}`;
-            const r2Id = `read2-${idx}`;
-            return (
-              <div key={`unit-${idx}`}>
-                <div className="s12">
-                  <label>
-                    Select Left read(s) , different lanes will be joined into a
-                    single r1 file
-                  </label>
-                  <input
-                    type="file"
-                    id={r1Id}
-                    name="r1"
-                    data-idx={idx}
-                    multiple
-                    onChange={handleUnitChange}
-                  />
-                </div>
-                <div className="s12">
-                  <label>
-                    Select Right read(s) , different lanes will be joined into a
-                    single r2 file
-                  </label>
-                  <input
-                    type="file"
-                    id={r2Id}
-                    name="r2"
-                    data-idx={idx}
-                    multiple
-                    onChange={handleUnitChange}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+    <Grid item xs={12}>
+      <Fab
+        size="small"
+        onClick={addUnit}
+        value="Add Unit Pair"
+        color="primary"
+        aria-label="add"
+      >
+        <AddIcon />
+      </Fab>{" "}
+      {unitState.map((val, idx) => {
+        const r1Id = `read1-${idx}`;
+        const r2Id = `read2-${idx}`;
+        return (
+          <Grid key={`unit-${idx}`} container>
+            <Grid item xs={12} md={6}>
+              <FormControl className={classes.formControl}>
+                <input
+                  type="file"
+                  id={r1Id}
+                  name="r1"
+                  data-idx={idx}
+                  multiple
+                  onChange={handleUnitChange}
+                />
+                <FormHelperText>Insert Forward Read(s)</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl className={classes.formControl}>
+                <input
+                  type="file"
+                  id={r2Id}
+                  name="r2"
+                  data-idx={idx}
+                  multiple
+                  onChange={handleUnitChange}
+                />
+                <FormHelperText>Insert Reverse Read(s)</FormHelperText>
+              </FormControl>
+            </Grid>
+          </Grid>
+        );
+      })}
+    </Grid>
   );
 };
 
