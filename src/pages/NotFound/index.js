@@ -1,4 +1,4 @@
-import NotFoundHeader from "../../components/NotFoundHeader";
+import NotFoundHeader from "../../components/NotFoundHeader/NotFoundHeader";
 import NotFoundSVG from "../../components/SVG/NotFoundSVG";
 import React from "react";
 

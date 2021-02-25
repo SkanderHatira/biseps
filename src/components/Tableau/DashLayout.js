@@ -103,7 +103,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://www.google.fr/">
-        Your Website
+        bissprop{" "}
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -156,9 +156,9 @@ const DashLayout = ({ Filling }) => {
           {auth.user.isAuthenticated ? (
             <>
               <IconButton color="inherit">
-                <Badge badgeContent={4} color="secondary">
+                {/* <Badge color="secondary">
                   <NotificationsIcon />
-                </Badge>
+                </Badge> */}
               </IconButton>
               <IconButton color="inherit">
                 <Typography
