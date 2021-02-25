@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import DashLayout from "../Tableau/DashLayout";
 
-import Checkout from "../Stepper/Checkout";
+import RunForm from "../Stepper/RunForm";
 
 const RunBoard = () => {
-  return <DashLayout Filling={Checkout} />;
+  return <DashLayout Filling={RunForm} />;
 };
 
 export default RunBoard;

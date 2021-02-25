@@ -11,8 +11,7 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Dashboard from "./components/Dashboard/Dashboard";
 import ReportsBoard from "./components/ReportsBoard/ReportsBoard";
 import RunBoard from "./components/RunBoard/RunBoard";
-
-import RunForm from "./components/RunForm/RunForm";
+import RunForm from "./components/Stepper/RunForm";
 import NotFound from "./pages/NotFound";
 
 function App() {

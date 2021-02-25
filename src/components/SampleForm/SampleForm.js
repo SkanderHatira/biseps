@@ -38,7 +38,7 @@ const SampleForm = () => {
       {sampleState.map((val, idx) => {
         const sampleId = `sample-${idx}`;
         return (
-          <Box borderColor="primary.main" border={2} m={1}>
+          <Box boxShadow={3} m={1}>
             <Grid item xs={12} md={6} gutterBottom>
               <FormControl className={classes.formControl}>
                 <TextField
@@ -63,7 +63,6 @@ const SampleForm = () => {
       })}
       <Grid xs={12} md={6} gutterBottom>
         <Fab
-          m={1}
           size="small"
           onClick={addSample}
           value="Add New Sample"

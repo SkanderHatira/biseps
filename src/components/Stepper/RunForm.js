@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
@@ -10,9 +10,10 @@ import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
-import AddressForm from "./AddressForm";
-import PaymentForm from "./PaymentForm";
-import Review from "./Review";
+import GlobalConfig from "./GlobalConfig";
+import Parameters from "./Parameters";
+import Overview from "./Overview";
+import axios from "axios";
 
 function Copyright() {
   return (
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
     [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
+      width: 1200,
       marginLeft: "auto",
       marginRight: "auto",
     },
@@ -66,20 +67,20 @@ const useStyles = makeStyles((theme) => ({
 
 const steps = ["Global configuration", "Expermiental design", "Overview"];
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <AddressForm />;
-    case 1:
-      return <PaymentForm />;
-    case 2:
-      return <Review />;
-    default:
-      throw new Error("Unknown step");
-  }
-}
-
-export default function Checkout() {
+export default function RunForm() {
+  const initialState = {
+    sampleFile: "",
+    unitsFile: "",
+    outdir: "",
+    genome: "",
+    adapters: "",
+    subsample: true,
+    trimming: true,
+    quality: true,
+    genome_preparation: true,
+    methylation_extraction_bismark: true,
+    methylation_calling: true,
+  };
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -90,7 +91,39 @@ export default function Checkout() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+  const [runState, setRunState] = useState(initialState);
+  const handleRunFiles = (e) =>
+    setRunState({
+      ...runState,
+      [e.target.name]: [e.target.files.webkitRelativePath],
+    });
+  const handleRunState = (e) => {
+    setRunState({
+      ...runState,
+      [e.target.name]: [e.target.value],
+    });
+  };
 
+  function getStepContent(step) {
+    switch (step) {
+      case 0:
+        return <GlobalConfig handleRunState={handleRunState} />;
+      case 1:
+        return <Parameters />;
+      case 2:
+        return <Overview />;
+      default:
+        throw new Error("Unknown step");
+    }
+  }
+  const handleRunSubmit = () => {
+    axios
+      .post("http://localhost:5000/api/runs/run")
+      .then((res) => console.log(res.data))
+      .catch((err) => {
+        console.log("failed get request");
+      });
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -136,10 +169,16 @@ export default function Checkout() {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleNext}
+                    onClick={
+                      activeStep === steps.length - 1
+                        ? handleRunSubmit
+                        : handleNext
+                    }
                     className={classes.button}
                   >
-                    {activeStep === steps.length - 1 ? "Place order" : "Next"}
+                    {activeStep === steps.length - 1
+                      ? "Launch analysis"
+                      : "Next"}
                   </Button>
                 </div>
               </React.Fragment>

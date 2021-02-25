@@ -35,34 +35,36 @@ const UnitForm = ({ classes }) => {
         const r1Id = `read1-${idx}`;
         const r2Id = `read2-${idx}`;
         return (
-          <Grid key={`unit-${idx}`} container>
-            <Grid item xs={12} md={6}>
-              <FormControl className={classes.formControl}>
-                <input
-                  type="file"
-                  id={r1Id}
-                  name="r1"
-                  data-idx={idx}
-                  multiple
-                  onChange={handleUnitChange}
-                />
-                <FormHelperText>Insert Forward Read(s)</FormHelperText>
-              </FormControl>
+          <Box boxShadow={3} m={1}>
+            <Grid key={`unit-${idx}`} container>
+              <Grid item xs={12} md={6}>
+                <FormControl className={classes.formControl}>
+                  <input
+                    type="file"
+                    id={r1Id}
+                    name="r1"
+                    data-idx={idx}
+                    multiple
+                    onChange={handleUnitChange}
+                  />
+                  <FormHelperText>Insert Forward Read(s)</FormHelperText>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl className={classes.formControl}>
+                  <input
+                    type="file"
+                    id={r2Id}
+                    name="r2"
+                    data-idx={idx}
+                    multiple
+                    onChange={handleUnitChange}
+                  />
+                  <FormHelperText>Insert Reverse Read(s)</FormHelperText>
+                </FormControl>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <FormControl className={classes.formControl}>
-                <input
-                  type="file"
-                  id={r2Id}
-                  name="r2"
-                  data-idx={idx}
-                  multiple
-                  onChange={handleUnitChange}
-                />
-                <FormHelperText>Insert Reverse Read(s)</FormHelperText>
-              </FormControl>
-            </Grid>
-          </Grid>
+          </Box>
         );
       })}
     </Grid>

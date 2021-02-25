@@ -11,18 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-.Modal {
-  position: absolute;
-  top: 20%;
-  left: 20%;
-  right: 20%;
-  bottom: 5%;
-}
-
-.Overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}

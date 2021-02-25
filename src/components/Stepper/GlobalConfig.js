@@ -12,11 +12,9 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Slider from "@material-ui/core/Slider";
-import Button from "@material-ui/core/Button";
 
 import Link from "@material-ui/core/Link";
 
-import { Input } from "@material-ui/core";
 const styles = {
   hidden: {
     display: "none",
@@ -34,52 +32,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
 }));
-export default function AddressForm() {
-  const initialState = {
-    sampleFile: "",
-    unitsFile: "",
-    outdir: "",
-    genome: "",
-    adapters: "",
-    subsample: true,
-    trimming: true,
-    quality: true,
-    genome_preparation: true,
-    methylation_extraction_bismark: true,
-    methylation_calling: true,
-  };
+export default function GlobalConfig({ handleRunState }) {
   const classes = useStyles();
-  const [age, setAge] = React.useState("");
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
-  const [modal, setModal] = useState(false);
-  const toggleModal = () => {
-    setModal(!modal);
-  };
-
-  const [runState, setRunState] = useState(initialState);
-  const handleRunFiles = (e) =>
-    setRunState({
-      ...runState,
-      [e.target.name]: [e.target.files.webkitRelativePath],
-    });
-  const handleRunState = (e) => {
-    setRunState({
-      ...runState,
-      [e.target.name]: [e.target.value],
-    });
-  };
-
-  const handleRunSubmit = () => {
-    axios
-      .get("http://localhost:5000/api/runs/run")
-      .then((res) => history.push("/dashboard"))
-      .catch((err) => {
-        console.log("failed get request");
-      });
-  };
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -224,6 +179,7 @@ export default function AddressForm() {
         </Grid>
         <Grid item xs={12}>
           <FormControlLabel
+            onChange={handleRunState}
             control={<Checkbox color="secondary" name="subsample" />}
             label="Toggle this option to execute a minimal run"
           />

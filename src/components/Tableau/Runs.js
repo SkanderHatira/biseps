@@ -82,11 +82,11 @@ export default function Runs() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
+            <TableCell>Genome</TableCell>
+            <TableCell>Results</TableCell>
+            <TableCell>Samples</TableCell>
+            <TableCell>Steps</TableCell>
+            <TableCell align="right">Steps</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
