@@ -1,5 +1,7 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
+require("dotenv").config();
+console.log(process.env.PORT);
 const isDev = require("electron-is-dev");
 const { exec } = require("child_process");
 try {
@@ -20,13 +22,13 @@ exec(
   }
 );
 
-const mongod = () => {
-  require(path.join(__dirname, "backend/spawnMongod"));
-};
-mongod();
+// const mongod = () => {
+//   require(path.join(__dirname, "backend/spawnMongod"));
+// };
+// mongod();
 
 const server = () => {
-  require(path.join(__dirname, "backend/server.js"));
+  require(path.join(__dirname, "backend/spawnServer.js"));
 };
 
 setTimeout(server, 2000);

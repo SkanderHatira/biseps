@@ -12,12 +12,21 @@ const Default = ({ Copyright, classes, fixedHeightPaper }) => {
     <Container maxWidth="lg" className={classes.container}>
       <Grid container spacing={3}>
         {/* Chart */}
-        {/* <Grid item xs={12} md={8} lg={9}>
+        <Grid item xs={12} md={8} lg={9}>
           <Paper className={fixedHeightPaper}>
             <Chart />
           </Paper>
-        </Grid> */}
+        </Grid>
       </Grid>
+      <Grid container spacing={3}>
+        {/* Runs */}
+        <Grid item xs={12} md={8} lg={9}>
+          <Paper className={fixedHeightPaper}>
+            <Runs />
+          </Paper>
+        </Grid>
+      </Grid>
+
       <Box pt={4}>
         <Copyright />
       </Box>

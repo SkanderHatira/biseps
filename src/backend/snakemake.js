@@ -2,9 +2,9 @@ async function spawnChild() {
     const { spawn } = require("child_process");
     const path = require("path");
     const child = spawn("bash", [
-        path.join(__dirname, "resources/linux/snakemake.sh"),
-        path.join(__dirname, "resources/linux/snakemake/bin/activate"),
-        path.join(__dirname, "resources/bissprop/config/profiles/test"),
+        path.join(__dirname, "scripts/snakemake.sh"),
+        path.join(__dirname, "../../resources/linux/snakemake/bin/activate"),
+        path.join(__dirname, "../../resources/bissprop/config/profiles/test"),
     ]);
 
     let data = "";

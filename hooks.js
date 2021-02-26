@@ -5,7 +5,10 @@ const path = require("path");
 
 module.exports = {
   postStart: async (forgeConfig, options) => {
-    const resources = path.join(__dirname, ".webpack/main/resources");
+    const resources = path.join(
+      __dirname,
+      ".webpack/main/resources/linux/snakemake"
+    );
 
     chmodr(resources, 0o777, (err) => {
       if (err) {
@@ -19,7 +22,7 @@ module.exports = {
   postPackage: async (forgeConfig, options) => {
     const resources = path.join(
       options.outputPaths[0],
-      "resources/app/.webpack/main/resources"
+      "resources/app/.webpack/main/resources/linux/snakemake"
     );
 
     chmodr(resources, 0o777, (err) => {

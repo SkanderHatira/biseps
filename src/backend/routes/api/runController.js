@@ -52,7 +52,7 @@ router.get("/run", function (req, res) {
         res.status(200).send(users);
     });
     console.log("GET method");
-    // launchRun();
+    launchRun();
 });
 
 module.exports = router;

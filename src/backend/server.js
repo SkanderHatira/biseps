@@ -5,8 +5,8 @@ const passport = require("passport");
 const users = require("./routes/api/userController");
 const runs = require("./routes/api/runController");
 const units = require("./routes/api/unitController");
-const keys = require("./config/keys");
 var cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
@@ -19,7 +19,7 @@ app.use(
 app.use(bodyParser.json());
 console.log("where am i");
 mongoose
-    .connect(keys.DATABASE, { useNewUrlParser: true })
+    .connect(process.env.DATABASE, { useNewUrlParser: true })
     .then(() => console.log("MongoDB successfully connected"))
     .catch((err) => console.log(err));
 // Passport middleware
@@ -28,9 +28,9 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 // Routes
 app.use("/api/users", users);
-app.use("/api/runs", runs);
+app.use("/api/runs", passport.authenticate("jwt", { session: false }), runs);
 app.use("/api/units", units);
 
-const port = keys.PORT || 5000;
+const port = process.env.PORT;
 
 app.listen(port, () => console.log(`Server up and running on port ${port} !`));
