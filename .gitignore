@@ -37,7 +37,9 @@ mongo/
 snakemake/
 node_modules/
 jspm_packages/
-
+server-linux
+server-macos
+server-win.exe
 # TypeScript v1 declaration files
 typings/
 
