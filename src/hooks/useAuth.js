@@ -97,7 +97,6 @@ const useProvideAuth = () => {
     }
   };
   const signout = async () => {
-    console.log("yes?");
     // Remove token from local storage
     localStorage.removeItem("jwtToken");
     // Remove auth header for future requests

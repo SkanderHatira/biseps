@@ -103,7 +103,15 @@ router.get("/", function (req, res) {
         res.status(200).send(units);
     });
 });
-
+router.get("/:id", function (req, res) {
+    User.findById(req.params.id, function (err, units) {
+        if (err)
+            return res
+                .status(500)
+                .send("There was a problem finding the users.");
+        res.status(200).send(units);
+    });
+});
 router.put("/:id", function (req, res) {
     const updatedUser = new User({
         name: req.body.name,

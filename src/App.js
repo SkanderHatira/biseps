@@ -3,6 +3,8 @@ import { hot } from "react-hot-loader";
 import React from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/useAuth";
+import { ProvideConfig } from "./hooks/useConfig";
+
 import Navbar from "./components/Navbar/Navbar";
 import Landing from "./components/Landing/Landing";
 import Register from "./components/Register/Register";
@@ -17,20 +19,22 @@ import NotFound from "./pages/NotFound";
 function App() {
   return (
     <ProvideAuth>
-      <Router>
-        <div className="App">
-          <Switch>
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
-            <PrivateRoute exact path="/newrun" component={RunForm} />
-            <PrivateRoute exact path="/runs" component={RunBoard} />
-            <PrivateRoute exact path="/dashboard" component={Dashboard} />
-            <PrivateRoute exact path="/reports" component={ReportsBoard} />
-            <Route component={NotFound} />
-          </Switch>
-        </div>
-      </Router>
+      <ProvideConfig>
+        <Router>
+          <div className="App">
+            <Switch>
+              <Route exact path="/" component={Landing} />
+              <Route exact path="/register" component={Register} />
+              <Route exact path="/login" component={Login} />
+              <PrivateRoute exact path="/newrun" component={RunForm} />
+              <PrivateRoute exact path="/runs" component={RunBoard} />
+              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/reports" component={ReportsBoard} />
+              <Route component={NotFound} />
+            </Switch>
+          </div>
+        </Router>
+      </ProvideConfig>
     </ProvideAuth>
   );
 }

@@ -4,7 +4,6 @@
   "description": "server side for bisspropgui",
   "main": "server.js",
   "bin": "server.js",
-  "assets": "scripts/**/*",
   "scripts": {
     "client-install": "npm install --prefix client",
     "start": "node server.js",
@@ -21,6 +20,8 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "is-empty": "^1.2.0",
+    "js-yaml": "^4.0.0",
+    "json2csv": "^5.0.6",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.15",
     "passport": "^0.4.1",

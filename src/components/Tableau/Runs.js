@@ -71,8 +71,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Runs() {
   const [data, setData] = useState({});
 
-  useEffect(async () => {
-    const result = await axios("http://localhost:5000/api/runs/run");
+  useEffect(() => {
+    const result = axios("http://localhost:5000/api/runs/run");
     setData(result.data);
   }, []);
   console.log(data);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
@@ -13,7 +13,10 @@ import Typography from "@material-ui/core/Typography";
 import GlobalConfig from "./GlobalConfig";
 import Parameters from "./Parameters";
 import Overview from "./Overview";
+import Table from "../Table/Table";
 import axios from "axios";
+import { useConfig } from "../../hooks/useConfig";
+import NewTable from "../Table/NewTable";
 
 function Copyright() {
   return (
@@ -65,22 +68,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = ["Global configuration", "Expermiental design", "Overview"];
+const steps = [
+  "Global configuration",
+  "Expermiental design",
+  "Overview",
+  "Grid",
+];
 
 export default function RunForm() {
-  const initialState = {
-    sampleFile: "",
-    unitsFile: "",
-    outdir: "",
-    genome: "",
-    adapters: "",
-    subsample: true,
-    trimming: true,
-    quality: true,
-    genome_preparation: true,
-    methylation_extraction_bismark: true,
-    methylation_calling: true,
-  };
+  const { runState, sampleState } = useConfig();
+
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -91,34 +88,49 @@ export default function RunForm() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
-  const [runState, setRunState] = useState(initialState);
-  const handleRunFiles = (e) =>
-    setRunState({
-      ...runState,
-      [e.target.name]: [e.target.files.webkitRelativePath],
-    });
-  const handleRunState = (e) => {
-    setRunState({
-      ...runState,
-      [e.target.name]: [e.target.value],
-    });
-  };
 
   function getStepContent(step) {
     switch (step) {
       case 0:
-        return <GlobalConfig handleRunState={handleRunState} />;
+        return <GlobalConfig />;
       case 1:
         return <Parameters />;
       case 2:
         return <Overview />;
+      case 3:
+        return <NewTable />;
       default:
         throw new Error("Unknown step");
     }
   }
   const handleRunSubmit = () => {
+    const request = {
+      ...runState,
+      sampleState,
+    };
+    console.log(request);
+    // const request = {
+    //   params: {
+    //     steps: {
+    //       subsample: runState.subsample,
+    //     },
+
+    //     bismark: {
+    //       aligner: runState.aligner,
+    //       alignerOptions: "",
+    //       instances: 4,
+    //       scoreMin: "L,0," + String(runState.minscore),
+    //       n: runState.n,
+    //       l: runState.l,
+    //     },
+    //   },
+    //   outdir: runState.outdir,
+    //   genome: runState.genome,
+    //   adapters: runState.adapters,
+    //   samples: sampleState,
+    // };
     axios
-      .post("http://localhost:5000/api/runs/run")
+      .post("http://localhost:5000/api/runs/run", request)
       .then((res) => console.log(res.data))
       .catch((err) => {
         console.log("failed get request");

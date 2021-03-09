@@ -10,6 +10,8 @@ import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
+import { useConfig } from "../../hooks/useConfig";
+
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -21,10 +23,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 const SampleForm = () => {
   const classes = useStyles();
-
-  const blankSample = { sample: " " };
-  const [sampleState, setSampleState] = useState([{ ...blankSample }]);
-
+  const { sampleState, setSampleState, blankSample } = useConfig();
+  console.log(sampleState[0].units);
   const addSample = () => {
     setSampleState([...sampleState, { ...blankSample }]);
   };
@@ -38,39 +38,34 @@ const SampleForm = () => {
       {sampleState.map((val, idx) => {
         const sampleId = `sample-${idx}`;
         return (
-          <Box boxShadow={3} m={1}>
-            <Grid item xs={12} md={6} gutterBottom>
+          <Grid key={sampleId} item xs={12} md={6}>
+            <Box key={idx} boxShadow={3} m={1}>
               <FormControl className={classes.formControl}>
-                <TextField
+                <input
                   id={sampleId}
                   data-idx={idx}
-                  label={`sample ${idx + 1}`}
-                  className={classnames("", {
-                    invalid: sampleState.sample,
-                  })}
+                  label={`sample ${idx}`}
+                  className="sample"
                   name={sampleId}
                   type="text"
+                  placeholder="Sample Name"
+                  value={val.sample}
                   required
                   onChange={handleSampleChange}
-                  value={sampleState.sample}
-                  error={sampleState.sample}
+                  value={val.sample}
+                  error={val.sample}
                 />
               </FormControl>
-            </Grid>
-            <UnitForm classes={classes} />
-          </Box>
+              <UnitForm classes={classes} sample={val} sampleId={idx} />
+            </Box>
+          </Grid>
         );
       })}
-      <Grid xs={12} md={6} gutterBottom>
-        <Fab
-          size="small"
-          onClick={addSample}
-          value="Add New Sample"
-          color="primary"
-          aria-label="add"
-        >
-          <AddIcon />
-        </Fab>{" "}
+      <Grid item xs={12} md={6}>
+        <Fab variant="extended" onClick={addSample} color="primary">
+          <AddIcon className={classes.extendedIcon} />
+          Add New Sample
+        </Fab>
       </Grid>
     </Grid>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -11,7 +12,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
+import { useConfig } from "../../hooks/useConfig";
 
 import Link from "@material-ui/core/Link";
 
@@ -32,8 +35,40 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
 }));
-export default function GlobalConfig({ handleRunState }) {
+export default function GlobalConfig() {
+  const { runState, setRunState } = useConfig();
+
   const classes = useStyles();
+  const handleGenome = (e) => {
+    setRunState({
+      ...runState,
+      [e.target.id]: document.getElementById(e.target.id).files[0].path,
+      outdir:
+        document
+          .getElementById(e.target.id)
+          .files[0].path.match(/(.*)[\/\\]/)[0] || "",
+    });
+  };
+
+  const handleRunState = (e) => {
+    setRunState({
+      ...runState,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleCheckBox = (e) => {
+    setRunState({
+      ...runState,
+      [e.target.name]: String(e.target.checked),
+    });
+  };
+  const handleSlider = (e, newValue) => {
+    console.log(e.target);
+    setRunState({
+      ...runState,
+      [e.target.id]: newValue,
+    });
+  };
 
   return (
     <React.Fragment>
@@ -43,91 +78,103 @@ export default function GlobalConfig({ handleRunState }) {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel id="aligner">Aligner</InputLabel>
+            <InputLabel>Aligner</InputLabel>
             <Select
-              defaultValue={10}
+              defaultValue="bowtie2"
               labelId="aligner"
               id="aligner"
+              name="aligner"
               onChange={handleRunState}
             >
-              <MenuItem value={10}>Bowtie2</MenuItem>
-              <MenuItem value={20}>Hisat2</MenuItem>
+              <MenuItem value="bowtie2">Bowtie2</MenuItem>
+              <MenuItem value="hisat2">Hisat2</MenuItem>
             </Select>
             <FormHelperText>Choose aligner. Default: bowtie2</FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel id="adapters">Adapters</InputLabel>
+            <InputLabel>Adapters</InputLabel>
             <Select
-              defaultValue={1}
+              value={runState.adapters}
               labelId="adapters"
               id="adapters"
+              name="adapters"
               onChange={handleRunState}
             >
-              <MenuItem value={1}>TruSeq2-SE</MenuItem>
-              <MenuItem value={2}>TruSeq2-PE</MenuItem>
-              <MenuItem value={3}>TruSeq3-SE</MenuItem>
-              <MenuItem value={4}>TruSeq3-PEE</MenuItem>
-              <input
-                accept=".fq.gz"
+              <MenuItem value="TruSeq2-SE">TruSeq2-SE</MenuItem>
+              <MenuItem value="TruSeq2-PE">TruSeq2-PE</MenuItem>
+              <MenuItem value="TruSeq3-SE">TruSeq3-SE</MenuItem>
+              <MenuItem value="TruSeq3-PE">TruSeq3-PE</MenuItem>
+              {/* <input
+                accept=".fa"
                 className={classes.input}
                 style={{ display: "none" }}
-                id="custom-adapters"
+                id="adapters"
                 multiple
+                onChange={handleRunFiles}
                 type="file"
               />
-              <label htmlFor="custom-adapters">
-                <MenuItem value={5}>Upload</MenuItem>
-              </label>
+              <label htmlFor="adapters">
+                <MenuItem value="Upload">Upload</MenuItem>
+              </label> */}
             </Select>
             <FormHelperText>Choose adapters</FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel id="genome">Genome</InputLabel>
-            <TextField
-              type="file"
-              required
-              id="genome"
-              name="genome"
-              label="Genome"
-              inputProps={{
-                accept: ".fasta , .fa , .fq , .fq.gz",
-              }}
-              fullWidth
-              autoComplete="family-name"
-            />
+            <Button
+              variant="contained"
+              component="label"
+              color={runState.genome === "" ? "" : "primary"}
+            >
+              {runState.genome === ""
+                ? "upload genome"
+                : runState.genome.split(/[\\/]/).pop()}
+              <input
+                type="file"
+                required
+                id="genome"
+                name="genome"
+                label="Genome"
+                accept=".fasta , .fa , .fq , .fq.gz"
+                onChange={handleGenome}
+                type="file"
+                hidden
+              />
+            </Button>
+
             <FormHelperText>Choose genome in .fasta Format</FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel id="outdir">Output</InputLabel>
-            <TextField
-              type="file"
-              required
-              id="outdir"
-              name="outdir"
-              label="Output"
-              inputProps={{
-                directory: "",
-                webkitdirectory: "",
-              }}
-              fullWidth
-              autoComplete="family-name"
-            />
-            <FormHelperText>Choose an output directory</FormHelperText>
+            <InputLabel>Number of Mismatches</InputLabel>
+            <Select
+              value={runState.n}
+              labelId="n"
+              id="n"
+              name="n"
+              onChange={handleRunState}
+            >
+              <MenuItem value={0}>0</MenuItem>
+              <MenuItem value={1}>1</MenuItem>
+            </Select>
+            <FormHelperText>
+              Choose Number of Mismatches. Default: 0, choosing 1 makes process
+              much slower
+            </FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
-            <Typography id="minlen" gutterBottom>
-              Minlen{" "}
-            </Typography>
+            <Typography gutterBottom>Minlen </Typography>
             <Slider
-              defaultValue={80}
+              name="minlen"
+              id="minlen"
+              onChange={handleSlider}
+              value={runState.minlen}
               aria-labelledby="minlen"
               step={10}
               min={30}
@@ -139,19 +186,19 @@ export default function GlobalConfig({ handleRunState }) {
         </Grid>
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
-            <Typography id="minscore" gutterBottom>
-              Min-Score{" "}
-            </Typography>
+            <Typography gutterBottom>Min-Score </Typography>
             <Slider
-              defaultValue={-0.6}
-              aria-labelledby="minscore"
+              id="minscore"
+              name="minscore"
+              onChange={handleSlider}
+              value={runState.minscore}
               step={-0.1}
               min={-1}
               max={-0.2}
               valueLabelDisplay="auto"
-            />{" "}
+            />
             <FormHelperText>
-              Choose minimal alignement quality score. See{" "}
+              Choose minimal alignement quality score. See
               <Link href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide_v0.7.12.pdf">
                 docs
               </Link>
@@ -161,28 +208,35 @@ export default function GlobalConfig({ handleRunState }) {
         </Grid>
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
-            <Typography id="L" gutterBottom>
-              L{" "}
-            </Typography>
+            <Typography gutterBottom>L</Typography>
             <Slider
-              defaultValue={20}
-              aria-labelledby="L"
+              value={runState.l}
+              onChange={handleSlider}
+              aria-labelledby="l"
+              id="l"
+              name="l"
               step={1}
               min={20}
               max={32}
               valueLabelDisplay="auto"
-            />{" "}
+            />
             <FormHelperText>
-              Choose k-mer length for alignment. Higher : Slower
+              Choose k-mer length for alignment. Higher : Faster but less
+              sensitive
             </FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12}>
           <FormControlLabel
-            onChange={handleRunState}
-            control={<Checkbox color="secondary" name="subsample" />}
+            control={
+              <Checkbox
+                onChange={handleCheckBox}
+                color="secondary"
+                name="subsample"
+              />
+            }
             label="Toggle this option to execute a minimal run"
-          />
+          ></FormControlLabel>
         </Grid>
       </Grid>
     </React.Fragment>

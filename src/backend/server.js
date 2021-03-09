@@ -5,12 +5,12 @@ const passport = require("passport");
 const users = require("./routes/api/userController");
 const runs = require("./routes/api/runController");
 const units = require("./routes/api/unitController");
-var cors = require("cors");
-require("dotenv").config();
+const path = require("path");
+const cors = require("cors");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 app.use(cors());
-require("dotenv").config();
 app.use(
     bodyParser.urlencoded({
         extended: false,

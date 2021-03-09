@@ -155,23 +155,22 @@ const DashLayout = ({ Filling }) => {
 
           {auth.user.isAuthenticated ? (
             <>
-              <IconButton color="inherit">
-                {/* <Badge color="secondary">
+              {/* <IconButton color="inherit">
+                <Badge color="secondary">
                   <NotificationsIcon />
-                </Badge> */}
-              </IconButton>
-              <IconButton color="inherit">
+                </Badge>
+              </IconButton> */}
+              <IconButton onClick={auth.signout} color="inherit">
                 <Typography
                   component="h1"
                   variant="h6"
                   color="inherit"
-                  onClick={auth.signout}
                   noWrap
                   className={classes.title}
                 >
                   Logout
                 </Typography>
-                <ExitToAppIcon onClick={auth.signout} />
+                <ExitToAppIcon />
               </IconButton>
             </>
           ) : (
