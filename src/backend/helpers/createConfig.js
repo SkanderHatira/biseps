@@ -26,7 +26,12 @@ const createConfig = (body) => {
             ref: {
                 genome: body.genome,
             },
-            adapters: body.adapters || "",
+            adapters:
+                path.join(
+                    __dirname,
+                    "../../../resources/adapters",
+                    body.adapters
+                ) || "",
         },
         Rossa_1: {
             params: {
