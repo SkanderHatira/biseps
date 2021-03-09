@@ -11,9 +11,7 @@ import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import GlobalConfig from "./GlobalConfig";
-import Parameters from "./Parameters";
-import Overview from "./Overview";
-import Table from "../Table/Table";
+import Execution from "./Execution";
 import axios from "axios";
 import { useConfig } from "../../hooks/useConfig";
 import NewTable from "../Table/NewTable";
@@ -68,15 +66,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = [
-  "Global configuration",
-  "Expermiental design",
-  "Overview",
-  "Grid",
-];
+const steps = ["Global configuration", "Expermiental design"];
 
 export default function RunForm() {
-  const { runState, sampleState } = useConfig();
+  const { runState, sampleState, units } = useConfig();
 
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -94,11 +87,11 @@ export default function RunForm() {
       case 0:
         return <GlobalConfig />;
       case 1:
-        return <Parameters />;
-      case 2:
-        return <Overview />;
-      case 3:
         return <NewTable />;
+      // case 2:
+      //   return <Overview />;
+      // case 3:
+      //   return <NewTable />;
       default:
         throw new Error("Unknown step");
     }
@@ -106,7 +99,7 @@ export default function RunForm() {
   const handleRunSubmit = () => {
     const request = {
       ...runState,
-      sampleState,
+      units,
     };
     console.log(request);
     // const request = {

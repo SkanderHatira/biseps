@@ -24,6 +24,7 @@ import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
 import uuid from "react-uuid";
+import { useConfig } from "../../hooks/useConfig";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -76,8 +77,8 @@ const headCells = [
     disablePadding: false,
     label: "Biological Replicate",
   },
-  { id: "r1", numeric: false, disablePadding: false, label: "Forward Read" },
-  { id: "r2", numeric: false, disablePadding: false, label: "Reverse Read" },
+  { id: "r1", numeric: false, disablePadding: false, label: "Forward" },
+  { id: "r2", numeric: false, disablePadding: false, label: "Reverse" },
 ];
 
 function EnhancedTableHead(props) {
@@ -250,6 +251,8 @@ export default function NewTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const { units, setUnits } = useConfig();
+
   const blankUnit = {
     id: uuid(),
     sample: "",
@@ -259,7 +262,6 @@ export default function NewTable() {
     r1: "",
     r2: "",
   };
-  const [units, setUnits] = useState([]);
   const addUnit = () => {
     setUnits([...units, { ...blankUnit }]);
   };
@@ -368,7 +370,7 @@ export default function NewTable() {
               rowCount={units.length}
             />
             <TableBody>
-              {stableSort(units, getComparator(order, orderBy))
+              {units
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((unit, index) => {
                   const isItemSelected = isSelected(index);
@@ -447,7 +449,7 @@ export default function NewTable() {
                           component="label"
                           color={unit.r1 === "" ? "" : "primary"}
                         >
-                          {unit.r1 === "" ? "Forward Read(s)" : "Files Added"}
+                          {unit.r1 === "" ? "Forward" : "Added"}
                           <input
                             data-idx={index}
                             type="file"
@@ -465,7 +467,7 @@ export default function NewTable() {
                           component="label"
                           color={unit.r2 === "" ? "" : "primary"}
                         >
-                          {unit.r2 === "" ? "Forward Read(s)" : "Files Added"}
+                          {unit.r2 === "" ? "Reverse" : "Added"}
                           <input
                             data-idx={index}
                             type="file"

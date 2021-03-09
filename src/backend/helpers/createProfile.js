@@ -29,15 +29,15 @@ function createProfile(body) {
         "keep-going": true,
         "dry-run": body.subsample,
     };
-    if (body.quality) {
-        const yamlStr = yaml.dump(localProfile);
+    if (body.cluster) {
+        const yamlStr = yaml.dump(slurmProfile);
         fs.writeFileSync(
             path.join(body.outdir, "config/profile/config.yaml"),
             yamlStr,
             "utf8"
         );
     } else {
-        const yamlStr = yaml.dump(slurmProfile);
+        const yamlStr = yaml.dump(localProfile);
         fs.writeFileSync(
             path.join(body.outdir, "config/profile/config.yaml"),
             yamlStr,

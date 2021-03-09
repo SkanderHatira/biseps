@@ -73,23 +73,25 @@ export default function GlobalConfig() {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        General configuration
+        Execution Parameters{" "}
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel>Aligner</InputLabel>
+            <InputLabel>CPUs</InputLabel>
             <Select
-              defaultValue="bowtie2"
-              labelId="aligner"
-              id="aligner"
-              name="aligner"
+              defaultValue="All"
+              labelId="CPU"
+              id="CPU"
+              name="CPU"
               onChange={handleRunState}
             >
               <MenuItem value="bowtie2">Bowtie2</MenuItem>
               <MenuItem value="hisat2">Hisat2</MenuItem>
             </Select>
-            <FormHelperText>Choose aligner. Default: bowtie2</FormHelperText>
+            <FormHelperText>
+              Specify CPUs available. Default: All
+            </FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -226,9 +228,8 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <FormControlLabel
-            className={classes.formControl}
             control={
               <Checkbox
                 onChange={handleCheckBox}
@@ -236,128 +237,9 @@ export default function GlobalConfig() {
                 name="subsample"
               />
             }
-            label="Toggle this option to execute a minimal run"
+            label="Toggle this option to run in cluster mode"
           ></FormControlLabel>
         </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom>
-            Execution Parameters{" "}
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            className={classes.formControl}
-            control={
-              <Checkbox
-                onChange={handleCheckBox}
-                color="secondary"
-                name="cluster"
-              />
-            }
-            label="Toggle this option to execute a minimal run"
-          ></FormControlLabel>
-          <Grid item xs={12} sm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>CPUs</InputLabel>
-              <Select
-                defaultValue="All"
-                labelId="CPU"
-                id="CPU"
-                name="CPU"
-                onChange={handleRunState}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify CPUs available. Default: All
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-        </Grid>
-        {runState.cluster === "true" ? (
-          <Grid item xs={12} sm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Memory</InputLabel>
-              <Select
-                defaultValue="All"
-                labelId="Memory"
-                id="Memory"
-                name="Memory"
-                onChange={handleRunState}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Memory available. Default: All
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Jobs</InputLabel>
-              <Select
-                defaultValue="5"
-                labelId="Jobs"
-                id="Jobs"
-                name="Jobs"
-                onChange={handleRunState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="15">15</MenuItem>
-                <MenuItem value="25">25</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Jobs available. Default: All
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Jobs</InputLabel>
-              <Select
-                defaultValue="5"
-                labelId="Jobs"
-                id="Jobs"
-                name="Jobs"
-                onChange={handleRunState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="15">15</MenuItem>
-                <MenuItem value="25">25</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Jobs available. Default: All
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>MaxTime</InputLabel>
-              <Select
-                defaultValue="5"
-                labelId="MaxTime"
-                id="MaxTime"
-                name="MaxTime"
-                onChange={handleRunState}
-              >
-                <MenuItem value="240">240</MenuItem>
-                <MenuItem value="1440">1440</MenuItem>
-                <MenuItem value="2880">2880</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify MaxTime available. Default: 1 day
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-        ) : (
-          ""
-        )}
       </Grid>
     </React.Fragment>
   );
