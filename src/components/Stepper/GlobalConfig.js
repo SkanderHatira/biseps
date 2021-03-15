@@ -261,9 +261,9 @@ export default function GlobalConfig() {
               <InputLabel>CPUs</InputLabel>
               <Select
                 defaultValue="All"
-                labelId="CPU"
-                id="CPU"
-                name="CPU"
+                labelId="cpu"
+                id="cpu"
+                name="cpu"
                 onChange={handleRunState}
               >
                 <MenuItem value="All">All</MenuItem>
@@ -284,9 +284,9 @@ export default function GlobalConfig() {
               <InputLabel>Memory</InputLabel>
               <Select
                 defaultValue="All"
-                labelId="Memory"
-                id="Memory"
-                name="Memory"
+                labelId="memMb"
+                id="memMb"
+                name="memMb"
                 onChange={handleRunState}
               >
                 <MenuItem value="All">All</MenuItem>
@@ -303,9 +303,9 @@ export default function GlobalConfig() {
               <InputLabel>Jobs</InputLabel>
               <Select
                 defaultValue="5"
-                labelId="Jobs"
-                id="Jobs"
-                name="Jobs"
+                labelId="jobs"
+                id="jobs"
+                name="jobs"
                 onChange={handleRunState}
               >
                 <MenuItem value="1">1</MenuItem>
@@ -341,9 +341,9 @@ export default function GlobalConfig() {
               <InputLabel>MaxTime</InputLabel>
               <Select
                 defaultValue="5"
-                labelId="MaxTime"
-                id="MaxTime"
-                name="MaxTime"
+                labelId="minTime"
+                id="minTime"
+                name="minTime"
                 onChange={handleRunState}
               >
                 <MenuItem value="240">240</MenuItem>

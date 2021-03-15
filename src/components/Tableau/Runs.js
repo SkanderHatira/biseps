@@ -7,7 +7,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Title from "./Title";
-import axios from "axios";
+
 import dummy from "../../dummy/multiqc_data";
 
 // Generate Order Data
@@ -69,13 +69,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Runs() {
-  const [data, setData] = useState({});
-
-  useEffect(() => {
-    const result = axios("http://localhost:5000/api/runs/run");
-    setData(result.data);
-  }, []);
-  console.log(data);
   const classes = useStyles();
   return (
     <React.Fragment>

@@ -1,15 +1,11 @@
-async function spawnServer() {
+const spawnServer = async () => {
     const options = {
         slient: true,
         detached: false,
     };
     const { spawn } = require("child_process");
     const path = require("path");
-    const child = spawn(
-        "node",
-        [path.join(__dirname, "src/backend/server.js")],
-        options
-    );
+    const child = spawn("node", [path.join(__dirname, "./server.js")], options);
 
     let data = "";
     for await (const chunk of child.stdout) {
@@ -29,12 +25,5 @@ async function spawnServer() {
         throw new Error(`subprocess error exit ${exitCode}, ${error}`);
     }
     return data;
-}
-spawnServer().then(
-    (data) => {
-        console.log("async result:\n" + data);
-    },
-    (err) => {
-        console.error("async error:\n" + err);
-    }
-);
+};
+module.exports = spawnServer;

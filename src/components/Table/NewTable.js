@@ -77,8 +77,8 @@ const headCells = [
     disablePadding: false,
     label: "Biological Replicate",
   },
-  { id: "r1", numeric: false, disablePadding: false, label: "Forward" },
-  { id: "r2", numeric: false, disablePadding: false, label: "Reverse" },
+  { id: "fq1", numeric: false, disablePadding: false, label: "Forward" },
+  { id: "fq2", numeric: false, disablePadding: false, label: "Reverse" },
 ];
 
 function EnhancedTableHead(props) {
@@ -259,8 +259,8 @@ export default function NewTable() {
     lane: 1,
     techrep: 1,
     biorep: 1,
-    r1: "",
-    r2: "",
+    fq1: "",
+    fq2: "",
   };
   const addUnit = () => {
     setUnits([...units, { ...blankUnit }]);
@@ -447,15 +447,15 @@ export default function NewTable() {
                         <Button
                           variant="contained"
                           component="label"
-                          color={unit.r1 === "" ? "" : "primary"}
+                          color={unit.fq1 === "" ? "" : "primary"}
                         >
-                          {unit.r1 === "" ? "Forward" : "Added"}
+                          {unit.fq1 === "" ? "Forward" : "Added"}
                           <input
                             data-idx={index}
                             type="file"
                             onChange={handleUnitFiles}
-                            id="r1"
-                            name="r1"
+                            id="fq1"
+                            name="fq1"
                             accept=".fastq , .fq , .fastq.gz , .fq.gz"
                             hidden
                           />
@@ -465,15 +465,15 @@ export default function NewTable() {
                         <Button
                           variant="contained"
                           component="label"
-                          color={unit.r2 === "" ? "" : "primary"}
+                          color={unit.fq2 === "" ? "" : "primary"}
                         >
-                          {unit.r2 === "" ? "Reverse" : "Added"}
+                          {unit.fq2 === "" ? "Reverse" : "Added"}
                           <input
                             data-idx={index}
                             type="file"
                             onChange={handleUnitFiles}
-                            id="r2"
-                            name="r2"
+                            id="fq2"
+                            name="fq2"
                             accept=".fastq , .fq , .fastq.gz , .fq.gz"
                             hidden
                           />

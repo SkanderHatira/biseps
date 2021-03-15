@@ -1,4 +1,0 @@
-configfile: config/config.yaml
-use-conda: true
-dry-run: true
-cores: all

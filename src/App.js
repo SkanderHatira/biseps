@@ -29,7 +29,7 @@ function App() {
               <PrivateRoute exact path="/newrun" component={RunForm} />
               <PrivateRoute exact path="/runs" component={RunBoard} />
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
-              <PrivateRoute exact path="/reports" component={ReportsBoard} />
+              {/* <PrivateRoute exact path="/reports" component={ReportsBoard} /> */}
               <Route component={NotFound} />
             </Switch>
           </div>

@@ -40,6 +40,7 @@ jspm_packages/
 server-linux
 server-macos
 server-win.exe
+dist/
 # TypeScript v1 declaration files
 typings/
 

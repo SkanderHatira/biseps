@@ -1,10 +1,9 @@
-async function spawnChild() {
+const spawnChild = async (profile) => {
     const { spawn } = require("child_process");
     const path = require("path");
-    const script = path.join(__dirname, "assets/snakemake.sh");
-    const env = path.join(__dirname, "assets/snakemake/bin/activate");
-    const profile = path.join(__dirname, "assets/config/profiles/test");
-    const workflow = path.join(__dirname, "assets/workflow");
+    const script = path.join(__dirname, "../../resources/snakemake.sh");
+    const env = path.join(__dirname, "../../resources/snakemake/bin/activate");
+    const workflow = path.join(__dirname, "../../resources/bissprop/workflow");
     const child = spawn("bash", [script, env, profile, workflow]);
 
     let data = "";
@@ -25,12 +24,5 @@ async function spawnChild() {
         throw new Error(`subprocess error exit ${exitCode}, ${error}`);
     }
     return data;
-}
-spawnChild().then(
-    (data) => {
-        console.log("async result:\n" + data);
-    },
-    (err) => {
-        console.error("async error:\n" + err);
-    }
-);
+};
+module.exports = spawnChild;

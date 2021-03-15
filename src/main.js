@@ -1,8 +1,8 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
+// import installExtension, {
+//   REACT_DEVELOPER_TOOLS,
+// } from "electron-devtools-installer";
 require("dotenv").config();
 console.log(process.env.PORT);
 const isDev = require("electron-is-dev");
@@ -30,11 +30,6 @@ exec(
 // };
 // mongod();
 
-// const server = () => {
-//   require(path.join(__dirname, "backend/spawnServer.js"));
-// };
-
-// setTimeout(server, 2000);
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
@@ -57,9 +52,9 @@ const createWindow = () => {
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log("An error occurred: ", err));
+  // installExtension(REACT_DEVELOPER_TOOLS)
+  //   .then((name) => console.log(`Added Extension:  ${name}`))
+  //   .catch((err) => console.log("An error occurred: ", err));
 };
 
 // This method will be called when Electron has finished

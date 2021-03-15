@@ -1,9 +1,10 @@
 const express = require("express");
+const path = require("path");
 const router = express.Router();
 const createProfile = require("../../helpers/createProfile");
 const createConfig = require("../../helpers/createConfig");
 const createUnits = require("../../helpers/createUnits");
-
+const spawnChild = require("../../snakemake");
 // load launch script
 // const launchRun = () => {
 //     require("../../snakemake.js");
@@ -20,6 +21,7 @@ const validateConfigurationInput = require("../../validation/sampleConfiguration
 // Load Run model
 
 const Run = require("../../models/Run");
+const { runInNewContext } = require("vm");
 
 // @route POST api/runs/Run
 // @desc Run
@@ -32,8 +34,11 @@ router.post("/run", (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     } else {
+        const uniqueDir = path.join(req.body.outdir, new Date().toISOString());
+        const profile = path.join(uniqueDir, "config/profile");
         const newRun = new Run({
-            outdir: req.body.outdir,
+            outdir: uniqueDir,
+            profile: profile,
             genome: req.body.genome,
             adapters: req.body.adapters,
             steps: {
@@ -47,10 +52,10 @@ router.post("/run", (req, res) => {
             .catch((err) => console.log(err));
         // launchRun();
         console.log("POST method");
-        // console.log(newRun.samples[0].units[0].r1);
-        // createProfile(req.body);
-        // createConfig(req.body);
-        createUnits(req.body);
+        createProfile(req.body, uniqueDir);
+        createConfig(req.body, uniqueDir);
+        createUnits(req.body, uniqueDir);
+        spawnChild(profile);
     }
 });
 router.get("/run", function (req, res) {
@@ -63,5 +68,24 @@ router.get("/run", function (req, res) {
     });
     console.log("GET method");
 });
+router.get("/run", function (req, res) {
+    Run.find({}, function (err, runs) {
+        if (err)
+            return res
+                .status(500)
+                .send("There was a problem finding the runs.");
+        res.status(200).send(runs);
+    });
+    console.log("GET method");
+});
 
+router.get("/run/:id", function (req, res) {
+    Run.findById(req.params.id, function (err, unit) {
+        if (err)
+            return res
+                .status(500)
+                .send("There was a problem finding the users.");
+        res.status(200).send(unit);
+    });
+});
 module.exports = router;

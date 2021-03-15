@@ -31,12 +31,12 @@ module.exports = [
    *   }]
    * }
    */
-  // {
-  //   test: /\.resources$/,
-  //   loader: "file-loader",
-  // },
-  // {
-  //   test: /\.backend$/,
-  //   loader: "file-loader",
-  // },
+  {
+    test: /\.resources$/,
+    loader: "file-loader",
+  },
+  {
+    test: /\.backend$/,
+    loader: "file-loader",
+  },
 ];

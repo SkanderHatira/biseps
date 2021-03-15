@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
@@ -69,8 +69,8 @@ const useStyles = makeStyles((theme) => ({
 const steps = ["Global configuration", "Expermiental design"];
 
 export default function RunForm() {
-  const { runState, sampleState, units } = useConfig();
-
+  const { runState, units } = useConfig();
+  const [response, setResponse] = useState({});
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -101,30 +101,13 @@ export default function RunForm() {
       ...runState,
       units,
     };
-    console.log(request);
-    // const request = {
-    //   params: {
-    //     steps: {
-    //       subsample: runState.subsample,
-    //     },
 
-    //     bismark: {
-    //       aligner: runState.aligner,
-    //       alignerOptions: "",
-    //       instances: 4,
-    //       scoreMin: "L,0," + String(runState.minscore),
-    //       n: runState.n,
-    //       l: runState.l,
-    //     },
-    //   },
-    //   outdir: runState.outdir,
-    //   genome: runState.genome,
-    //   adapters: runState.adapters,
-    //   samples: sampleState,
-    // };
     axios
       .post("http://localhost:5000/api/runs/run", request)
-      .then((res) => console.log(res.data))
+      .then((res) => {
+        setResponse(res.data);
+        handleNext();
+      })
       .catch((err) => {
         console.log("failed get request");
       });
@@ -158,8 +141,8 @@ export default function RunForm() {
                   Your analysis has been submitted.
                 </Typography>
                 <Typography variant="subtitle1">
-                  Your run number is #2001539. you can follow the run status
-                  through the dashboard.
+                  Your run number is {response._id}. you can follow the run
+                  status through the dashboard.
                 </Typography>
               </React.Fragment>
             ) : (
