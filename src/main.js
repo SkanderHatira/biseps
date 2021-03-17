@@ -1,8 +1,8 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
-// import installExtension, {
-//   REACT_DEVELOPER_TOOLS,
-// } from "electron-devtools-installer";
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
 require("dotenv").config();
 console.log(process.env.PORT);
 const isDev = require("electron-is-dev");
@@ -41,20 +41,22 @@ const createWindow = () => {
     width: 1080,
     height: 720,
     webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      nodeIntegration: true,
+      enableRemoteModule: true,
     },
   });
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  console.log(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
-  // installExtension(REACT_DEVELOPER_TOOLS)
-  //   .then((name) => console.log(`Added Extension:  ${name}`))
-  //   .catch((err) => console.log("An error occurred: ", err));
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log("An error occurred: ", err));
 };
 
 // This method will be called when Electron has finished

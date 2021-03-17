@@ -447,7 +447,7 @@ export default function NewTable() {
                         <Button
                           variant="contained"
                           component="label"
-                          color={unit.fq1 === "" ? "" : "primary"}
+                          color={unit.fq1 === "" ? "default" : "primary"}
                         >
                           {unit.fq1 === "" ? "Forward" : "Added"}
                           <input
@@ -465,7 +465,7 @@ export default function NewTable() {
                         <Button
                           variant="contained"
                           component="label"
-                          color={unit.fq2 === "" ? "" : "primary"}
+                          color={unit.fq2 === "" ? "default" : "primary"}
                         >
                           {unit.fq2 === "" ? "Reverse" : "Added"}
                           <input

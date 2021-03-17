@@ -3,9 +3,15 @@ import { DataGrid } from "@material-ui/data-grid";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+const electron = window.require("electron");
+const remote = electron.remote;
+const { BrowserWindow, dialog, Menu } = remote;
+// console.log(
+//   dialog.showOpenDialog({ properties: ["openFile", "multiSelections"] })
+// );
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
+  { field: "_id", headerName: "ID", width: 70 },
   { field: "genome", headerName: "Genome", width: 130 },
   { field: "outdir", headerName: "Output Directory", width: 130 },
   {
@@ -28,17 +34,30 @@ const rows = [
 ];
 
 export default function Table({ Copyright, classes, fixedHeightPaper }) {
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/runs/run")
-      .then((response) => setData(response.data));
+    const fetchData = async () => {
+      const result = await axios("http://localhost:5000/api/runs/run");
+
+      setData(result.data);
+    };
+
+    fetchData();
   }, []);
+  console.log(data[0]);
   return (
     <Container maxWidth="lg" className={classes.container}>
-      <Grid container spacing={3}>
-        <DataGrid rows={rows} columns={columns} pageSize={5} />
-      </Grid>
+      {data && (
+        <div style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={data}
+            getRowId={(row) => row._id}
+            columns={columns}
+            pageSize={5}
+            checkboxSelection
+          />
+        </div>
+      )}
     </Container>
   );
 }

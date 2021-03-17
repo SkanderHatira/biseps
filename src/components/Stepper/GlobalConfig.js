@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -15,7 +15,6 @@ import Select from "@material-ui/core/Select";
 import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
 import { useConfig } from "../../hooks/useConfig";
-
 import Link from "@material-ui/core/Link";
 
 const styles = {
@@ -127,7 +126,7 @@ export default function GlobalConfig() {
             <Button
               variant="contained"
               component="label"
-              color={runState.genome === "" ? "" : "primary"}
+              color={runState.genome === "" ? "default" : "primary"}
             >
               {runState.genome === ""
                 ? "upload genome"
