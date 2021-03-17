@@ -11,9 +11,10 @@ import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import GlobalConfig from "./GlobalConfig";
-import Execution from "./Execution";
 import axios from "axios";
 import { useConfig } from "../../hooks/useConfig";
+import { useAuth } from "../../hooks/useAuth";
+
 import NewTable from "../Table/NewTable";
 
 function Copyright() {
@@ -70,6 +71,7 @@ const steps = ["Global configuration", "Expermiental design"];
 
 export default function RunForm() {
   const { runState, units } = useConfig();
+  const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -100,6 +102,7 @@ export default function RunForm() {
     const request = {
       ...runState,
       units,
+      userId: user.user.id,
     };
 
     axios

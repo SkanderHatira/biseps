@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const RunSchema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "users" },
+    status: { type: String, required: true, default: "running" },
     outdir: {
         type: String,
         required: true,

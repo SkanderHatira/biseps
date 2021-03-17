@@ -93,24 +93,31 @@ router.post("/login", (req, res) => {
         });
     });
 });
-// @route GET api/units/user
-router.get("/", function (req, res) {
-    User.find({}, function (err, units) {
-        if (err)
-            return res
-                .status(500)
-                .send("There was a problem finding the users.");
-        res.status(200).send(units);
-    });
-});
+// // @route GET api/units/user
+// router.get("/", function (req, res) {
+//     User.find({}, function (err, units) {
+//         if (err)
+//             return res
+//                 .status(500)
+//                 .send("There was a problem finding the users.");
+//         res.status(200).send(units);
+//     });
+// });
 router.get("/:id", function (req, res) {
-    User.findById(req.params.id, function (err, units) {
-        if (err)
-            return res
-                .status(500)
-                .send("There was a problem finding the users.");
-        res.status(200).send(units);
-    });
+    User.findById(req.params.id)
+        .populate("runs") // key to populate
+        .then((user) => {
+            res.json(user);
+        })
+        .catch((err) => console.log(err));
+
+    // User.findById(req.params.id, function (err, units) {
+    //     if (err)
+    //         return res
+    //             .status(500)
+    //             .send("There was a problem finding the users.");
+    //     res.status(200).send(units);
+    // });
 });
 router.put("/:id", function (req, res) {
     const updatedUser = new User({
