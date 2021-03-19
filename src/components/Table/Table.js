@@ -78,7 +78,7 @@ import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import axios from "axios";
-
+const got = require("got");
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -107,9 +107,36 @@ export default function InteractiveList() {
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios("http://localhost:5000/api/runs");
-
-      setData(result.data);
+      const token = localStorage.jwtToken;
+      const http = require("http");
+      const options = {
+        method: "GET",
+        path: "http://localhost/api/runs",
+        socketPath: "/tmp/bissprop.sock",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      };
+      const req = http.get(options, function (res) {
+        console.log("STATUS: " + res.statusCode);
+        console.log("HEADERS: " + JSON.stringify(res.headers));
+        // Buffer the body entirely for processing as a whole.
+        const bodyChunks = [];
+        res
+          .on("data", function (chunk) {
+            // You can process streamed parts here...
+            bodyChunks.push(chunk);
+          })
+          .on("end", function () {
+            const body = Buffer.concat(bodyChunks);
+            const jsbody = JSON.parse(body);
+            setData(jsbody);
+          });
+      });
+      req.on("error", function (e) {
+        console.log("ERROR: " + e.message);
+      });
     };
 
     fetchData();

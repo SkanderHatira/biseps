@@ -5,25 +5,13 @@ const createProfile = require("../../helpers/createProfile");
 const createConfig = require("../../helpers/createConfig");
 const createUnits = require("../../helpers/createUnits");
 const spawnChild = require("../../snakemake");
-// load launch script
-// const launchRun = () => {
-//     require("../../snakemake.js");
-// };
-// const createProfile = () => {
-//     require("../../helpers/createProfile");
-// };
-// console.log(createProfile);
-// const createConfig = () => {
-//     require("../../helpers/createConfig");
-// };
+
 // Load input validation
 const validateConfigurationInput = require("../../validation/sampleConfiguration");
 // Load Run model
 
 const Run = require("../../models/Run");
 const User = require("../../models/User");
-
-const { runInNewContext } = require("vm");
 
 // @route POST api/runs/Run
 // @desc Run
@@ -53,16 +41,6 @@ router.post("/run", (req, res) => {
             .save()
             .then((run) => {
                 res.json(run);
-                // User.findByIdAndUpdate(run.createdBy, {
-                //     $push: {
-                //         runs: run._id,
-                //     },
-
-                //     {safe: true, upsert: true, new : true},
-                //     function(err, model) {
-                //             console.log(err);
-                //         }
-                // });
                 User.findByIdAndUpdate(
                     run.createdBy,
                     { $push: { runs: run._id } },
@@ -73,15 +51,15 @@ router.post("/run", (req, res) => {
                 );
             })
             .catch((err) => console.log(err));
-        // launchRun();
 
-        // console.log("POST method");
-        // createProfile(req.body, uniqueDir);
-        // createConfig(req.body, uniqueDir);
-        // createUnits(req.body, uniqueDir);
-        // spawnChild(profile);
+        console.log("POST method");
+        createProfile(req.body, uniqueDir);
+        createConfig(req.body, uniqueDir);
+        createUnits(req.body, uniqueDir);
+        spawnChild(profile);
     }
 });
+
 router.get("/", function (req, res) {
     Run.find({}, function (err, runs) {
         if (err)

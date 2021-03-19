@@ -20,7 +20,7 @@ module.exports = {
             ],
           },
         },
-        // { from: "backend", to: "backend" },
+        { from: "src/backend", to: "src/backend" },
       ],
     }),
     // new PermissionsOutputPlugin({

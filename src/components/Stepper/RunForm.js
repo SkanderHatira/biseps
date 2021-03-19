@@ -14,8 +14,9 @@ import GlobalConfig from "./GlobalConfig";
 import axios from "axios";
 import { useConfig } from "../../hooks/useConfig";
 import { useAuth } from "../../hooks/useAuth";
-
 import NewTable from "../Table/NewTable";
+
+const http = require("http");
 
 function Copyright() {
   return (
@@ -104,16 +105,55 @@ export default function RunForm() {
       units,
       userId: user.user.id,
     };
+    const token = localStorage.jwtToken;
 
-    axios
-      .post("http://localhost:5000/api/runs/run", request)
-      .then((res) => {
-        setResponse(res.data);
-        handleNext();
-      })
-      .catch((err) => {
-        console.log("failed get request");
+    const options = {
+      method: "POST",
+      path: "http://localhost/api/runs/run",
+      socketPath: "/tmp/bissprop.sock",
+      hostname: "unix",
+      port: null,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+
+    const req = http.request(options, function (res) {
+      const chunks = [];
+      console.log("STATUS: " + res.statusCode);
+      console.log("HEADERS: " + JSON.stringify(res.headers));
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
       });
+      res.on("error", (err) => console.log(err));
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
+
+        const jsbody = JSON.parse(body);
+        if (res.statusCode !== 200) {
+          console.log("failed post request");
+        } else {
+          console.log("successful post request");
+
+          setResponse(jsbody);
+          handleNext();
+        }
+      });
+    });
+    req.on("error", (err) => console.log(err));
+    req.write(JSON.stringify(request));
+    req.end();
+
+    // axios
+    //   .post("http://unix:/tmp/bissprop.sock:/localhost/api/runs/run", request)
+    //   .then((res) => {
+    //     setResponse(res.data);
+    //     handleNext();
+    //   })
+    //   .catch((err) => {
+    //     console.log("failed get request");
+    //   });
   };
   return (
     <React.Fragment>

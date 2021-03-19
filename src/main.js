@@ -1,10 +1,11 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const server = require("../src/backend/spawnServer.js");
+server();
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 require("dotenv").config();
-console.log(process.env.PORT);
 const isDev = require("electron-is-dev");
 const { exec } = require("child_process");
 try {
@@ -26,7 +27,7 @@ exec(
 );
 
 // const mongod = () => {
-//   require(path.join(__dirname, "backend/spawnMongod"));
+//   require(path.join(__dirname, "src/backend/spawnMongod"));
 // };
 // mongod();
 
@@ -49,6 +50,7 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   console.log(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.webContents.send("store-data", { sock: "test" });
 
   // Open the DevTools.
   if (isDev) {
@@ -57,6 +59,8 @@ const createWindow = () => {
   installExtension(REACT_DEVELOPER_TOOLS)
     .then((name) => console.log(`Added Extension:  ${name}`))
     .catch((err) => console.log("An error occurred: ", err));
+
+  // server();
 };
 
 // This method will be called when Electron has finished

@@ -1,5 +1,10 @@
 #!/bin/bash
 rootPath=$1
+echo "no need for this"
+echo "no need for this"
+echo "no need for this"
+echo "no need for this"
+
 # chmod -R 755 $rootPath/resources/database/mongo
 # chmod -R 755 $rootPath/resources/linux/snakemake
 if ! [ "$(command -v conda)" ]; then
