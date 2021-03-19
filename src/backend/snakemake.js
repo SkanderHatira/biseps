@@ -5,12 +5,9 @@ const spawnChild = async (profile) => {
         slient: false,
         detached: false,
     };
-    const script = path.join(
-        __dirname,
-        "../../resources/snakemake/snakemake.sh"
-    );
-    const env = path.join(__dirname, "../../resources/snakemake/bin/activate");
-    const workflow = path.join(__dirname, "../../resources/bissprop/workflow");
+    const script = path.join(__dirname, "../resources/snakemake/snakemake.sh");
+    const env = path.join(__dirname, "../resources/snakemake/bin/");
+    const workflow = path.join(__dirname, "../resources/bissprop/workflow");
     const child = spawn("bash", [script, env, profile, workflow], options);
 
     let data = "";

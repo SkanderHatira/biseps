@@ -77,8 +77,6 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
-import axios from "axios";
-const got = require("got");
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,

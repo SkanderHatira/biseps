@@ -1,11 +1,12 @@
 const spawnServer = async () => {
+    const { fork } = require("child_process");
+    const path = require("path");
     const options = {
         slient: true,
         detached: true,
     };
-    const { fork } = require("child_process");
-    const path = require("path");
-    const child = fork(path.join(__dirname, "src/backend/server.js"), options);
+    console.log(__dirname);
+    const child = fork(path.join(__dirname, "backend/server.js"), options);
 
     // let data = "";
     // for await (const chunk of child.stdout) {
