@@ -1,10 +1,12 @@
 #!/bin/bash
 sourceEnv=$1
-dbPath=$2
+port=$2
+dbpath=$3
+unixSocket=$4
 
-
-source $sourceEnv
-mongod --dbpath $dbPath
+source $sourceEnv/activate
+$sourceEnv/mongod  --port $port --dbpath $dbpath
+#  --bind_ip $unixSocket --filePermissions 0777
 
 
 

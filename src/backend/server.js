@@ -1,5 +1,6 @@
 const express = require("express");
 const fs = require("fs");
+var net = require("net");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
@@ -33,7 +34,7 @@ require("./config/passport")(passport);
 app.use("/api/users", users);
 app.use("/api/runs", passport.authenticate("jwt", { session: false }), runs);
 app.use("/api/units", units);
-const sock = "/tmp/bissprop.sock";
+const sock = process.env.sock;
 fs.stat(sock, function (err) {
     console.log(!err);
 
@@ -41,11 +42,15 @@ fs.stat(sock, function (err) {
         fs.unlinkSync(sock);
     }
     app.listen(sock, (err) => {
-        console.log(err);
         fs.chmodSync(sock, "775");
         console.log("Express server listening on " + sock);
     });
 });
+
+// app.listen(sock, (err) => {
+//     fs.chmodSync(sock, "775");
+//     console.log("Express server listening on " + sock);
+// });
 // app.listen("/tmp/bisspropSocket", function () {
 //     console.log(`Server up and running !`);
 //     fs.chmodSync("/tmp/bisspropSocket", 0777);

@@ -26,7 +26,7 @@ const useProvideAuth = () => {
     const options = {
       method: "POST",
       path: "http://localhost/api/users/register",
-      socketPath: "/tmp/bissprop.sock",
+      socketPath: localStorage.Sock,
       hostname: "unix",
       port: null,
       headers: {
@@ -63,7 +63,7 @@ const useProvideAuth = () => {
     const options = {
       method: "POST",
       path: "http://localhost/api/users/login",
-      socketPath: "/tmp/bissprop.sock",
+      socketPath: localStorage.Sock,
       hostname: "unix",
       port: null,
       headers: {

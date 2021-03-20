@@ -110,7 +110,7 @@ export default function RunForm() {
     const options = {
       method: "POST",
       path: "http://localhost/api/runs/run",
-      socketPath: "/tmp/bissprop.sock",
+      socketPath: localStorage.Sock,
       hostname: "unix",
       port: null,
       headers: {

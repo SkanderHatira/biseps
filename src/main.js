@@ -1,11 +1,22 @@
-const { app, BrowserWindow } = require("electron");
+import { v4 as uuidv4 } from "uuid";
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+const fs = require("fs");
+
+const mongod = require("./backend/spawnMongod.js");
+// try {
+//   mongod();
+// } catch (err) {
+//   console.log(err);
+// }
+
+const uid = uuidv4();
+const sock = `/tmp/bisspropss${uid}.sock`;
 const server = require("../src/backend/spawnServer.js");
-server();
+server(sock);
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-require("dotenv").config();
 const isDev = require("electron-is-dev");
 const { exec } = require("child_process");
 try {
@@ -26,11 +37,6 @@ exec(
   }
 );
 
-// const mongod = () => {
-//   require(path.join(__dirname, "src/backend/spawnMongod"));
-// };
-// mongod();
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
@@ -43,26 +49,25 @@ const createWindow = () => {
     height: 720,
     webPreferences: {
       nodeIntegration: true,
+      preload: __dirname + "/preload.js",
       enableRemoteModule: true,
     },
   });
-
+  mainWindow.webContents.on("did-finish-load", () =>
+    mainWindow.webContents.send("ping", sock)
+  );
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  console.log(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainWindow.webContents.send("store-data", { sock: "test" });
-
+  const ses = mainWindow.webContents.session;
+  console.log(ses.getUserAgent());
   // Open the DevTools.
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log("An error occurred: ", err));
-
-  // server();
+  // installExtension(REACT_DEVELOPER_TOOLS)
+  //   .then((name) => console.log(`Added Extension:  ${name}`))
+  //   .catch((err) => console.log("An error occurred: ", err));
 };
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -73,6 +78,8 @@ app.on("ready", createWindow);
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
+    fs.unlinkSync(sock);
+    console.log("App Successfully Terminated");
     app.quit();
   }
 });

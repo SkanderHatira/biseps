@@ -12,12 +12,7 @@ module.exports = {
           from: path.join("resources"),
           to: "resources",
           globOptions: {
-            ignore: [
-              "**/.test/**",
-              "**/.snakemake/**",
-              "**/.git/**",
-              "**/database/**",
-            ],
+            ignore: ["**/.test/**", "**/.snakemake/**", "**/.git/**"],
           },
         },
         { from: "src/backend", to: "backend" },

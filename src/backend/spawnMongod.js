@@ -1,19 +1,23 @@
-async function spawnChild() {
+const spawnChild = async () => {
     const { spawn } = require("child_process");
-    const isDev = require("electron-is-dev");
     const path = require("path");
-    const options = {
-        slient: true,
-        detached: false,
-    };
     const command = "bash";
-    const args = [
-        path.join(__dirname, "resources/database/mongod.sh"),
-        path.join(__dirname, "resources/database/mongo/bin/activate"),
-        path.join(__dirname, "resources/database/data/db"),
-    ];
+    const options = {
+        slient: false,
+        detached: true,
+    };
 
-    const child = spawn(command, args, options);
+    const script = path.join(__dirname, "resources/database/mongod.sh");
+    const env = path.join(__dirname, "resources/database/mongo/bin/");
+    const port = 27017;
+    const dbpath = path.join(__dirname, "resources/database/data/db");
+    const unixSocket = "/tmp/bisspropmongodb.sock";
+
+    const child = spawn(
+        command,
+        [script, env, port, dbpath, unixSocket],
+        options
+    );
 
     let data = "";
     for await (const chunk of child.stdout) {
@@ -33,12 +37,5 @@ async function spawnChild() {
         throw new Error(`subprocess error exit ${exitCode}, ${error}`);
     }
     return data;
-}
-spawnChild().then(
-    (data) => {
-        console.log("async result:\n" + data);
-    },
-    (err) => {
-        console.error("async error:\n" + err);
-    }
-);
+};
+module.exports = spawnChild;

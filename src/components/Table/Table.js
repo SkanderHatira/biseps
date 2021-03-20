@@ -110,7 +110,7 @@ export default function InteractiveList() {
       const options = {
         method: "GET",
         path: "http://localhost/api/runs",
-        socketPath: "/tmp/bissprop.sock",
+        socketPath: localStorage.sock,
         headers: {
           "Content-Type": "application/json",
           Authorization: token,

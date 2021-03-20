@@ -1,14 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-
-const ipcRenderer = require("electron").ipcRenderer;
-
+console.log(window);
 function render() {
-  ipcRenderer.on("store-data", function (event, store) {
-    console.log(store);
-  });
   ReactDOM.render(
     <React.Fragment>
       <App />
