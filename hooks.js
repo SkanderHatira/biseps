@@ -15,6 +15,7 @@ module.exports = {
       }
     });
   },
+
   postPackage: async (forgeConfig, options) => {
     const resources = path.join(
       options.outputPaths[0],

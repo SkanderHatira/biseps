@@ -2,6 +2,8 @@ function createProfile(body, uniqueDir) {
     const yaml = require("js-yaml");
     const fs = require("fs");
     const path = require("path");
+    console.log("creating profile");
+
     if (!fs.existsSync(uniqueDir)) {
         fs.mkdirSync(path.join(uniqueDir, "config/profile"), {
             recursive: true,

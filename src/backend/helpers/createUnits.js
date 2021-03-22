@@ -4,6 +4,7 @@ const createUnits = (body, uniqueDir) => {
     const path = require("path");
     const fields = ["sample", "lane", "techrep", "biorep", "fq1", "fq2"];
     const opts = { fields, delimiter: "\t" };
+    console.log("creating units");
 
     try {
         const csv = parse(body.units, opts);

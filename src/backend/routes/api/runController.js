@@ -1,17 +1,26 @@
 const express = require("express");
 const path = require("path");
 const router = express.Router();
-const createProfile = require("../../helpers/createProfile");
-const createConfig = require("../../helpers/createConfig");
-const createUnits = require("../../helpers/createUnits");
-const spawnChild = require("../../snakemake");
+const createProfile = require(path.join(
+    __dirname,
+    "../../helpers/createProfile"
+));
+const createConfig = require(path.join(
+    __dirname,
+    "../../helpers/createConfig"
+));
+const createUnits = require(path.join(__dirname, "../../helpers/createUnits"));
+const spawnChild = require(path.join(__dirname, "../../snakemake"));
 
 // Load input validation
-const validateConfigurationInput = require("../../validation/sampleConfiguration");
+const validateConfigurationInput = require(path.join(
+    __dirname,
+    "../../validation/sampleConfiguration"
+));
 // Load Run model
 
-const Run = require("../../models/Run");
-const User = require("../../models/User");
+const Run = require(path.join(__dirname, "../../models/Run"));
+const User = require(path.join(__dirname, "../../models/User"));
 
 // @route POST api/runs/Run
 // @desc Run

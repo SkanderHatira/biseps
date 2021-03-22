@@ -110,7 +110,7 @@ export default function RunForm() {
     const options = {
       method: "POST",
       path: "http://localhost/api/runs/run",
-      socketPath: localStorage.Sock,
+      socketPath: sessionStorage.Sock,
       hostname: "unix",
       port: null,
       headers: {

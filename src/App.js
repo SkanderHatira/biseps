@@ -14,10 +14,9 @@ import ReportsBoard from "./components/ReportsBoard/ReportsBoard";
 import RunBoard from "./components/RunBoard/RunBoard";
 import RunForm from "./components/Stepper/RunForm";
 import NotFound from "./pages/NotFound";
-window.ipcRenderer.on("ping", (event, sock) => {
-  localStorage.setItem("Sock", sock);
-});
 function App() {
+  console.log(sessionStorage.Sock);
+
   return (
     <ProvideAuth>
       <ProvideConfig>

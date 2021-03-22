@@ -97,7 +97,6 @@ function generate(element) {
     })
   );
 }
-
 export default function InteractiveList() {
   const classes = useStyles();
   const [dense, setDense] = useState(false);
@@ -107,10 +106,12 @@ export default function InteractiveList() {
     const fetchData = async () => {
       const token = localStorage.jwtToken;
       const http = require("http");
+
       const options = {
         method: "GET",
         path: "http://localhost/api/runs",
-        socketPath: localStorage.sock,
+        socketPath: sessionStorage.Sock,
+        port: null,
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -139,7 +140,6 @@ export default function InteractiveList() {
 
     fetchData();
   }, []);
-  console.log(data);
   return (
     <Container maxWidth="lg" className={classes.container}>
       <FormGroup row>

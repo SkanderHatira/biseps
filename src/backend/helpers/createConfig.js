@@ -2,6 +2,7 @@ const createConfig = (body, uniqueDir) => {
     const yaml = require("js-yaml");
     const fs = require("fs");
     const path = require("path");
+    console.log("creating config");
     const config = {
         units: path.join(uniqueDir, "config/units.tsv"),
         general: {

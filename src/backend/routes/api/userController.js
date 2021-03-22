@@ -2,13 +2,20 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 // Load input validation
-const validateRegisterInput = require("../../validation/register");
-const validateLoginInput = require("../../validation/login");
+const validateRegisterInput = require(path.join(
+    __dirname,
+    "../../validation/register"
+));
+const validateLoginInput = require(path.join(
+    __dirname,
+    "../../validation/login"
+));
 
 // Load User model
-const User = require("../../models/User");
+const User = require(path.join(__dirname, "../../models/User"));
 
 // @route POST approcess.envi/users/register
 // @desc Register user

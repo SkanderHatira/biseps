@@ -2,8 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const server = require("../src/backend/spawnServer.js");
 
-const mongod = require("./backend/spawnMongod.js");
+// const mongod = require("./backend/spawnMongod.js");
 // try {
 //   mongod();
 // } catch (err) {
@@ -11,8 +12,9 @@ const mongod = require("./backend/spawnMongod.js");
 // }
 
 const uid = uuidv4();
-const sock = `/tmp/bisspropss${uid}.sock`;
-const server = require("../src/backend/spawnServer.js");
+const sock = "/tmp/bissprop.sock";
+
+// const sock = `/tmp/bissprop${uid}.sock`;
 server(sock);
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
