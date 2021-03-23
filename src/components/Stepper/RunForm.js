@@ -100,8 +100,24 @@ export default function RunForm() {
     }
   }
   const handleRunSubmit = () => {
+    const blankSample = {};
+    const helper = {};
+    const result = units.reduce(function (r, o) {
+      console.log(r);
+      const key = o.sample + "-" + o.techrep + "-" + o.biorep;
+      const sample = `${o.sample} TechRep ${o.techrep} BioRep ${o.biorep}`;
+      const samplePath = `${o.sample}-TechRep_${o.techrep}-BioRep_${o.biorep}`;
+      if (!helper[key]) {
+        helper[key] = Object.assign({ sample, samplePath }, blankSample); // create a copy of o
+        r.push(helper[key]);
+      }
+      return r;
+    }, []);
+
+    console.log(result);
     const request = {
       ...runState,
+      samples: result,
       units,
       userId: user.user.id,
     };

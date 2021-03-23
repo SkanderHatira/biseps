@@ -80,6 +80,11 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
+const fs = require("fs");
+
+const electron = window.require("electron");
+const remote = electron.remote;
+const { BrowserWindow } = remote;
 const http = require("http");
 
 const useStyles = makeStyles((theme) => ({
@@ -144,10 +149,29 @@ export default function InteractiveList() {
 
     fetchData();
   }, []);
+  const fileExist = (path) => {
+    try {
+      if (fs.existsSync(path)) {
+        return true;
+      }
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const createBrowserWindow = (path) => {
+    const win = new BrowserWindow({
+      height: 600,
+      width: 800,
+    });
+    console.log("here");
+
+    win.loadURL(`file://${path}`);
+  };
   console.log(data);
   return (
     <Container maxWidth="lg" className={classes.container}>
-      <FormGroup row>
+      {/* <FormGroup row>
         <FormControlLabel
           control={
             <Checkbox
@@ -166,31 +190,45 @@ export default function InteractiveList() {
           }
           label="Enable secondary text"
         />
-      </FormGroup>
+      </FormGroup> */}
 
       <Grid container spacing={2}>
-        {data &&
+        {data.length > 0 ? (
           data.map((row) => (
             <Grid key={row._id} item xs={12} md={6}>
               <Typography variant="h6" className={classes.title}>
-                Avatar with text and icon
+                Analysis created by {row.createdBy.name}
               </Typography>
               <div className={classes.demo}>
                 <List dense={dense}>
-                  {data &&
-                    row.samples.map((sample) => (
-                      <ListItem key={sample._id}>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <FolderIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={sample.sample}
-                          secondary={secondary ? "Secondary text" : null}
-                        />
-                      </ListItem>
-                    ))}
+                  {row.samples.map((sample) => (
+                    <ListItem
+                      button
+                      disabled={
+                        fileExist(
+                          `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`
+                        )
+                          ? false
+                          : true
+                      }
+                      key={sample._id}
+                      onClick={() => {
+                        const path = `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`;
+                        console.log(path);
+                        createBrowserWindow(path);
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Avatar>
+                          <FolderIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={sample.samplePath}
+                        secondary={secondary ? "Secondary text" : null}
+                      />
+                    </ListItem>
+                  ))}
                   {/* {generate(
                   <ListItem>
                     <ListItemAvatar>
@@ -212,7 +250,21 @@ export default function InteractiveList() {
                 </List>
               </div>
             </Grid>
-          ))}
+          ))
+        ) : (
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: "100vh" }}
+          >
+            <Typography variant="h6" className={classes.title}>
+              You have no analyses to view{" "}
+            </Typography>
+          </Grid>
+        )}
       </Grid>
     </Container>
   );

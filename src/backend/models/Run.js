@@ -132,19 +132,22 @@ const RunSchema = new Schema({
             },
         },
     },
+
     samples: [
         {
             sample: { type: String, required: false },
+            samplePath: { type: String, required: false },
+        },
+    ],
+    units: [
+        {
+            id: { type: String, required: false },
+            sample: { type: String, required: false },
             lane: { type: String, required: false },
-            techrep: { type: String, required: false },
-            biorep: { type: String, required: false },
-            units: [
-                {
-                    r1: [{ type: String, required: true }],
-
-                    r2: [{ type: String, required: false }],
-                },
-            ],
+            techrep: { type: Number, required: false },
+            biorep: { type: Number, required: false },
+            fq1: { type: String, required: false },
+            fq2: { type: String, required: false },
         },
     ],
 });

@@ -17,7 +17,7 @@ const User = require("../../models/User");
 // @desc Run
 // @access Public
 router.post("/run", (req, res) => {
-    console.log(req.body.units);
+    console.log(req.body);
     // Form validation
     const { errors, isValid } = validateConfigurationInput(req.body);
     // Check validation
@@ -34,7 +34,8 @@ router.post("/run", (req, res) => {
             steps: {
                 subsample: req.body.subsample,
             },
-            samples: req.body.units,
+            samples: req.body.samples,
+            units: req.body.units,
             createdBy: req.body.userId,
         });
         newRun

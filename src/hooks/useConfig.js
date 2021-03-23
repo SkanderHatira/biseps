@@ -27,17 +27,12 @@ const useProvideConfig = () => {
     cluster: false,
   };
 
-  const blankSample = { sample: "", units: [{ r1: "", r2: "" }] };
-  const [sampleState, setSampleState] = useState([{ ...blankSample }]);
   const [runState, setRunState] = useState(initialState);
   const [units, setUnits] = useState([]);
 
   return {
     runState,
     setRunState,
-    sampleState,
-    setSampleState,
-    blankSample,
     units,
     setUnits,
   };

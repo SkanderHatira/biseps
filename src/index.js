@@ -4,7 +4,6 @@ import "./index.css";
 import App from "./App";
 const electron = window.require("electron");
 const remote = electron.remote;
-const { BrowserWindow, dialog, Menu } = remote;
 sessionStorage.setItem("Sock", remote.getGlobal("sharedObj").prop1);
 function render() {
   ReactDOM.render(
