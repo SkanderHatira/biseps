@@ -135,6 +135,9 @@ const RunSchema = new Schema({
     samples: [
         {
             sample: { type: String, required: false },
+            lane: { type: String, required: false },
+            techrep: { type: String, required: false },
+            biorep: { type: String, required: false },
             units: [
                 {
                     r1: [{ type: String, required: true }],

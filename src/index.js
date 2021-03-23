@@ -2,7 +2,10 @@ import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-console.log(sessionStorage.Sock);
+const electron = window.require("electron");
+const remote = electron.remote;
+const { BrowserWindow, dialog, Menu } = remote;
+sessionStorage.setItem("Sock", remote.getGlobal("sharedObj").prop1);
 function render() {
   ReactDOM.render(
     <React.Fragment>

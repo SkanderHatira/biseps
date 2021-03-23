@@ -12,9 +12,11 @@ const server = require("../src/backend/spawnServer.js");
 // }
 
 const uid = uuidv4();
-const sock = "/tmp/bissprop.sock";
+// const sock = "/tmp/bissprop.sock";
 
-// const sock = `/tmp/bissprop${uid}.sock`;
+const sock = `/tmp/bissprop${uid}.sock`;
+global.sharedObj = { prop1: sock };
+
 server(sock);
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -55,20 +57,20 @@ const createWindow = () => {
       enableRemoteModule: true,
     },
   });
-  mainWindow.webContents.on("did-finish-load", () =>
-    mainWindow.webContents.send("ping", sock)
-  );
+
+  // mainWindow.webContents.on("did-finish-load", () => {
+  //   console.log("this is where the ping is happening");
+  //   mainWindow.webContents.send("ping", sock);
+  // });
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  const ses = mainWindow.webContents.session;
-  console.log(ses.getUserAgent());
   // Open the DevTools.
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
-  // installExtension(REACT_DEVELOPER_TOOLS)
-  //   .then((name) => console.log(`Added Extension:  ${name}`))
-  //   .catch((err) => console.log("An error occurred: ", err));
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log("An error occurred: ", err));
 };
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

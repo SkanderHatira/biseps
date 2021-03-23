@@ -2,10 +2,8 @@
 sourceEnv=$1
 profile=$2
 workflow=$3
-echo $sourceEnv
-echo $profile
-echo $workflow
-
+which conda
+which python
 source  $sourceEnv/activate
 cd $workflow
 $sourceEnv/snakemake --profile $profile --unlock

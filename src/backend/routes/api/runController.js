@@ -1,32 +1,23 @@
 const express = require("express");
 const path = require("path");
 const router = express.Router();
-const createProfile = require(path.join(
-    __dirname,
-    "../../helpers/createProfile"
-));
-const createConfig = require(path.join(
-    __dirname,
-    "../../helpers/createConfig"
-));
-const createUnits = require(path.join(__dirname, "../../helpers/createUnits"));
-const spawnChild = require(path.join(__dirname, "../../snakemake"));
+const createProfile = require("../../helpers/createProfile");
+const createConfig = require("../../helpers/createConfig");
+const createUnits = require("../../helpers/createUnits");
+const spawnChild = require("../../snakemake");
 
 // Load input validation
-const validateConfigurationInput = require(path.join(
-    __dirname,
-    "../../validation/sampleConfiguration"
-));
+const validateConfigurationInput = require("../../validation/sampleConfiguration");
 // Load Run model
 
-const Run = require(path.join(__dirname, "../../models/Run"));
-const User = require(path.join(__dirname, "../../models/User"));
+const Run = require("../../models/Run");
+const User = require("../../models/User");
 
 // @route POST api/runs/Run
 // @desc Run
 // @access Public
 router.post("/run", (req, res) => {
-    console.log(req.body);
+    console.log(req.body.units);
     // Form validation
     const { errors, isValid } = validateConfigurationInput(req.body);
     // Check validation

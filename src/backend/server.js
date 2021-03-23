@@ -4,15 +4,15 @@ var net = require("net");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const users = require(path.join(__dirname, "./routes/api/userController"));
-const runs = require(path.join(__dirname, "./routes/api/runController"));
-const units = require(path.join(__dirname, "./routes/api/unitController"));
 const path = require("path");
+const users = require("../backend/routes/api/userController");
+const runs = require("../backend/routes/api/runController");
+const units = require("../backend/routes/api/unitController");
 const cors = require("cors");
 // const http = require("http");
 // const https = require("https");
-require("dotenv").config({ path: path.join(__dirname, ".env") });
-
+require("dotenv").config({ path: path.join(__dirname, "../backend/.env") });
+console.log(__dirname);
 const app = express();
 app.use(cors());
 app.use(
@@ -29,14 +29,13 @@ mongoose
 // Passport middleware
 app.use(passport.initialize());
 // Passport config
-require(path.join(__dirname, "./config/passport"))(passport);
+require("../backend/config/passport")(passport);
 // Routes
 app.use("/api/users", users);
 app.use("/api/runs", passport.authenticate("jwt", { session: false }), runs);
 app.use("/api/units", units);
-// const sock = process.env.sock;
-const sock = "/tmp/bissprop.sock";
-
+// const sock = "/tmp/bissprop.sock";
+const sock = process.argv[2];
 fs.stat(sock, function (err) {
     console.log(!err);
 

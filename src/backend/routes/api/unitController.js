@@ -3,13 +3,10 @@ const router = express.Router();
 const path = require("path");
 
 // Load input validation
-const validateUnitConfigInput = require(path.join(
-    __dirname,
-    "../../validation/unitConfiguration"
-));
+const validateUnitConfigInput = require("../../validation/unitConfiguration");
 // Load Run model
 
-const UnitConfig = require(path.join(__dirname, "../../models/Unit"));
+const UnitConfig = require("../../models/Unit");
 
 // @route POST api/units/unitconfig
 router.post("/unitconfig", (req, res) => {

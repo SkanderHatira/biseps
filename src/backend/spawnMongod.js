@@ -7,10 +7,10 @@ const spawnChild = async () => {
         detached: true,
     };
 
-    const script = path.join(__dirname, "resources/database/mongod.sh");
-    const env = path.join(__dirname, "resources/database/mongo/bin/");
+    const script = "resources/database/mongod.sh";
+    const env = "resources/database/mongo/bin/";
     const port = 27017;
-    const dbpath = path.join(__dirname, "resources/database/data/db");
+    const dbpath = "resources/database/data/db";
     const unixSocket = "/tmp/bisspropmongodb.sock";
 
     const child = spawn(

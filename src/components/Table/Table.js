@@ -5,9 +5,11 @@
 // const electron = window.require("electron");
 // const remote = electron.remote;
 // const { BrowserWindow, dialog, Menu } = remote;
-// // console.log(
-// //   dialog.showOpenDialog({ properties: ["openFile", "multiSelections"] })
-// // );
+// console.log(remote.getGlobal("sharedObj").prop1);
+
+// console.log(
+//   dialog.showOpenDialog({ properties: ["openFile", "multiSelections"] })
+// );
 
 // const columns = [
 //   { field: "_id", headerName: "ID", width: 70 },
@@ -70,6 +72,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -77,6 +80,8 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
+const http = require("http");
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -105,12 +110,11 @@ export default function InteractiveList() {
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.jwtToken;
-      const http = require("http");
-
+      const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
         path: "http://localhost/api/runs",
-        socketPath: sessionStorage.Sock,
+        socketPath: Sock,
         port: null,
         headers: {
           "Content-Type": "application/json",
@@ -140,6 +144,7 @@ export default function InteractiveList() {
 
     fetchData();
   }, []);
+  console.log(data);
   return (
     <Container maxWidth="lg" className={classes.container}>
       <FormGroup row>
@@ -168,56 +173,46 @@ export default function InteractiveList() {
           data.map((row) => (
             <Grid key={row._id} item xs={12} md={6}>
               <Typography variant="h6" className={classes.title}>
-                Avatar with text
+                Avatar with text and icon
               </Typography>
               <div className={classes.demo}>
                 <List dense={dense}>
-                  {/* {data &&
-                    row.units.map((sample) => (
-                      <ListItem>
+                  {data &&
+                    row.samples.map((sample) => (
+                      <ListItem key={sample._id}>
                         <ListItemAvatar>
                           <Avatar>
                             <FolderIcon />
                           </Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Single-line item"
+                          primary={sample.sample}
                           secondary={secondary ? "Secondary text" : null}
                         />
                       </ListItem>
-                    ))} */}
+                    ))}
+                  {/* {generate(
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <FolderIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Single-line item"
+                      secondary={secondary ? "Secondary text" : null}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                )} */}
                 </List>
               </div>
             </Grid>
           ))}
-
-        <Grid item xs={12} md={6}>
-          <Typography variant="h6" className={classes.title}>
-            Avatar with text and icon
-          </Typography>
-          <div className={classes.demo}>
-            <List dense={dense}>
-              {generate(
-                <ListItem>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <FolderIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary="Single-line item"
-                    secondary={secondary ? "Secondary text" : null}
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              )}
-            </List>
-          </div>
-        </Grid>
       </Grid>
     </Container>
   );

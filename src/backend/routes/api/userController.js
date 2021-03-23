@@ -5,17 +5,11 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 
 // Load input validation
-const validateRegisterInput = require(path.join(
-    __dirname,
-    "../../validation/register"
-));
-const validateLoginInput = require(path.join(
-    __dirname,
-    "../../validation/login"
-));
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
 
 // Load User model
-const User = require(path.join(__dirname, "../../models/User"));
+const User = require("../../models/User");
 
 // @route POST approcess.envi/users/register
 // @desc Register user

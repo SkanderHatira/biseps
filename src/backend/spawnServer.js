@@ -1,17 +1,19 @@
 const spawnServer = async (sock) => {
+    console.log(sock);
+    console.log(sock);
+    console.log(sock);
+    console.log(sock);
+    console.log(sock);
+
     const { spawn } = require("child_process");
     const path = require("path");
     const options = {
         slient: false,
         detached: true,
-        env: {
-            sock: sock,
-        },
     };
-
     const child = spawn(
         "node",
-        [path.join(__dirname, "backend/server.js")],
+        [path.join(__dirname, "backend/server.js"), sock],
         options
     );
 

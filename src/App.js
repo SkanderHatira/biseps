@@ -14,9 +14,8 @@ import ReportsBoard from "./components/ReportsBoard/ReportsBoard";
 import RunBoard from "./components/RunBoard/RunBoard";
 import RunForm from "./components/Stepper/RunForm";
 import NotFound from "./pages/NotFound";
-function App() {
-  console.log(sessionStorage.Sock);
 
+function App() {
   return (
     <ProvideAuth>
       <ProvideConfig>
