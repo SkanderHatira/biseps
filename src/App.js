@@ -10,7 +10,8 @@ import Register from "./components/Register/Register";
 import Login from "./components/Login/Login";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Dashboard from "./components/Dashboard/Dashboard";
-import ReportsBoard from "./components/ReportsBoard/ReportsBoard";
+import Comparisons from "./components/Comparisons/Comparisons";
+
 import RunBoard from "./components/RunBoard/RunBoard";
 import RunForm from "./components/Stepper/RunForm";
 import NotFound from "./pages/NotFound";
@@ -27,8 +28,8 @@ function App() {
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/newrun" component={RunForm} />
               <PrivateRoute exact path="/runs" component={RunBoard} />
+              <PrivateRoute exact path="/comparison" component={Comparisons} />
               <PrivateRoute exact path="/alignment" component={Dashboard} />
-              {/* <PrivateRoute exact path="/reports" component={ReportsBoard} /> */}
               <Route component={NotFound} />
             </Switch>
           </div>

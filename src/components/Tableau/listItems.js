@@ -19,11 +19,11 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Alignment" />
     </ListItem>
-    <ListItem component={Link} to="/runs" button button>
+    <ListItem component={Link} to="/comparison" button button>
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>
-      <ListItemText primary="New Run" />
+      <ListItemText primary="DMR Comparisons" />
     </ListItem>
     <ListItem component={Link} to="/reports" button button>
       <ListItemIcon>

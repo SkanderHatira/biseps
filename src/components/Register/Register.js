@@ -5,7 +5,50 @@ import { UPDATE_FORM } from "../../actions/types";
 import classnames from "classnames";
 import { formReducer } from "../../reducers/formReducer";
 import { useAuth } from "../../hooks/useAuth";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {"Copyright © "}
+      <Link color="inherit" to="https://material-ui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 const initialState = {
   name: "",
   email: "",
@@ -14,6 +57,8 @@ const initialState = {
   errors: {},
 };
 const Register = () => {
+  const classes = useStyles();
+
   const auth = useAuth();
   const [state, dispatch] = useReducer(formReducer, initialState);
   const history = useHistory();
@@ -31,101 +76,135 @@ const Register = () => {
     e.preventDefault();
     auth.signin(state, dispatch, history);
   };
+  const { errors } = state;
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col s8 offset-s2">
-          <Link to="/" className="btn-flat waves-effect">
-            <i className="material-icons left">keyboard_backspace</i> Back to
-            home
-          </Link>
-          <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-            <h4>
-              <b>Register</b> below
-            </h4>
-            <p className="grey-text text-darken-1">
-              Already have an account? <Link to="/login">Log in</Link>
-            </p>
-          </div>
-          <form noValidate onSubmit={onSubmit}>
-            <div className="input-field col s12">
-              <input
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Register
+        </Typography>
+        <Typography component="h1" variant="h5">
+          Register
+        </Typography>
+
+        <form className={classes.form} noValidate onSubmit={onSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
                 onChange={onChange}
                 value={state.name}
-                error={state.errors.name}
+                error={errors.name === ""}
+                helperText={errors.name === "" ? "Empty!" : errors.name}
                 className={classnames("", {
-                  invalid: state.errors.name,
+                  invalid: errors.name,
                 })}
                 id="name"
                 type="text"
+                autoComplete="name"
+                name="name"
+                variant="outlined"
+                required
+                fullWidth
+                label="First Name"
+                autoFocus
               />
-              <label htmlFor="name">Name</label>
-              <span className="red-text">{state.errors.name}</span>
-            </div>
+            </Grid>
 
-            <div className="input-field col s12">
-              <input
+            <Grid item xs={12}>
+              <TextField
                 onChange={onChange}
                 value={state.email}
-                error={state.errors.email}
+                error={errors.email === ""}
+                helperText={errors.email === "" ? "Empty!" : errors.email}
                 className={classnames("", {
-                  invalid: state.errors.email,
+                  invalid: errors.email,
                 })}
                 id="email"
                 type="email"
+                variant="outlined"
+                required
+                fullWidth
+                label="Email Address"
+                name="email"
+                autoComplete="email"
               />
-              <label htmlFor="email">Email</label>
-              <span className="red-text">{state.errors.email}</span>
-            </div>
-            <div className="input-field col s12">
-              <input
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
                 onChange={onChange}
                 value={state.password}
-                error={state.errors.password}
+                error={errors.password === ""}
+                helperText={errors.password === "" ? "Empty!" : errors.password}
                 className={classnames("", {
-                  invalid: state.errors.password,
+                  invalid: errors.password,
                 })}
                 id="password"
                 type="password"
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                autoComplete="current-password"
               />
-              <label htmlFor="password">Password</label>
-              <span className="red-text">{state.errors.password}</span>
-            </div>
-
-            <div className="input-field col s12">
-              <input
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
                 onChange={onChange}
                 value={state.password2}
-                error={state.errors.password2}
+                error={errors.password2 === ""}
+                helperText={
+                  errors.password2 === "" ? "Empty!" : errors.password2
+                }
                 className={classnames("", {
-                  invalid: state.errors.password2,
+                  invalid: errors.password2,
                 })}
                 id="password2"
                 type="password"
+                variant="outlined"
+                required
+                fullWidth
+                name="password2"
+                label="password2"
+                type="password"
+                autoComplete="current-password"
               />
-              <label htmlFor="password2">Confirm Password</label>
-              <span className="red-text">{state.errors.password2}</span>
-            </div>
-
-            <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-              <button
-                style={{
-                  width: "150px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "1rem",
-                }}
-                type="submit"
-                className="btn btn-large waves-effect waves-light hoverable"
-              >
-                Sign up
-              </button>
-            </div>
-          </form>
-        </div>
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Register{" "}
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid container>
+              <Grid item xs>
+                <Link to="/" variant="body2">
+                  Go Back
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link to="/login" variant="body2">
+                  {"Already have an account? Sign in"}
+                </Link>
+              </Grid>
+            </Grid>
+          </Grid>
+        </form>
       </div>
-    </div>
+      <Box mt={5}>
+        <Copyright />
+      </Box>
+    </Container>
   );
 };
 

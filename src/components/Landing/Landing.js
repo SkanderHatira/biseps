@@ -1,57 +1,91 @@
 import React, { useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import AppBar from "@material-ui/core/AppBar";
+import Box from "@material-ui/core/Box";
+
+import Toolbar from "@material-ui/core/Toolbar";
+const useStyles = makeStyles((theme) => ({
+  heroContent: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(8, 0, 8),
+  },
+  heroButtons: {
+    marginTop: theme.spacing(10),
+  },
+  paper: {
+    marginTop: theme.spacing(20),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+}));
 
 const Landing = () => {
   const history = useHistory();
   const { checkauth } = useAuth();
+  const classes = useStyles();
+
   useEffect(() => {
     checkauth(history, "/alignment");
   }, [checkauth, history]);
   return (
-    <div style={{ height: "75vh" }} className="container valign-wrapper">
-      <div className="row">
-        <div className="col s12 center-align">
-          <h4>
-            <b>Run</b> our powerful DMR Identification Pipeline{" "}
-            <b>
-              <span style={{ fontFamily: "monospace" }}>BiSSProP</span>
-            </b>{" "}
-            from a User-Friendly <b>GUI!</b>
-          </h4>
-          <p className="flow-text grey-text text-darken-1">
-            Configure, Run and visualize your data from one spot
-          </p>
-          <br />
-          <div className="col s6">
-            <Link
-              to="/register"
-              style={{
-                width: "140px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-              }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+    <React.Fragment>
+      <CssBaseline />
+
+      <Box height="100%">
+        <div className={classes.paper}>
+          <Container maxWidth="sm">
+            <Typography
+              component="h1"
+              variant="h3"
+              align="center"
+              color="textPrimary"
+              gutterBottom
             >
-              Register
-            </Link>
-          </div>
-          <div className="col s6">
-            <Link
-              to="/login"
-              style={{
-                width: "140px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-              }}
-              className="btn btn-large btn-flat waves-effect hoverable  white black-text"
-            >
-              Log In
-            </Link>
-          </div>
+              <b>Run</b> our powerful DMR Identification Pipeline{" "}
+              <b>
+                <span style={{ fontFamily: "monospace" }}>BiSSProP</span>
+              </b>{" "}
+              from a User-Friendly <b>GUI!</b>
+            </Typography>
+
+            <div className={classes.heroButtons}>
+              <Grid container spacing={2} justify="center">
+                <Grid item>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    component={Link}
+                    to="/register"
+                    color="primary"
+                  >
+                    Register
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    size="large"
+                    variant="outlined"
+                    component={Link}
+                    to="/login"
+                    color="primary"
+                  >
+                    Login
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
+          </Container>
         </div>
-      </div>
-    </div>
+      </Box>
+    </React.Fragment>
   );
 };
 

@@ -15,6 +15,7 @@ import axios from "axios";
 import { useConfig } from "../../hooks/useConfig";
 import { useAuth } from "../../hooks/useAuth";
 import NewTable from "../Table/NewTable";
+import { useHistory } from "react-router-dom";
 
 const http = require("http");
 
@@ -71,11 +72,12 @@ const useStyles = makeStyles((theme) => ({
 const steps = ["Global configuration", "Expermiental design"];
 
 export default function RunForm() {
-  const { runState, units } = useConfig();
+  const { runState, setRunState, units, setUnits, initialRun } = useConfig();
   const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+  const history = useHistory();
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -91,10 +93,6 @@ export default function RunForm() {
         return <GlobalConfig />;
       case 1:
         return <NewTable />;
-      // case 2:
-      //   return <Overview />;
-      // case 3:
-      //   return <NewTable />;
       default:
         throw new Error("Unknown step");
     }
@@ -153,23 +151,15 @@ export default function RunForm() {
           console.log("successful post request");
 
           setResponse(jsbody);
-          handleNext();
+          setRunState(initialRun);
+          setUnits([]);
+          history.push("/alignment");
         }
       });
     });
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
-
-    // axios
-    //   .post("http://unix:/tmp/bissprop.sock:/localhost/api/runs/run", request)
-    //   .then((res) => {
-    //     setResponse(res.data);
-    //     handleNext();
-    //   })
-    //   .catch((err) => {
-    //     console.log("failed get request");
-    //   });
   };
   return (
     <React.Fragment>
@@ -195,15 +185,7 @@ export default function RunForm() {
           </Stepper>
           <React.Fragment>
             {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Your analysis has been submitted.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your run number is {response._id}. you can follow the run
-                  status through the dashboard.
-                </Typography>
-              </React.Fragment>
+              ""
             ) : (
               <React.Fragment>
                 {getStepContent(activeStep)}

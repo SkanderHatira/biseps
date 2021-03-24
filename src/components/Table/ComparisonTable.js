@@ -123,7 +123,7 @@ export default function InteractiveList() {
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/runs",
+        path: "http://localhost/api/comparisons",
         socketPath: Sock,
         port: null,
         headers: {
@@ -196,7 +196,7 @@ export default function InteractiveList() {
             component={Link}
             to="/runs"
           >
-            New Alignment
+            New Comparison
           </Button>
         </Box>
       </Grid>
@@ -291,7 +291,7 @@ export default function InteractiveList() {
             style={{ minHeight: "70vh" }}
           >
             <Typography variant="h6" className={classes.title}>
-              You have no analyses to view{" "}
+              You have no comparisons to view{" "}
             </Typography>
           </Grid>
         )}

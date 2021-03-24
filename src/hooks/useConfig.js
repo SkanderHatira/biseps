@@ -14,7 +14,7 @@ export const useConfig = () => {
 };
 
 const useProvideConfig = () => {
-  const initialState = {
+  const initialRun = {
     aligner: "bowtie2",
     adapters: "TruSeq2-SE",
     genome: "",
@@ -27,7 +27,7 @@ const useProvideConfig = () => {
     cluster: false,
   };
 
-  const [runState, setRunState] = useState(initialState);
+  const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);
 
   return {
@@ -35,5 +35,6 @@ const useProvideConfig = () => {
     setRunState,
     units,
     setUnits,
+    initialRun,
   };
 };
