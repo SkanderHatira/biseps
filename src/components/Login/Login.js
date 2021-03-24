@@ -18,7 +18,7 @@ const Login = () => {
   const [state, dispatch] = useReducer(formReducer, initialStateForm);
 
   useEffect(() => {
-    checkauth(history, "/dashboard");
+    checkauth(history, "/alignment");
   }, [checkauth, history]);
   const onChange = (e) => {
     e.persist();

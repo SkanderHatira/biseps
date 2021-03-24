@@ -27,7 +27,7 @@ function App() {
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/newrun" component={RunForm} />
               <PrivateRoute exact path="/runs" component={RunBoard} />
-              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <PrivateRoute exact path="/alignment" component={Dashboard} />
               {/* <PrivateRoute exact path="/reports" component={ReportsBoard} /> */}
               <Route component={NotFound} />
             </Switch>

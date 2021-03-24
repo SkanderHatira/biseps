@@ -100,7 +100,7 @@ const useProvideAuth = () => {
             type: SET_CURRENT_USER,
             payload: decoded,
           });
-          history.push("/dashboard");
+          history.push("/alignment");
         }
       });
     });

@@ -18,7 +18,7 @@ const Register = () => {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const history = useHistory();
   useEffect(() => {
-    auth.checkauth(history, "/dashboard");
+    auth.checkauth(history, "/alignment");
   }, [auth, history]);
   const onChange = (e) => {
     e.persist();

@@ -71,6 +71,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -80,7 +82,10 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { Link } from "react-router-dom";
+
 const fs = require("fs");
+const portastic = require("portastic");
 
 const electron = window.require("electron");
 const remote = electron.remote;
@@ -169,8 +174,33 @@ export default function InteractiveList() {
     win.loadURL(`file://${path}`);
   };
   console.log(data);
+  const handleClick = () => {
+    portastic
+      .find({
+        min: 30000,
+        max: 35000,
+        retrieve: 1,
+      })
+      .then(function (port) {
+        console.log(port);
+      });
+  };
   return (
-    <Container maxWidth="lg" className={classes.container}>
+    <Container maxWidth="lg" className={classes.container} gutterBottom>
+      <Grid container direction="column" alignItems="center" gutterBottom>
+        <Box m={3}>
+          <Button
+            alignItems="center"
+            variant="contained"
+            color="primary"
+            component={Link}
+            to="/runs"
+          >
+            New Alignment
+          </Button>
+        </Box>
+      </Grid>
+
       {/* <FormGroup row>
         <FormControlLabel
           control={
@@ -224,7 +254,7 @@ export default function InteractiveList() {
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        primary={sample.samplePath}
+                        primary={sample.sample}
                         secondary={secondary ? "Secondary text" : null}
                       />
                     </ListItem>

@@ -13,11 +13,11 @@ import { Link } from "react-router-dom";
 
 export const mainListItems = (
   <div>
-    <ListItem component={Link} to="/dashboard" button>
+    <ListItem component={Link} to="/alignment" button>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <ListItemText primary="Dashboard" />
+      <ListItemText primary="Alignment" />
     </ListItem>
     <ListItem component={Link} to="/runs" button button>
       <ListItemIcon>

@@ -6,7 +6,7 @@ const Landing = () => {
   const history = useHistory();
   const { checkauth } = useAuth();
   useEffect(() => {
-    checkauth(history, "/dashboard");
+    checkauth(history, "/alignment");
   }, [checkauth, history]);
   return (
     <div style={{ height: "75vh" }} className="container valign-wrapper">
