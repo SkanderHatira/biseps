@@ -1,66 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { DataGrid } from "@material-ui/data-grid";
-// import axios from "axios";
-// import Container from "@material-ui/core/Container";
-// const electron = window.require("electron");
-// const remote = electron.remote;
-// const { BrowserWindow, dialog, Menu } = remote;
-// console.log(remote.getGlobal("sharedObj").prop1);
-
-// console.log(
-//   dialog.showOpenDialog({ properties: ["openFile", "multiSelections"] })
-// );
-
-// const columns = [
-//   { field: "_id", headerName: "ID", width: 70 },
-//   { field: "genome", headerName: "Genome", width: 130 },
-//   { field: "outdir", headerName: "Output Directory", width: 130 },
-//   {
-//     field: "adapters",
-//     headerName: "Adapters",
-//     width: 90,
-//   },
-// ];
-// // works like a charm
-// const createBrowserWindow = () => {
-//   const win = new BrowserWindow({
-//     height: 600,
-//     width: 800,
-//   });
-//   console.log("here");
-//   win.loadURL(`file:/${test}`);
-// };
-
-// export default function Table({ Copyright, classes, fixedHeightPaper }) {
-//   const [data, setData] = useState([]);
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       const result = await axios("http://localhost:5000/api/runs");
-
-//       setData(result.data);
-//     };
-
-//     fetchData();
-//   }, []);
-//   console.log(data);
-
-//   return (
-//     <Container maxWidth="lg" className={classes.container}>
-//       {/* <button onClick={createBrowserWindow}></button> */}
-//       {data && (
-//         <div style={{ height: 400, width: "100%" }}>
-//           <DataGrid
-//             rows={data}
-//             getRowId={(row) => row._id}
-//             columns={columns}
-//             pageSize={5}
-//             checkboxSelection
-//           />
-//         </div>
-//       )}
-//     </Container>
-//   );
-// }
 import React, { useState, useEffect } from "react";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
@@ -194,7 +131,7 @@ export default function InteractiveList() {
             variant="contained"
             color="primary"
             component={Link}
-            to="/runs"
+            to="/newcomparison"
           >
             New Comparison
           </Button>

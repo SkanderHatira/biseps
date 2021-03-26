@@ -5,6 +5,10 @@ const Schema = mongoose.Schema;
 const RunSchema = new Schema({
     createdBy: { type: Schema.Types.ObjectId, ref: "users" },
     status: { type: String, required: true, default: "running" },
+    profile: {
+        type: String,
+        default: "",
+    },
     outdir: {
         type: String,
         required: true,

@@ -1,0 +1,62 @@
+{
+  "assemblies": [
+    {
+      "name": "Malus_domestica_cultivar_Golden_Delicious-chr4",
+      "sequence": {
+        "type": "ReferenceSequenceTrack",
+        "trackId": "Malus_domestica_cultivar_Golden_Delicious-chr4-ReferenceSequenceTrack",
+        "adapter": {
+          "type": "IndexedFastaAdapter",
+          "fastaLocation": {
+            "uri": "Malus_domestica_cultivar_Golden_Delicious-chr4.fasta"
+          },
+          "faiLocation": {
+            "uri": "Malus_domestica_cultivar_Golden_Delicious-chr4.fasta.fai"
+          }
+        }
+      }
+    }
+  ],
+  "configuration": {},
+  "connections": [],
+  "defaultSession": {
+    "name": "Integration test example",
+    "views": [
+      {
+        "id": "integration_test",
+        "type": "LinearGenomeView"
+      }
+    ]
+  },
+  "tracks": [
+    {
+      "type": "AlignmentsTrack",
+      "trackId": "v1-sorted",
+      "name": "v1-sorted",
+      "assemblyNames": [
+        "Malus_domestica_cultivar_Golden_Delicious-chr4"
+      ],
+      "adapter": {
+        "type": "BamAdapter",
+        "bamLocation": {
+          "uri": "v1-sorted.bam"
+        },
+        "index": {
+          "location": {
+            "uri": "v1-sorted.bam.bai"
+          },
+          "indexType": "BAI"
+        },
+        "sequenceAdapter": {
+          "type": "IndexedFastaAdapter",
+          "fastaLocation": {
+            "uri": "Malus_domestica_cultivar_Golden_Delicious-chr4.fasta"
+          },
+          "faiLocation": {
+            "uri": "Malus_domestica_cultivar_Golden_Delicious-chr4.fasta.fai"
+          }
+        }
+      }
+    }
+  ]
+}

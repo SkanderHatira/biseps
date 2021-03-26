@@ -24,6 +24,12 @@ const UserSchema = new Schema({
             ref: "runs",
         },
     ],
+    comparisons: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "comparisons",
+        },
+    ],
 });
 
 // eslint-disable-next-line no-undef

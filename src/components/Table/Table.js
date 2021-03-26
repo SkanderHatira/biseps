@@ -174,17 +174,7 @@ export default function InteractiveList() {
     win.loadURL(`file://${path}`);
   };
   console.log(data);
-  const handleClick = () => {
-    portastic
-      .find({
-        min: 30000,
-        max: 35000,
-        retrieve: 1,
-      })
-      .then(function (port) {
-        console.log(port);
-      });
-  };
+
   return (
     <Container maxWidth="lg" className={classes.container} gutterBottom>
       <Grid container direction="column" alignItems="center" gutterBottom>
@@ -194,7 +184,7 @@ export default function InteractiveList() {
             variant="contained"
             color="primary"
             component={Link}
-            to="/runs"
+            to="/newrun"
           >
             New Alignment
           </Button>

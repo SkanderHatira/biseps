@@ -10,10 +10,10 @@ import Register from "./components/Register/Register";
 import Login from "./components/Login/Login";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Dashboard from "./components/Dashboard/Dashboard";
+import Visualization from "./components/Visualization/Visualization";
 import Comparisons from "./components/Comparisons/Comparisons";
-
+import Comparison from "./components/Comparison/Comparison";
 import RunBoard from "./components/RunBoard/RunBoard";
-import RunForm from "./components/Stepper/RunForm";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -26,9 +26,19 @@ function App() {
               <Route exact path="/" component={Landing} />
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
-              <PrivateRoute exact path="/newrun" component={RunForm} />
-              <PrivateRoute exact path="/runs" component={RunBoard} />
+              <PrivateRoute exact path="/newrun" component={RunBoard} />
               <PrivateRoute exact path="/comparison" component={Comparisons} />
+              <PrivateRoute
+                exact
+                path="/newcomparison"
+                component={Comparison}
+              />
+              <PrivateRoute
+                exact
+                path="/visualization"
+                component={Visualization}
+              />
+
               <PrivateRoute exact path="/alignment" component={Dashboard} />
               <Route component={NotFound} />
             </Switch>

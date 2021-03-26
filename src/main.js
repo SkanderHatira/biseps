@@ -1,5 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-const { app, BrowserWindow, ipcMain } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  session,
+  ipcRenderer,
+} = require("electron");
 const path = require("path");
 const fs = require("fs");
 const server = require("../src/backend/spawnServer.js");
@@ -40,12 +46,49 @@ exec(
     console.log(`stdout: ${stdout}`);
   }
 );
-
+async function createJB(port) {
+  // Create the browser window.
+  // const newWindow = new BrowserWindow({
+  //   width: 1080,
+  //   height: 720,
+  //   webPreferences: {
+  //     nodeIntegration: true,
+  //     enableRemoteModule: true,
+  //     webSecurity: false,
+  //   },
+  // });
+  // Load app
+  // newWindow.webContents.loadURL(SECOND_WINDOW_WEBPACK_ENTRY);
+  // rest of code..
+}
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
 }
+ipcMain.on("ping", (event, port) => {
+  console.log(port);
+  createJB(port);
+  const newWindow = new BrowserWindow({
+    width: 1080,
+    height: 720,
+    webPreferences: {
+      preload: __dirname + "/preloadJB.js",
+    },
+  });
+  const dirname = "/home/Bureau/jbrowse2";
+  const url = require("url").format({
+    protocol: "file",
+    slashes: true,
+    pathname: path.join(dirname, "index.html"),
+  });
+  newWindow.loadURL(url);
+
+  newWindow.loadURL(`http:///localhost:${port}`);
+  newWindow.once("ready-to-show", () => {
+    newWindow.show();
+  });
+});
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -55,6 +98,7 @@ const createWindow = () => {
       nodeIntegration: true,
       preload: __dirname + "/preload.js",
       enableRemoteModule: true,
+      devTools: true,
     },
   });
 
@@ -68,9 +112,9 @@ const createWindow = () => {
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log("An error occurred: ", err));
+  // installExtension(REACT_DEVELOPER_TOOLS)
+  //   .then((name) => console.log(`Added Extension:  ${name}`))
+  //   .catch((err) => console.log("An error occurred: ", err));
 };
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

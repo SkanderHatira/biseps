@@ -6,6 +6,10 @@ rules.push({
   use: [{ loader: "style-loader" }, { loader: "css-loader" }],
 });
 rules.push({
+  test: /\.scss$/,
+  use: [{ loader: "style-loader" }, { loader: "scss-loader" }],
+});
+rules.push({
   test: /\.(js|jsx)$/,
   include: path.resolve(__dirname, "src"),
   use: [

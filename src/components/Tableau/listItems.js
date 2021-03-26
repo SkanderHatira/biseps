@@ -17,21 +17,21 @@ export const mainListItems = (
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <ListItemText primary="Alignment" />
+      <ListItemText primary="Alignments" />
     </ListItem>
     <ListItem component={Link} to="/comparison" button button>
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>
-      <ListItemText primary="DMR Comparisons" />
+      <ListItemText primary="Comparisons" />
     </ListItem>
-    <ListItem component={Link} to="/reports" button button>
+    <ListItem component={Link} to="/alignment" button button>
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
       <ListItemText primary="Reports" />
     </ListItem>
-    <ListItem component={Link} to="/visualisations" button button>
+    <ListItem component={Link} to="/visualization" button button>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>

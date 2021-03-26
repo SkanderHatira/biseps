@@ -20,16 +20,16 @@ module.exports = [
   /**
    * Typescript Example:
    *
-   * {
-   *   test: /\.tsx?$/,
-   *   exclude: /(node_modules|.webpack)/,
-   *   loaders: [{
-   *     loader: 'ts-loader',
-   *     options: {
-   *       transpileOnly: true
-   *     }
-   *   }]
-   * }
+    {
+      test: /\.tsx?$/,
+      exclude: /(node_modules|.webpack)/,
+      loaders: [{
+        loader: 'ts-loader',
+        options: {
+          transpileOnly: true
+        }
+      }]
+    }
    */
   // {
   //   test: /\.resources$/,
@@ -38,5 +38,17 @@ module.exports = [
   // {
   //   test: /\.backend$/,
   //   loader: "file-loader",
+  // },
+  // {
+  //   test: /\.tsx?$/,
+  //   exclude: /(node_modules|.webpack)/,
+  //   loaders: [
+  //     {
+  //       loader: "ts-loader",
+  //       options: {
+  //         transpileOnly: true,
+  //       },
+  //     },
+  //   ],
   // },
 ];
