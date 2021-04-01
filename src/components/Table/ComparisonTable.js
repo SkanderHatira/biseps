@@ -129,6 +129,7 @@ export default function InteractiveList() {
           <Button
             alignItems="center"
             variant="contained"
+            variant="outlined"
             color="primary"
             component={Link}
             to="/newcomparison"

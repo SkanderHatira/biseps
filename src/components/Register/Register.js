@@ -74,6 +74,7 @@ const Register = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
+    console.log("signing in yaaaaaaaaaaaaaaay");
     auth.signin(state, dispatch, history);
   };
   const { errors } = state;

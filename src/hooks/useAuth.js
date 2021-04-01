@@ -40,17 +40,16 @@ const useProvideAuth = () => {
       res.on("data", function (chunk) {
         chunks.push(chunk);
       });
-
       res.on("end", function () {
         const body = Buffer.concat(chunks).toString();
         const jsbody = JSON.parse(body);
-        if (Object.entries(jsbody).length !== 7) {
+        if ("_id" in jsbody) {
+          history.push("/login");
+        } else {
           dispatch({
             type: GET_ERRORS,
             payload: jsbody,
           });
-        } else {
-          history.push("/login");
         }
       });
     });

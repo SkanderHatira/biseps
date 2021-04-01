@@ -7,9 +7,7 @@ const passport = require("passport");
 const path = require("path");
 const users = require("../backend/routes/api/userController");
 const runs = require("../backend/routes/api/runController");
-const comparisons = require("../backend/routes/api/comparisonController");
-
-const units = require("../backend/routes/api/unitController");
+const views = require("../backend/routes/api/viewController");
 const cors = require("cors");
 // const http = require("http");
 // const https = require("https");
@@ -36,12 +34,11 @@ require("../backend/config/passport")(passport);
 app.use("/api/users", users);
 app.use("/api/runs", passport.authenticate("jwt", { session: false }), runs);
 app.use(
-    "/api/comparisons",
+    "/api/jbrowse",
     passport.authenticate("jwt", { session: false }),
-    comparisons
+    views
 );
 
-app.use("/api/units", units);
 // const sock = "/tmp/bissprop.sock";
 const sock = process.argv[2];
 fs.stat(sock, function (err) {

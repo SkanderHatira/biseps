@@ -66,29 +66,33 @@ if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
 }
-ipcMain.on("ping", (event, port) => {
-  console.log(port);
-  createJB(port);
-  const newWindow = new BrowserWindow({
-    width: 1080,
-    height: 720,
-    webPreferences: {
-      preload: __dirname + "/preloadJB.js",
-    },
-  });
-  const dirname = "/home/Bureau/jbrowse2";
-  const url = require("url").format({
-    protocol: "file",
-    slashes: true,
-    pathname: path.join(dirname, "index.html"),
-  });
-  newWindow.loadURL(url);
+// ipcMain.on("ping", (event, port) => {
+//   // console.log(port);
+//   // createJB(port);
+//   const newWindow = new BrowserWindow({
+//     width: 1080,
+//     height: 720,
+//     webPreferences: {
+//       preload: __dirname + "/preloadJB.js",
+//       nodeIntegration: false,
+//       nativeWindowOpen: true,
+//       nodeIntegrationInSubFrames: true,
+//       webSecurity: false,
+//     },
+//   });
+//   const dirname = "/home/Bureau/jbrowse2";
+//   // const url = require("url").format({
+//   //   protocol: "file",
+//   //   slashes: true,
+//   //   pathname: path.join(dirname, "worker.html"),
+//   // });
+//   // newWindow.loadURL(url);
 
-  newWindow.loadURL(`http:///localhost:${port}`);
-  newWindow.once("ready-to-show", () => {
-    newWindow.show();
-  });
-});
+//   newWindow.loadURL(`http:///localhost:${port}`);
+//   newWindow.once("ready-to-show", () => {
+//     newWindow.show();
+//   });
+// });
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({

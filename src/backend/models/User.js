@@ -24,10 +24,10 @@ const UserSchema = new Schema({
             ref: "runs",
         },
     ],
-    comparisons: [
+    views: [
         {
             type: Schema.Types.ObjectId,
-            ref: "comparisons",
+            ref: "views",
         },
     ],
 });

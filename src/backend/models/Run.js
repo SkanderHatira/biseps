@@ -136,9 +136,13 @@ const RunSchema = new Schema({
             },
         },
     },
-
+    date: {
+        type: Date,
+        default: Date.now,
+    },
     samples: [
         {
+            sampleName: { type: String, required: false },
             sample: { type: String, required: false },
             samplePath: { type: String, required: false },
         },

@@ -182,6 +182,7 @@ export default function InteractiveList() {
           <Button
             alignItems="center"
             variant="contained"
+            variant="outlined"
             color="primary"
             component={Link}
             to="/newrun"
@@ -191,6 +192,14 @@ export default function InteractiveList() {
         </Box>
       </Grid>
 
+      {/* important */}
+      {/* 
+      <iframe
+        src="http://127.0.0.1:8080/"
+        style={{ border: "none", display: "true" }}
+        width="100%"
+        height="1000"
+      ></iframe> */}
       {/* <FormGroup row>
         <FormControlLabel
           control={

@@ -1,15 +1,9 @@
 const spawnServer = async (sock) => {
-    console.log(sock);
-    console.log(sock);
-    console.log(sock);
-    console.log(sock);
-    console.log(sock);
-
     const { spawn } = require("child_process");
     const path = require("path");
     const options = {
         slient: false,
-        detached: true,
+        detached: false,
     };
     const child = spawn(
         "node",
