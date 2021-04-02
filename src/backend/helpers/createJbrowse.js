@@ -1,14 +1,9 @@
-const createJbrowse = (body) => {
+const createJbrowse = (jbPath) => {
     const fs = require("fs");
     const ncp = require("ncp").ncp;
     const path = require("path");
     const source = path.join(__dirname, "../../resources/jbrowse2");
-    const destination = path.join(
-        __dirname,
-        `../../resources/users/${body.name}/`
-    );
-    console.log(`creating Jbrowse For ${body.name}`);
-    ncp(source, destination, function (err) {
+    ncp(source, jbPath, function (err) {
         if (err) {
             return console.error(err);
         }

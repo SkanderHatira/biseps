@@ -256,9 +256,9 @@ export default function NewTable() {
   const blankUnit = {
     id: uuid(),
     sample: "",
-    lane: 1,
-    techrep: 1,
-    biorep: 1,
+    lane: "",
+    techrep: "",
+    biorep: "",
     fq1: "",
     fq2: "",
   };
@@ -411,23 +411,25 @@ export default function NewTable() {
                         {" "}
                         <InputBase
                           placeholder="Lane"
+                          inputProps={{ "data-idx": index }}
+                          label={`Lane ${index}`}
+                          placeholder="Lane Number"
                           required
+                          type="text"
                           value={unit.lane}
                           onChange={handleUnitChange}
-                          inputProps={{ "data-idx": index, min: "1" }}
                           id="lane"
-                          type="number"
                         ></InputBase>
                       </TableCell>
                       <TableCell align="right">
                         {" "}
                         <InputBase
+                          inputProps={{ "data-idx": index }}
                           onChange={handleUnitChange}
                           placeholder="Technical Replicate"
                           value={unit.techrep}
-                          inputProps={{ "data-idx": index, min: "1" }}
                           id="techrep"
-                          type="number"
+                          type="text"
                         ></InputBase>
                       </TableCell>
 
@@ -438,9 +440,9 @@ export default function NewTable() {
                           placeholder="Biological Replicate"
                           value={unit.biorep}
                           required
-                          inputProps={{ "data-idx": index, min: "1" }}
+                          inputProps={{ "data-idx": index }}
                           id="biorep"
-                          type="number"
+                          type="text"
                         ></InputBase>
                       </TableCell>
                       <TableCell align="right">

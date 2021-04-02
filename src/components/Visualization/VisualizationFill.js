@@ -17,6 +17,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Link } from "react-router-dom";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+
 const electron = window.require("electron");
 const { shell } = window.require("electron");
 const remote = electron.remote;
@@ -24,7 +26,8 @@ const { BrowserWindow } = remote;
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
-const handler = require("serve-handler");
+const fs = require("fs");
+
 const http = require("http");
 import IconButton from "@material-ui/core/IconButton";
 import CommentIcon from "@material-ui/icons/Comment";
@@ -41,18 +44,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function VisualizationFill() {
   const classes = useStyles();
-  const [dense, setDense] = useState(false);
-  const [secondary, setSecondary] = useState(false);
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const [checked, setChecked] = useState([0]);
-  const [openJB, setOpenJB] = useState([]);
+  const [checked, setChecked] = useState([]);
   const { user } = useAuth();
 
   const handleToggle = (genome) => () => {
@@ -69,7 +61,6 @@ export default function VisualizationFill() {
   };
   const [data, setData] = useState([]);
   const [views, setViews] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.jwtToken;
@@ -107,6 +98,7 @@ export default function VisualizationFill() {
 
     fetchData();
   }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.jwtToken;
@@ -156,62 +148,48 @@ export default function VisualizationFill() {
   };
 
   const handleClick = () => {
-    portastic
-      .find({
-        min: 30000,
-        max: 35000,
-        retrieve: 1,
-      })
-      .then(function (port) {
-        window.ipcRenderer.send("ping", port[0]);
-        const request = {
-          port: port[0],
-          genomes:
-            "/home/shatira/Documents/Demo_Data/genome/Malus_domestica_cultivar_Golden_Delicious-chr4.fasta",
-          outdir: "/home/shatira/Bureau/jbrowse2",
-          userId: user.user.id,
-        };
-        const token = localStorage.jwtToken;
-        const options = {
-          method: "POST",
-          path: "http://localhost/api/jbrowse/visualize",
-          socketPath: sessionStorage.Sock,
-          hostname: "unix",
-          port: null,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        };
-
-        const req = http.request(options, function (res) {
-          const chunks = [];
-          console.log("STATUS: " + res.statusCode);
-          console.log("HEADERS: " + JSON.stringify(res.headers));
-          res.on("data", function (chunk) {
-            chunks.push(chunk);
-          });
-          res.on("error", (err) => console.log(err));
-          res.on("end", function () {
-            const body = Buffer.concat(chunks).toString();
-
-            const jsbody = JSON.parse(body);
-            if (res.statusCode !== 200) {
-              console.log("failed post request");
-            } else {
-              console.log("successful post request");
-            }
-          });
-        });
-        req.on("error", (err) => console.log(err));
-        req.write(JSON.stringify(request));
-        req.end();
-        setOpenJB([...openJB, `http:///localhost:${port}`]);
-        setOpen(false);
-        shell.openExternal(`http:///localhost:${port}`);
+    const request = {
+      genomes: checked,
+      userId: user.user.id,
+    };
+    const token = localStorage.jwtToken;
+    const options = {
+      method: "POST",
+      path: "http://localhost/api/jbrowse/visualize",
+      socketPath: sessionStorage.Sock,
+      hostname: "unix",
+      port: null,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+    const req = http.request(options, function (res) {
+      const chunks = [];
+      console.log("STATUS: " + res.statusCode);
+      console.log("HEADERS: " + JSON.stringify(res.headers));
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
       });
+      res.on("error", (err) => console.log(err));
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
+
+        const jsbody = JSON.parse(body);
+        if (res.statusCode !== 200) {
+          console.log("failed post request");
+        } else {
+          console.log("successful post request");
+        }
+      });
+    });
+    req.on("error", (err) => console.log(err));
+    req.write(JSON.stringify(request));
+    req.end();
+    setOpen(false);
+    shell.openExternal(`http:///localhost:${user.user.port[0]}`);
   };
-  console.log(openJB);
+
   const blankSample = {};
   const helper = {};
   const result = data.reduce(function (r, o) {
@@ -228,194 +206,165 @@ export default function VisualizationFill() {
 
   console.log(result);
 
-  const handleServe = (outdir) => {
-    portastic
-      .find({
-        min: 30000,
-        max: 35000,
-        retrieve: 1,
-      })
-      .then(function (port) {
-        console.log(outdir);
-        const server = http.createServer((request, response) => {
-          return handler(request, response, { public: outdir });
-        });
-        server.listen(port[0], () => {
-          console.log(`Running at http://localhost:${port}`);
-        });
-        shell.openExternal(`http:///localhost:${port}`);
-      });
+  const handleServe = () => {
+    shell.openExternal(`http:///localhost:${user.user.port[0]}`);
   };
   return (
     <Container maxWidth="lg" className={classes.container} gutterBottom>
       <Grid container direction="column" alignItems="center" gutterBottom>
         <Box m={3}>
           {" "}
-          <Button
-            alignItems="center"
-            variant="contained"
-            variant="outlined"
+          <ButtonGroup
             color="primary"
-            onClick={handleClickOpen}
+            aria-label="outlined primary button group"
           >
-            New Jbrowse
-          </Button>
+            <Button
+              alignItems="center"
+              variant="contained"
+              variant="outlined"
+              color="primary"
+              onClick={handleServe}
+            >
+              Start Jbrowse{" "}
+            </Button>
+            <Button
+              alignItems="center"
+              variant="contained"
+              variant="outlined"
+              color="primary"
+            >
+              Reset Jbrowse{" "}
+            </Button>
+            <Button alignItems="center" variant="contained" color="primary">
+              Populate Jbrowse{" "}
+            </Button>
+          </ButtonGroup>
         </Box>
       </Grid>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Create a new Jbrowse Intance?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Select the assemblies and tracks you want in your Jbrowse Instance,
-            Please note that a whole new Instance is created with a copy of all
-            selected files inside , this can quickly consume a lot of space.
-          </DialogContentText>
-          <List className={classes.root}>
-            {result.map((genome, idx) => {
-              const labelId = `checkbox-list-label-${genome}`;
-              console.log(idx);
-              return (
-                <ListItem
-                  key={idx}
-                  role={undefined}
-                  dense
-                  button
-                  onClick={handleToggle(idx)}
-                >
-                  <ListItemIcon>
-                    <Checkbox
-                      edge="start"
-                      checked={checked.indexOf(idx) !== -1}
-                      tabIndex={-1}
-                      disableRipple
-                      inputProps={{ "aria-labelledby": labelId }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText id={labelId} primary={`${genome.genome}`} />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="comments">
-                      <CommentIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            })}
-          </List>
-          <List className={classes.root}>
-            {data &&
-              data.map((row) => {
-                console.log(row);
-                row.samples.map((sample) => {
+      <List subheader={"Genomes"}>
+        {result.map((genome, idx) => {
+          console.log(user.user.jbPath, genome.genome);
+          const labelId = `checkbox-list-label-${genome}`;
+          console.log(idx);
+          if (!fileExist(path.join(user.user.jbPath, genome.genome))) {
+            return (
+              <ListItem
+                key={idx}
+                button
+                onClick={handleToggle(genome.genomePath)}
+              >
+                <ListItemIcon>
+                  <Checkbox
+                    edge="start"
+                    checked={checked.indexOf(genome.genomePath) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                    inputProps={{ "aria-labelledby": labelId }}
+                  />
+                </ListItemIcon>
+                <ListItemText id={labelId} primary={`${genome.genome}`} />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="comments">
+                    <CommentIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            );
+          }
+        })}
+      </List>
+      <List subheader={"Bam Files"}>
+        {data.map((row) => {
+          const labelId = `checkbox-list-label-${row}`;
+          return (
+            <div>
+              {row.samples.map((sample) => {
+                const samplePath = `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`;
+                if (
+                  fileExist(samplePath) &&
+                  !fileExist(
+                    path.join(
+                      user.user.jbPath,
+                      `${sample.sampleName}.deduplicated.bam`
+                    )
+                  )
+                ) {
                   return (
-                    <ListItemText
-                      primary={`${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`}
-                    />
-                  );
-                });
-              })}
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Quit
-          </Button>
-          <Button onClick={handleClick} color="primary" autoFocus>
-            Create
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Grid container spacing={2}>
-        {views.length > 0 ? (
-          views.map((view) => (
-            <Grid key={view._id} item xs={12} md={6}>
-              <List dense={dense}>
-                <ListItem
-                  button
-                  onClick={() => {
-                    const path = `${view.outdir}/index.html`;
-                    handleServe(view.outdir);
-                  }}
-                >
-                  Jbrowse Instance created by {view.createdBy.name}
-                </ListItem>
-              </List>
-
-              <div className={classes.demo}>
-                <List dense={dense}>
-                  {/* {view.samples.map((sample) => (
                     <ListItem
+                      key={row._id}
                       button
-                      disabled={
-                        fileExist(
-                          `${view.outdir}/results/${sample.samplePath}/multiqc_report.html`
-                        )
-                          ? false
-                          : true
-                      }
-                      key={sample._id}
-                      onClick={() => {
-                        const path = `${view.outdir}/results/${sample.samplePath}/multiqc_report.html`;
-                        console.log(path);
-                        createBrowserWindow(path);
-                      }}
+                      onClick={handleToggle(samplePath)}
                     >
-                      <ListItemAvatar>
-                        <Avatar>
-                          <FolderIcon />
-                        </Avatar>
-                      </ListItemAvatar>
+                      <ListItemIcon>
+                        <Checkbox
+                          edge="start"
+                          checked={checked.indexOf(samplePath) !== -1}
+                          tabIndex={-1}
+                          disableRipple
+                          inputProps={{ "aria-labelledby": labelId }}
+                        />
+                      </ListItemIcon>
                       <ListItemText
-                        primary={sample.sample}
-                        secondary={secondary ? "Secondary text" : null}
+                        id={labelId}
+                        primary={`${sample.sampleName}.deduplicated.bam`}
                       />
+                      <ListItemSecondaryAction>
+                        <IconButton edge="end" aria-label="comments">
+                          <CommentIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
                     </ListItem>
-                  ))} */}
-                  {/* {generate(
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <FolderIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Single-line item"
-                      secondary={secondary ? "Secondary text" : null}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                )} */}
-                </List>
-              </div>
-            </Grid>
-          ))
-        ) : (
-          <Grid
-            container
-            spacing={0}
-            direction="column"
-            alignItems="center"
-            justify="center"
-            style={{ minHeight: "70vh" }}
-          >
-            <Typography variant="h6" className={classes.title}>
-              You have no analyses to view{" "}
-            </Typography>
-          </Grid>
-        )}
-      </Grid>
+                  );
+                }
+              })}
+            </div>
+          );
+          // console.log(row);
+          // {
+          //   row.samples.map((sample) => {
+          //     console.log(
+          //       `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`
+          //     );
+          //     if (
+          //       !fileExist(
+          //         path.join(
+          //           user.user.jbPath,
+          //           `${sample.sampleName}.deduplicated.bam`
+          //         )
+          //       )
+          //     ) {
+          // return (
+          //   <ListItem
+          //     key={row._id}
+          //     button
+          //     onClick={handleToggle(row._id)}
+          //   >
+          //     <ListItemIcon>
+          //       <Checkbox
+          //         edge="start"
+          //         checked={checked.indexOf(row._id) !== -1}
+          //         tabIndex={-1}
+          //         disableRipple
+          //         inputProps={{ "aria-labelledby": labelId }}
+          //       />
+          //     </ListItemIcon>
+          //     <ListItemText
+          //       id={labelId}
+          //       primary={`${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`}
+          //     />
+          //     <ListItemSecondaryAction>
+          //       <IconButton edge="end" aria-label="comments">
+          //         <CommentIcon />
+          //       </IconButton>
+          //     </ListItemSecondaryAction>
+          //   </ListItem>
+          // );
+          //     }
+          //   });
+          // }
+        })}
+      </List>
     </Container>
   );
 }

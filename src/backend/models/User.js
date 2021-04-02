@@ -18,6 +18,10 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    jbPath: {
+        type: String,
+        required: true,
+    },
     runs: [
         {
             type: Schema.Types.ObjectId,

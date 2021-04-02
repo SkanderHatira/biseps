@@ -8,6 +8,7 @@ const {
 } = require("electron");
 const path = require("path");
 const fs = require("fs");
+
 const server = require("../src/backend/spawnServer.js");
 
 // const mongod = require("./backend/spawnMongod.js");
@@ -116,9 +117,9 @@ const createWindow = () => {
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
-  // installExtension(REACT_DEVELOPER_TOOLS)
-  //   .then((name) => console.log(`Added Extension:  ${name}`))
-  //   .catch((err) => console.log("An error occurred: ", err));
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log("An error occurred: ", err));
 };
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

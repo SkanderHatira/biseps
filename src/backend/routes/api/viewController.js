@@ -47,7 +47,7 @@ router.post("/visualize", (req, res) => {
         spawnJbrowse(req.body, uniqueDir);
     }
 });
-router.post("/nonassigned", (req, res) => {
+router.post("/serve", (req, res) => {
     console.log(req.body);
 });
 router.get("/", function (req, res) {

@@ -3,6 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const portastic = require("portastic");
+const handler = require("serve-handler");
+const http = require("http");
 const createJB = require("../../helpers/createJbrowse");
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
@@ -25,11 +28,16 @@ router.post("/register", (req, res) => {
         if (user) {
             return res.status(400).json({ email: "Email already exists" });
         } else {
-            createJB(req.body);
+            const jbPath = path.join(
+                __dirname,
+                `../../../resources/users/${req.body.name}/`
+            );
+            createJB(jbPath);
             const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
+                jbPath,
             });
             // Hash password before saving in database
             bcrypt.genSalt(10, (err, salt) => {
@@ -69,24 +77,47 @@ router.post("/login", (req, res) => {
             if (isMatch) {
                 // User matched
                 // Create JWT Payload
-                const payload = {
-                    id: user.id,
-                    name: user.name,
-                };
-                // Sign token
-                jwt.sign(
-                    payload,
-                    process.env.SECRET,
-                    {
-                        expiresIn: 31556926, // 1 year in seconds
-                    },
-                    (err, token) => {
-                        res.json({
-                            success: true,
-                            token: "Bearer " + token,
+                portastic
+                    .find({
+                        min: 30000,
+                        max: 35000,
+                        retrieve: 1,
+                    })
+                    .then(function (port) {
+                        const server = http.createServer(
+                            (request, response) => {
+                                return handler(request, response, {
+                                    public: user.jbPath,
+                                });
+                            }
+                        );
+                        server.listen(port[0], () => {
+                            console.log(`Running at http://localhost:${port}`);
+                            const payload = {
+                                id: user.id,
+                                name: user.name,
+                                jbPath: user.jbPath,
+                                email: user.email,
+                                runs: user.runs,
+                                views: user.runs,
+                                port: port,
+                            };
+                            // Sign token
+                            jwt.sign(
+                                payload,
+                                process.env.SECRET,
+                                {
+                                    expiresIn: 31556926, // 1 year in seconds
+                                },
+                                (err, token) => {
+                                    res.json({
+                                        success: true,
+                                        token: "Bearer " + token,
+                                    });
+                                }
+                            );
                         });
-                    }
-                );
+                    });
             } else {
                 return res
                     .status(400)

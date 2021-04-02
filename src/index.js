@@ -5,6 +5,9 @@ import App from "./App";
 const electron = window.require("electron");
 const remote = electron.remote;
 sessionStorage.setItem("Sock", remote.getGlobal("sharedObj").prop1);
+sessionStorage.setItem("Jbrowse", remote.getGlobal("sharedObj").jbrowse);
+sessionStorage.setItem("Shiny", remote.getGlobal("sharedObj").shiny);
+console.log(sessionStorage);
 function render() {
   ReactDOM.render(
     <React.Fragment>

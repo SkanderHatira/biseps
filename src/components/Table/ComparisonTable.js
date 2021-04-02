@@ -20,6 +20,7 @@ import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Link } from "react-router-dom";
+import Iframe from "react-iframe";
 
 const fs = require("fs");
 const portastic = require("portastic");
@@ -126,7 +127,7 @@ export default function InteractiveList() {
     <Container maxWidth="lg" className={classes.container} gutterBottom>
       <Grid container direction="column" alignItems="center" gutterBottom>
         <Box m={3}>
-          <Button
+          {/* <Button
             alignItems="center"
             variant="contained"
             variant="outlined"
@@ -135,10 +136,25 @@ export default function InteractiveList() {
             to="/newcomparison"
           >
             New Comparison
-          </Button>
+          </Button> */}
         </Box>
       </Grid>
+      {/* <Iframe
+        url="http://127.0.0.1:8080/"
+        position="absolute"
+        width="70%"
+        id="myId"
+        className="myClassname"
+        height="100%"
+        styles={{ height: "100%", border: "none" }}
+      /> */}
 
+      <iframe
+        src="http://127.0.0.1:8080/"
+        style={{ border: "none", display: "true" }}
+        width="100%"
+        height="1000"
+      ></iframe>
       {/* <FormGroup row>
         <FormControlLabel
           control={
