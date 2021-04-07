@@ -30,7 +30,7 @@ router.post("/register", (req, res) => {
         } else {
             const jbPath = path.join(
                 __dirname,
-                `../../../resources/users/${req.body.name}/`
+                `../../../resources/users/${req.body.name}`
             );
             createJB(jbPath);
             const newUser = new User({

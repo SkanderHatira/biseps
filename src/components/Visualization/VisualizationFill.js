@@ -45,10 +45,13 @@ const useStyles = makeStyles((theme) => ({
 export default function VisualizationFill() {
   const classes = useStyles();
   const [checked, setChecked] = useState([]);
+  const [checkedTrack, setCheckedTrack] = useState([]);
+
   const { user } = useAuth();
 
   const handleToggle = (genome) => () => {
     const currentIndex = checked.indexOf(genome);
+    console.log(currentIndex);
     const newChecked = [...checked];
 
     if (currentIndex === -1) {
@@ -58,6 +61,20 @@ export default function VisualizationFill() {
     }
 
     setChecked(newChecked);
+  };
+
+  const handleToggleTrack = (track, associatedGenome, id, name) => () => {
+    const currentIndex = checkedTrack.findIndex((x) => x.id === id);
+    console.log(currentIndex);
+    const newChecked = [...checkedTrack];
+
+    if (currentIndex === -1) {
+      newChecked.push({ track, associatedGenome, id, name });
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setCheckedTrack(newChecked);
   };
   const [data, setData] = useState([]);
   const [views, setViews] = useState([]);
@@ -147,10 +164,12 @@ export default function VisualizationFill() {
     }
   };
 
-  const handleClick = () => {
+  const handlePopulate = () => {
     const request = {
       genomes: checked,
+      tracks: checkedTrack,
       userId: user.user.id,
+      jbPath: user.user.jbPath,
     };
     const token = localStorage.jwtToken;
     const options = {
@@ -186,7 +205,6 @@ export default function VisualizationFill() {
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
-    setOpen(false);
     shell.openExternal(`http:///localhost:${user.user.port[0]}`);
   };
 
@@ -235,7 +253,12 @@ export default function VisualizationFill() {
             >
               Reset Jbrowse{" "}
             </Button>
-            <Button alignItems="center" variant="contained" color="primary">
+            <Button
+              onClick={handlePopulate}
+              alignItems="center"
+              variant="contained"
+              color="primary"
+            >
               Populate Jbrowse{" "}
             </Button>
           </ButtonGroup>
@@ -281,34 +304,47 @@ export default function VisualizationFill() {
             <div>
               {row.samples.map((sample) => {
                 const samplePath = `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`;
+                const associatedGenomePath = row.genome.replace(
+                  /^.*[\\\/]/,
+                  ""
+                );
+
+                const associatedGenome = path.parse(associatedGenomePath).name;
                 if (
                   fileExist(samplePath) &&
                   !fileExist(
                     path.join(
                       user.user.jbPath,
-                      `${sample.sampleName}.deduplicated.bam`
+                      `${associatedGenome}/${sample.sampleName}.deduplicated.bam`
                     )
-                  )
+                  ) &&
+                  fileExist(path.join(user.user.jbPath, associatedGenomePath))
                 ) {
                   return (
                     <ListItem
                       key={row._id}
                       button
-                      onClick={handleToggle(samplePath)}
+                      onClick={handleToggleTrack(
+                        samplePath,
+                        associatedGenome,
+                        row._id,
+                        sample.sample
+                      )}
                     >
                       <ListItemIcon>
                         <Checkbox
                           edge="start"
-                          checked={checked.indexOf(samplePath) !== -1}
+                          checked={
+                            checkedTrack.findIndex(
+                              (x) => x.track === samplePath
+                            ) !== -1
+                          }
                           tabIndex={-1}
                           disableRipple
                           inputProps={{ "aria-labelledby": labelId }}
                         />
                       </ListItemIcon>
-                      <ListItemText
-                        id={labelId}
-                        primary={`${sample.sampleName}.deduplicated.bam`}
-                      />
+                      <ListItemText id={labelId} primary={sample.sample} />
                       <ListItemSecondaryAction>
                         <IconButton edge="end" aria-label="comments">
                           <CommentIcon />
