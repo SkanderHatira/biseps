@@ -4,7 +4,7 @@ const spawnChild = async () => {
     const command = "bash";
     const options = {
         slient: false,
-        detached: false,
+        detached: true,
     };
 
     const script = "resources/database/mongod.sh";

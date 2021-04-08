@@ -5,6 +5,7 @@ const createProfile = require("../../helpers/createProfile");
 const createConfig = require("../../helpers/createConfig");
 const createUnits = require("../../helpers/createUnits");
 const spawnChild = require("../../snakemake");
+const fs = require("fs");
 
 // Load input validation
 const validateConfigurationInput = require("../../validation/sampleConfiguration");
@@ -12,6 +13,7 @@ const validateConfigurationInput = require("../../validation/sampleConfiguration
 
 const Run = require("../../models/Run");
 const User = require("../../models/User");
+const { ObjectId } = require("bson");
 
 // @route POST api/runs/Run
 // @desc Run
@@ -60,7 +62,25 @@ router.post("/run", (req, res) => {
         spawnChild(profile);
     }
 });
-
+router.delete("/:id", function (req, res) {
+    const id = req.params.id;
+    const userId = req.user._id;
+    console.log(req.outdir);
+    console.log(req.user);
+    Run.deleteOne({ _id: id })
+        .then((result) => {
+            res.json(`Deleted ${id}`);
+        })
+        .catch((error) => console.error(error));
+    User.findByIdAndUpdate(
+        userId,
+        { $pull: { runs: id } },
+        { safe: true, upsert: true, new: true },
+        function (err, model) {
+            console.log(err);
+        }
+    );
+});
 router.get("/", function (req, res) {
     Run.find({}, function (err, runs) {
         if (err)
@@ -80,5 +100,10 @@ router.get("/:id", function (req, res) {
                 .send("There was a problem finding the users.");
         res.status(200).send(unit);
     }).populate("createdBy");
+});
+router.post("/rerun", function (req, res) {
+    const profile = path.join(req.body.path, "config/profile");
+    spawnChild(profile);
+    console.log("Rerun Snakemake", profile);
 });
 module.exports = router;

@@ -8,23 +8,33 @@ const {
 } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const mongodLock = path.join(
+  __dirname,
+  "resources/database/data/db/mongod.lock"
+);
 
+fs.stat(mongodLock, function (err, stats) {
+  console.log(!err);
+
+  if (stats.size === 0) {
+    mongod();
+  } else {
+    console.log("database already running on /tmp/bisspropmongodb.sock");
+  }
+});
 const server = require("../src/backend/spawnServer.js");
-
-// const mongod = require("./backend/spawnMongod.js");
-// try {
-//   mongod();
-// } catch (err) {
-//   console.log(err);
-// }
-
 const uid = uuidv4();
+const sock = `/tmp/bissprop${uid}.sock`;
+
+const mongod = require("./backend/spawnMongod.js");
+
+setTimeout(function () {
+  server(sock);
+}, 4000);
 // const sock = "/tmp/bissprop.sock";
 
-const sock = `/tmp/bissprop${uid}.sock`;
 global.sharedObj = { prop1: sock };
 
-server(sock);
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";

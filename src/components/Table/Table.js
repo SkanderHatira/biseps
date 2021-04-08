@@ -83,13 +83,21 @@ import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Link } from "react-router-dom";
+import AlarmIcon from "@material-ui/icons/Alarm";
+import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import KeyboardVoiceIcon from "@material-ui/icons/KeyboardVoice";
+import Icon from "@material-ui/core/Icon";
+import SaveIcon from "@material-ui/icons/Save";
+import { useAuth } from "../../hooks/useAuth";
 
+import ActionRowing from "material-ui/svg-icons/action/rowing";
 const fs = require("fs");
 const portastic = require("portastic");
 
 const electron = window.require("electron");
 const remote = electron.remote;
-const { BrowserWindow } = remote;
+const { BrowserWindow, shell } = remote;
 const http = require("http");
 
 const useStyles = makeStyles((theme) => ({
@@ -102,6 +110,9 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     margin: theme.spacing(4, 0, 2),
+  },
+  button: {
+    margin: theme.spacing(1),
   },
 }));
 
@@ -117,6 +128,90 @@ export default function InteractiveList() {
   const [dense, setDense] = useState(false);
   const [secondary, setSecondary] = useState(false);
   const [data, setData] = useState([]);
+  const { user } = useAuth();
+  const handleRerun = (path) => {
+    const request = {
+      path: path,
+    };
+    const token = localStorage.jwtToken;
+    const options = {
+      method: "POST",
+      path: "http://localhost/api/runs/rerun",
+      socketPath: sessionStorage.Sock,
+      hostname: "unix",
+      port: null,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+    const req = http.request(options, function (res) {
+      const chunks = [];
+      console.log("STATUS: " + res.statusCode);
+      console.log("HEADERS: " + JSON.stringify(res.headers));
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+      res.on("error", (err) => console.log(err));
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
+
+        const jsbody = JSON.parse(body);
+        if (res.statusCode !== 200) {
+          console.log("failed post request");
+        } else {
+          console.log("successful post request");
+        }
+      });
+    });
+    req.on("error", (err) => console.log(err));
+    req.write(JSON.stringify(request));
+    req.end();
+    window.location.reload(false);
+  };
+  const handleDelete = (id, user, outdir) => {
+    const request = {
+      user: user.user,
+    };
+    const token = localStorage.jwtToken;
+    const options = {
+      method: "DELETE",
+      path: `http://localhost/api/runs/${id}`,
+      socketPath: sessionStorage.Sock,
+      hostname: "unix",
+      port: null,
+      data: request,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+    const req = http.request(options, function (res) {
+      const chunks = [];
+      console.log("STATUS: " + res.statusCode);
+      console.log("HEADERS: " + JSON.stringify(res.headers));
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+      res.on("error", (err) => console.log(err));
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
+
+        const jsbody = JSON.parse(body);
+        if (res.statusCode !== 200) {
+          console.log("failed post request");
+        } else {
+          console.log("successful post request");
+        }
+      });
+    });
+    req.on("error", (err) => console.log(err));
+    console.log(request);
+    req.end();
+    fs.rmdirSync(outdir, { recursive: true });
+
+    window.location.reload(false);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.jwtToken;
@@ -170,11 +265,15 @@ export default function InteractiveList() {
       width: 1080,
     });
     console.log("here");
+    shell.showItemInFolder(path);
 
     win.loadURL(`file://${path}`);
   };
-  console.log(data);
 
+  console.log(data);
+  const openInFolder = (path) => {
+    shell.showItemInFolder(path);
+  };
   return (
     <Container maxWidth="lg" className={classes.container} gutterBottom>
       <Grid container direction="column" alignItems="center" gutterBottom>
@@ -226,8 +325,40 @@ export default function InteractiveList() {
           data.map((row) => (
             <Grid key={row._id} item xs={12} md={6}>
               <Typography variant="h6" className={classes.title}>
-                Analysis created by {row.createdBy.name}
+                Analysis created by {row.createdBy.name} on{" "}
+                {row.date.split("T")[0]}
               </Typography>
+
+              <div>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleDelete(row._id, user, row.outdir)}
+                  className={classes.button}
+                  startIcon={<DeleteIcon />}
+                >
+                  Delete
+                </Button>
+                {/* This Button uses a Font Icon, see the installation instructions in the Icon component docs. */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => openInFolder(`${row.outdir}/results`)}
+                  className={classes.button}
+                  endIcon={<Icon>send</Icon>}
+                >
+                  Open
+                </Button>
+                <Button
+                  variant="contained"
+                  color="default"
+                  onClick={() => handleRerun(row.outdir)}
+                  className={classes.button}
+                  startIcon={<RefreshIcon />}
+                >
+                  Rerun
+                </Button>
+              </div>
               <div className={classes.demo}>
                 <List dense={dense}>
                   {row.samples.map((sample) => (

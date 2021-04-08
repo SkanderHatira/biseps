@@ -84,39 +84,30 @@ router.post("/login", (req, res) => {
                         retrieve: 1,
                     })
                     .then(function (port) {
-                        const server = http.createServer(
-                            (request, response) => {
-                                return handler(request, response, {
-                                    public: user.jbPath,
+                        console.log(`found  http://localhost:${port} free`);
+                        const payload = {
+                            id: user.id,
+                            name: user.name,
+                            jbPath: user.jbPath,
+                            email: user.email,
+                            runs: user.runs,
+                            views: user.runs,
+                            port: port,
+                        };
+                        // Sign token
+                        jwt.sign(
+                            payload,
+                            process.env.SECRET,
+                            {
+                                expiresIn: 31556926, // 1 year in seconds
+                            },
+                            (err, token) => {
+                                res.json({
+                                    success: true,
+                                    token: "Bearer " + token,
                                 });
                             }
                         );
-                        server.listen(port[0], () => {
-                            console.log(`Running at http://localhost:${port}`);
-                            const payload = {
-                                id: user.id,
-                                name: user.name,
-                                jbPath: user.jbPath,
-                                email: user.email,
-                                runs: user.runs,
-                                views: user.runs,
-                                port: port,
-                            };
-                            // Sign token
-                            jwt.sign(
-                                payload,
-                                process.env.SECRET,
-                                {
-                                    expiresIn: 31556926, // 1 year in seconds
-                                },
-                                (err, token) => {
-                                    res.json({
-                                        success: true,
-                                        token: "Bearer " + token,
-                                    });
-                                }
-                            );
-                        });
                     });
             } else {
                 return res

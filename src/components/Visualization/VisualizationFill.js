@@ -18,6 +18,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Link } from "react-router-dom";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
+const handler = require("serve-handler");
 
 const electron = window.require("electron");
 const { shell } = window.require("electron");
@@ -205,9 +206,48 @@ export default function VisualizationFill() {
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
-    shell.openExternal(`http:///localhost:${user.user.port[0]}`);
+    window.location.reload(false);
   };
+  const handleReset = () => {
+    const request = {
+      jbPath: user.user.jbPath,
+    };
+    const token = localStorage.jwtToken;
+    const options = {
+      method: "POST",
+      path: "http://localhost/api/jbrowse/resetJB",
+      socketPath: sessionStorage.Sock,
+      hostname: "unix",
+      port: null,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+    const req = http.request(options, function (res) {
+      const chunks = [];
+      console.log("STATUS: " + res.statusCode);
+      console.log("HEADERS: " + JSON.stringify(res.headers));
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+      res.on("error", (err) => console.log(err));
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
 
+        const jsbody = JSON.parse(body);
+        if (res.statusCode !== 200) {
+          console.log("failed post request");
+        } else {
+          console.log("successful post request");
+        }
+      });
+    });
+    req.on("error", (err) => console.log(err));
+    req.write(JSON.stringify(request));
+    req.end();
+    window.location.reload(false);
+  };
   const blankSample = {};
   const helper = {};
   const result = data.reduce(function (r, o) {
@@ -225,6 +265,18 @@ export default function VisualizationFill() {
   console.log(result);
 
   const handleServe = () => {
+    try {
+      const server = http.createServer((request, response) => {
+        return handler(request, response, {
+          public: user.user.jbPath,
+        });
+      });
+      console.log(user.user.jbPath);
+      server.listen(user.user.port[0], () => {});
+    } catch (err) {
+      return;
+    }
+
     shell.openExternal(`http:///localhost:${user.user.port[0]}`);
   };
   return (
@@ -246,6 +298,7 @@ export default function VisualizationFill() {
               Start Jbrowse{" "}
             </Button>
             <Button
+              onClick={handleReset}
               alignItems="center"
               variant="contained"
               variant="outlined"
@@ -267,34 +320,37 @@ export default function VisualizationFill() {
 
       <List subheader={"Genomes"}>
         {result.map((genome, idx) => {
-          console.log(user.user.jbPath, genome.genome);
           const labelId = `checkbox-list-label-${genome}`;
           console.log(idx);
-          if (!fileExist(path.join(user.user.jbPath, genome.genome))) {
-            return (
-              <ListItem
-                key={idx}
-                button
-                onClick={handleToggle(genome.genomePath)}
-              >
-                <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={checked.indexOf(genome.genomePath) !== -1}
-                    tabIndex={-1}
-                    disableRipple
-                    inputProps={{ "aria-labelledby": labelId }}
-                  />
-                </ListItemIcon>
-                <ListItemText id={labelId} primary={`${genome.genome}`} />
-                <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="comments">
-                    <CommentIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            );
-          }
+
+          return (
+            <ListItem
+              key={idx}
+              button
+              disabled={
+                !fileExist(path.join(user.user.jbPath, genome.genome))
+                  ? false
+                  : true
+              }
+              onClick={handleToggle(genome.genomePath)}
+            >
+              <ListItemIcon>
+                <Checkbox
+                  edge="start"
+                  checked={checked.indexOf(genome.genomePath) !== -1}
+                  tabIndex={-1}
+                  disableRipple
+                  inputProps={{ "aria-labelledby": labelId }}
+                />
+              </ListItemIcon>
+              <ListItemText id={labelId} primary={`${genome.genome}`} />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="comments">
+                  <CommentIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          );
         })}
       </List>
       <List subheader={"Bam Files"}>
@@ -310,49 +366,53 @@ export default function VisualizationFill() {
                 );
 
                 const associatedGenome = path.parse(associatedGenomePath).name;
-                if (
-                  fileExist(samplePath) &&
-                  !fileExist(
-                    path.join(
-                      user.user.jbPath,
-                      `${associatedGenome}/${sample.sampleName}.deduplicated.bam`
-                    )
-                  ) &&
-                  fileExist(path.join(user.user.jbPath, associatedGenomePath))
-                ) {
-                  return (
-                    <ListItem
-                      key={row._id}
-                      button
-                      onClick={handleToggleTrack(
-                        samplePath,
-                        associatedGenome,
-                        row._id,
-                        sample.sample
-                      )}
-                    >
-                      <ListItemIcon>
-                        <Checkbox
-                          edge="start"
-                          checked={
-                            checkedTrack.findIndex(
-                              (x) => x.track === samplePath
-                            ) !== -1
-                          }
-                          tabIndex={-1}
-                          disableRipple
-                          inputProps={{ "aria-labelledby": labelId }}
-                        />
-                      </ListItemIcon>
-                      <ListItemText id={labelId} primary={sample.sample} />
-                      <ListItemSecondaryAction>
-                        <IconButton edge="end" aria-label="comments">
-                          <CommentIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  );
-                }
+
+                return (
+                  <ListItem
+                    key={row._id}
+                    button
+                    disabled={
+                      fileExist(samplePath) &&
+                      !fileExist(
+                        path.join(
+                          user.user.jbPath,
+                          `${associatedGenome}/${sample.sampleName}.deduplicated.bam`
+                        )
+                      ) &&
+                      fileExist(
+                        path.join(user.user.jbPath, associatedGenomePath)
+                      )
+                        ? false
+                        : true
+                    }
+                    onClick={handleToggleTrack(
+                      samplePath,
+                      associatedGenome,
+                      row._id,
+                      sample.sample
+                    )}
+                  >
+                    <ListItemIcon>
+                      <Checkbox
+                        edge="start"
+                        checked={
+                          checkedTrack.findIndex(
+                            (x) => x.track === samplePath
+                          ) !== -1
+                        }
+                        tabIndex={-1}
+                        disableRipple
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText id={labelId} primary={sample.sample} />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="comments">
+                        <CommentIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                );
               })}
             </div>
           );

@@ -5,8 +5,8 @@ dbpath=$3
 unixSocket=$4
 
 source $sourceEnv/activate
-$sourceEnv/mongod  --port $port --dbpath $dbpath
-#  --bind_ip $unixSocket --filePermissions 0777
+$sourceEnv/mongod  --port $port --dbpath $dbpath --bind_ip $unixSocket 
+
 
 
 

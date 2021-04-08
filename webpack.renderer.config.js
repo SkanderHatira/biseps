@@ -21,6 +21,14 @@ rules.push({
     },
   ],
 });
+rules.push({
+  test: /\.(png|jp(e*)g|svg|gif)$/,
+  use: [
+    {
+      loader: "file-loader",
+    },
+  ],
+});
 module.exports = {
   // Put your normal webpack config below here
   devServer: {

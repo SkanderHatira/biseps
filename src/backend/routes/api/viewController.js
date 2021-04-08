@@ -1,8 +1,7 @@
 const express = require("express");
 const path = require("path");
 const router = express.Router();
-
-const spawnChild = require("../../snakemake");
+const createJB = require("../../helpers/createJbrowse");
 const spawnJbrowse = require("../../helpers/spawnJbrowse");
 
 // Load input validation
@@ -23,29 +22,11 @@ router.post("/visualize", (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     } else {
-        // const uniqueDir = path.join(req.body.outdir, new Date().toISOString());
-        // const newView = new View({
-        //     outdir: uniqueDir,
-        //     port: req.body.port,
-        //     genomes: req.body.genomes,
-        //     createdBy: req.body.userId,
-        // });
-        // newView
-        //     .save()
-        //     .then((view) => {
-        //         res.json(view);
-        //         User.findByIdAndUpdate(
-        //             view.createdBy,
-        //             { $push: { views: view._id } },
-        //             { safe: true, upsert: true, new: true },
-        //             function (err, model) {
-        //                 console.log(err);
-        //             }
-        //         );
-        //     })
-        //     .catch((err) => console.log(err));
         spawnJbrowse(req.body);
     }
+});
+router.post("/resetJB", (req, res) => {
+    createJB(req.body.jbPath, true);
 });
 router.post("/serve", (req, res) => {
     console.log(req.body);
