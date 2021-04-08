@@ -13,16 +13,22 @@ const mongodLock = path.join(
   "resources/database/data/db/mongod.lock"
 );
 const mongod = require("./backend/spawnMongod.js");
+try {
+  if (fs.existsSync(mongodLock)) {
+    fs.stat(mongodLock, function (err, stats) {
+      console.log(!err);
 
-fs.stat(mongodLock, function (err, stats) {
-  console.log(!err);
-
-  if (stats.size === 0) {
-    mongod();
-  } else {
-    console.log("database already running on /tmp/bisspropmongodb.sock");
+      if (stats.size === 0) {
+        mongod();
+      } else {
+        console.log("database already running on /tmp/bisspropmongodb.sock");
+      }
+    });
   }
-});
+} catch (err) {
+  mongod();
+}
+
 const server = require("../src/backend/spawnServer.js");
 const uid = uuidv4();
 const sock = `/tmp/bissprop${uid}.sock`;
