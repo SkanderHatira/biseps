@@ -86,9 +86,7 @@ const Register = () => {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
-          Register
-        </Typography>
+
         <Typography component="h1" variant="h5">
           Register
         </Typography>

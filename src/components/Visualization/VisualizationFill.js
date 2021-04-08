@@ -18,6 +18,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Link } from "react-router-dom";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 const handler = require("serve-handler");
 
 const electron = window.require("electron");
@@ -345,8 +346,16 @@ export default function VisualizationFill() {
               </ListItemIcon>
               <ListItemText id={labelId} primary={`${genome.genome}`} />
               <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="comments">
-                  <CommentIcon />
+                <IconButton
+                  disabled={
+                    fileExist(path.join(user.user.jbPath, genome.genome))
+                      ? false
+                      : true
+                  }
+                  edge="end"
+                  aria-label="comments"
+                >
+                  <CheckCircleOutlineIcon />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
@@ -407,8 +416,25 @@ export default function VisualizationFill() {
                     </ListItemIcon>
                     <ListItemText id={labelId} primary={sample.sample} />
                     <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="comments">
-                        <CommentIcon />
+                      <IconButton
+                        disabled={
+                          fileExist(samplePath) &&
+                          fileExist(
+                            path.join(
+                              user.user.jbPath,
+                              `${associatedGenome}/${sample.sampleName}.deduplicated.bam`
+                            )
+                          ) &&
+                          fileExist(
+                            path.join(user.user.jbPath, associatedGenomePath)
+                          )
+                            ? false
+                            : true
+                        }
+                        edge="end"
+                        aria-label="comments"
+                      >
+                        <CheckCircleOutlineIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
                   </ListItem>

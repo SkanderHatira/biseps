@@ -24,9 +24,11 @@ try {
         console.log("database already running on /tmp/bisspropmongodb.sock");
       }
     });
+  } else {
+    mongod();
   }
 } catch (err) {
-  mongod();
+  console.log(err);
 }
 
 const server = require("../src/backend/spawnServer.js");

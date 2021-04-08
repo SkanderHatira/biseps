@@ -11,7 +11,7 @@ module.exports = {
       if (err) {
         console.log("Failed to execute chmod", err);
       } else {
-        console.log("Success");
+        console.log("Successful");
       }
     });
   },
@@ -26,7 +26,7 @@ module.exports = {
       if (err) {
         console.log("Failed to execute chmod", err);
       } else {
-        console.log("Success");
+        console.log("Successful");
       }
     });
   },

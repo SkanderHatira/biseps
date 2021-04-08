@@ -21,7 +21,7 @@ export const mainListItems = (
     </ListItem>
     <ListItem component={Link} to="/alignment" button>
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <BarChartIcon />
       </ListItemIcon>
       <ListItemText primary="In Progress" />
     </ListItem>

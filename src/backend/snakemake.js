@@ -1,5 +1,5 @@
 const spawnChild = async (profile) => {
-    const { spawn } = require("child_process");
+    const { execFile } = require("child_process");
     const path = require("path");
     const script = path.join(__dirname, "../resources/snakemake.sh");
     const env = path.join(__dirname, "../resources/snakemake/bin");
@@ -8,14 +8,13 @@ const spawnChild = async (profile) => {
         slient: false,
         detached: true,
     };
-    const child = spawn("bash", [script, env, profile, workflow], options);
+    const child = execFile(script, [env, profile, workflow], options);
 
     let data = "";
     for await (const chunk of child.stdout) {
         console.log("stdout chunk: " + chunk);
         data += chunk;
     }
-    q;
     let error = "";
     for await (const chunk of child.stderr) {
         console.error("stderr chunk: " + chunk);
