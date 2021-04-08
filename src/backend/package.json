@@ -29,8 +29,10 @@
     "ncp": "^2.0.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
+    "portastic": "^1.0.1",
     "react-spinners-css": "^1.2.2",
     "scp": "^0.0.3",
+    "serve": "^11.3.2",
     "validator": "^13.5.2"
   },
   "devDependencies": {

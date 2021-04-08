@@ -12,6 +12,7 @@ const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
 );
+const mongod = require("./backend/spawnMongod.js");
 
 fs.stat(mongodLock, function (err, stats) {
   console.log(!err);
@@ -25,8 +26,6 @@ fs.stat(mongodLock, function (err, stats) {
 const server = require("../src/backend/spawnServer.js");
 const uid = uuidv4();
 const sock = `/tmp/bissprop${uid}.sock`;
-
-const mongod = require("./backend/spawnMongod.js");
 
 setTimeout(function () {
   server(sock);
