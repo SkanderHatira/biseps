@@ -92,6 +92,7 @@ export default function InteractiveList() {
 
     fetchData();
   }, []);
+  console.log(data);
   const fileExist = (path) => {
     try {
       if (fs.existsSync(path)) {
@@ -127,7 +128,7 @@ export default function InteractiveList() {
     <Container maxWidth="lg" className={classes.container} gutterBottom>
       <Grid container direction="column" alignItems="center" gutterBottom>
         <Box m={3}>
-          {/* <Button
+          <Button
             alignItems="center"
             variant="contained"
             variant="outlined"
@@ -136,7 +137,7 @@ export default function InteractiveList() {
             to="/newcomparison"
           >
             New Comparison
-          </Button> */}
+          </Button>
         </Box>
       </Grid>
       {/* <Iframe
@@ -149,12 +150,12 @@ export default function InteractiveList() {
         styles={{ height: "100%", border: "none" }}
       /> */}
 
-      <iframe
+      {/* <iframe
         src="http://127.0.0.1:8080/"
         style={{ border: "none", display: "true" }}
         width="100%"
         height="1000"
-      ></iframe>
+      ></iframe> */}
       {/* <FormGroup row>
         <FormControlLabel
           control={

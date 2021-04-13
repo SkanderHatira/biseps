@@ -253,7 +253,7 @@ export default function GlobalConfig() {
                 name="cluster"
               />
             }
-            label="Toggle this option to execute a minimal run"
+            label="Toggle this option to execute in SLURM Cluster mode"
           ></FormControlLabel>
           <Grid item xs={12} sm={6}>
             <FormControl className={classes.formControl}>

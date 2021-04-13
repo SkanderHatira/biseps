@@ -106,9 +106,11 @@ export default function RunForm() {
       const sampleName = `${o.sample}`;
       const sample = `${o.sample} TechRep ${o.techrep} BioRep ${o.biorep}`;
       const samplePath = `${o.sample}-TechRep_${o.techrep}-BioRep_${o.biorep}`;
+      const merged = `${o.sample} TechRep ${o.techrep}`;
+      const mergedPath = `${o.sample}-TechRep_${o.techrep}`;
       if (!helper[key]) {
         helper[key] = Object.assign(
-          { sampleName, sample, samplePath },
+          { sampleName, sample, samplePath, merged, mergedPath },
           blankSample
         ); // create a copy of o
         r.push(helper[key]);
@@ -165,6 +167,10 @@ export default function RunForm() {
     req.write(JSON.stringify(request));
     req.end();
   };
+  const handleReset = () => {
+    setRunState(initialRun);
+    setUnits([]);
+  };
   return (
     <React.Fragment>
       <CssBaseline />
@@ -212,6 +218,14 @@ export default function RunForm() {
                     {activeStep === steps.length - 1
                       ? "Launch analysis"
                       : "Next"}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleReset}
+                    className={classes.button}
+                  >
+                    reset
                   </Button>
                 </div>
               </React.Fragment>

@@ -144,6 +144,8 @@ const RunSchema = new Schema({
         {
             sampleName: { type: String, required: false },
             sample: { type: String, required: false },
+            merged: { type: String, required: false },
+            mergedPath: { type: String, required: false },
             samplePath: { type: String, required: false },
         },
     ],

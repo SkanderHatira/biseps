@@ -1,6 +1,6 @@
 import React from "react";
 import DashLayout from "../Tableau/DashLayout";
-import ComparisonTable from "../Table/ComparisonTable";
+import ComparisonTable from "./ComparisonTable";
 
 const Comparison = () => {
   return <DashLayout Filling={ComparisonTable} />;

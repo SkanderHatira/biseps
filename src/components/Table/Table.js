@@ -90,7 +90,12 @@ import KeyboardVoiceIcon from "@material-ui/icons/KeyboardVoice";
 import Icon from "@material-ui/core/Icon";
 import SaveIcon from "@material-ui/icons/Save";
 import { useAuth } from "../../hooks/useAuth";
-
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import ActionRowing from "material-ui/svg-icons/action/rowing";
 const fs = require("fs");
 const portastic = require("portastic");
@@ -129,6 +134,15 @@ export default function InteractiveList() {
   const [secondary, setSecondary] = useState(false);
   const [data, setData] = useState([]);
   const { user } = useAuth();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const handleRerun = (path) => {
     const request = {
       path: path,
@@ -265,7 +279,6 @@ export default function InteractiveList() {
       width: 1080,
     });
     console.log("here");
-    shell.showItemInFolder(path);
 
     win.loadURL(`file://${path}`);
   };
@@ -333,13 +346,51 @@ export default function InteractiveList() {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => handleDelete(row._id, user, row.outdir)}
+                  onClick={handleClickOpen}
                   className={classes.button}
                   startIcon={<DeleteIcon />}
                 >
                   Delete
                 </Button>
                 {/* This Button uses a Font Icon, see the installation instructions in the Icon component docs. */}
+                <Dialog
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="form-dialog-title"
+                >
+                  <DialogTitle id="form-dialog-title">
+                    Confirm Delete
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      This action will definitively delete all Run information
+                      as well as corresponding files, please Confirm by writing
+                      DELETE in all caps.
+                    </DialogContentText>
+                    <TextField
+                      autoFocus
+                      margin="dense"
+                      id="confirmation"
+                      label="write DELETE"
+                      type="text"
+                      fullWidth
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        handleDelete(row._id, user, row.outdir);
+                        handleClose();
+                      }}
+                      color="primary"
+                    >
+                      Delete
+                    </Button>
+                  </DialogActions>
+                </Dialog>
                 <Button
                   variant="contained"
                   color="primary"

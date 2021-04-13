@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -25,6 +25,7 @@ import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
 import uuid from "react-uuid";
 import { useConfig } from "../../hooks/useConfig";
+const http = require("http");
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -54,31 +55,17 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: "sample",
+    id: "control",
     numeric: false,
     disablePadding: false,
-    label: "Sample",
+    label: "Control",
   },
   {
-    id: "lane",
-    numeric: true,
+    id: "treatment",
+    numeric: false,
     disablePadding: false,
-    label: "Lane",
+    label: "Treatment",
   },
-  {
-    id: "techrep",
-    numeric: true,
-    disablePadding: false,
-    label: "Technical Replicate",
-  },
-  {
-    id: "biorep",
-    numeric: true,
-    disablePadding: false,
-    label: "Biological Replicate",
-  },
-  { id: "fq1", numeric: false, disablePadding: false, label: "Forward" },
-  { id: "fq2", numeric: false, disablePadding: false, label: "Reverse" },
 ];
 
 function EnhancedTableHead(props) {
@@ -103,7 +90,7 @@ function EnhancedTableHead(props) {
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputProps={{ "aria-label": "select all units" }}
+            inputProps={{ "aria-label": "select all comparisons" }}
           /> */}
         </TableCell>
         {headCells.map((headCell) => (
@@ -188,7 +175,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Experimental Design{" "}
+          Control and Treatment Pairs{" "}
         </Typography>
       )}
 
@@ -206,7 +193,7 @@ const EnhancedTableToolbar = (props) => {
         </Tooltip>
       )}
       <Tooltip title="Add Unit">
-        <IconButton onClick={addUnit} aria-label="add unit">
+        <IconButton onClick={addUnit} aria-label="add comparison">
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -245,29 +232,78 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NewTable() {
   const classes = useStyles();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { units, setUnits } = useConfig();
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("calories");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { comparisons, setComparisons } = useConfig();
+  const [data, setData] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.jwtToken;
+      const Sock = await sessionStorage.Sock;
+      const options = {
+        method: "GET",
+        path: "http://localhost/api/runs",
+        socketPath: Sock,
+        port: null,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      };
+      const req = http.get(options, function (res) {
+        console.log("STATUS: " + res.statusCode);
+        console.log("HEADERS: " + JSON.stringify(res.headers));
+        // Buffer the body entirely for processing as a whole.
+        const bodyChunks = [];
+        res
+          .on("data", function (chunk) {
+            // You can process streamed parts here...
+            bodyChunks.push(chunk);
+          })
+          .on("end", function () {
+            const body = Buffer.concat(bodyChunks);
+            const jsbody = JSON.parse(body);
+            setData(jsbody);
+          });
+      });
+      req.on("error", function (e) {
+        console.log("ERROR: " + e.message);
+      });
+    };
+
+    fetchData();
+  }, []);
+  console.log(data);
+  const blankSample = {};
+  const helper = {};
+
+  const availableRds = data.reduce(function (r, o) {
+    console.log(r);
+    const key = o.mergedPath;
+    const mergedPath = o.mergedPath;
+    if (!helper[key]) {
+      helper[key] = Object.assign({ mergedPath }, blankSample); // create a copy of o
+      r.push(helper[key]);
+    }
+    return r;
+  }, []);
+  console.log(availableRds);
   const blankUnit = {
     id: uuid(),
-    sample: "",
-    lane: 1,
-    techrep: 1,
-    biorep: 1,
-    fq1: "",
-    fq2: "",
+    control: "",
+    treatment: "",
   };
   const addUnit = () => {
-    setUnits([...units, { ...blankUnit }]);
+    setComparisons([...comparisons, { ...blankUnit }]);
   };
 
   const removeUnit = () => {
-    const updatedUnits = [...units];
+    const updatedUnits = [...comparisons];
     const updatedSelection = [...selected];
     console.log(updatedSelection);
     selected.map((item) => {
@@ -276,22 +312,22 @@ export default function NewTable() {
         return value !== item;
       });
       updatedSelection.splice(item, 1);
-      setUnits(updatedUnits);
+      setComparisons(updatedUnits);
       setSelected(filtered);
     });
-    console.log(units);
+    console.log(comparisons);
   };
   const handleUnitChange = (e) => {
-    const updatedUnits = [...units];
+    const updatedUnits = [...comparisons];
     console.log(e.target.dataset.idx);
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.value;
-    setUnits(updatedUnits);
+    setComparisons(updatedUnits);
   };
   const handleUnitFiles = (e) => {
-    const updatedUnits = [...units];
+    const updatedUnits = [...comparisons];
     console.log(e.target.dataset.idx);
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.files[0].path;
-    setUnits(updatedUnits);
+    setComparisons(updatedUnits);
   };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -301,7 +337,7 @@ export default function NewTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = units.map((n) => n.id);
+      const newSelecteds = comparisons.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -343,7 +379,8 @@ export default function NewTable() {
 
   const isSelected = (index) => selected.indexOf(index) !== -1;
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, units.length - page * rowsPerPage);
+    rowsPerPage -
+    Math.min(rowsPerPage, comparisons.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -367,12 +404,12 @@ export default function NewTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={units.length}
+              rowCount={comparisons.length}
             />
             <TableBody>
-              {units
+              {comparisons
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((unit, index) => {
+                .map((comparison, index) => {
                   const isItemSelected = isSelected(index);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -397,87 +434,27 @@ export default function NewTable() {
                         {" "}
                         <InputBase
                           inputProps={{ "data-idx": index }}
-                          label={`sample ${index}`}
+                          label={`control ${index}`}
                           type="text"
-                          placeholder="Sample Name"
-                          value={unit.sample}
+                          placeholder="Choose Control"
+                          value={comparison.control}
                           required
                           onChange={handleUnitChange}
-                          id="sample"
+                          id="control"
                           type="text"
                         ></InputBase>
                       </TableCell>
                       <TableCell align="right">
                         {" "}
                         <InputBase
-                          placeholder="Lane"
+                          placeholder="Choose Treatment"
                           required
-                          value={unit.lane}
+                          value={comparison.treatment}
                           onChange={handleUnitChange}
                           inputProps={{ "data-idx": index, min: "1" }}
-                          id="lane"
-                          type="number"
+                          id="treatment"
+                          type="text"
                         ></InputBase>
-                      </TableCell>
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
-                          onChange={handleUnitChange}
-                          placeholder="Technical Replicate"
-                          value={unit.techrep}
-                          inputProps={{ "data-idx": index, min: "1" }}
-                          id="techrep"
-                          type="number"
-                        ></InputBase>
-                      </TableCell>
-
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
-                          onChange={handleUnitChange}
-                          placeholder="Biological Replicate"
-                          value={unit.biorep}
-                          required
-                          inputProps={{ "data-idx": index, min: "1" }}
-                          id="biorep"
-                          type="number"
-                        ></InputBase>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Button
-                          variant="contained"
-                          component="label"
-                          color={unit.fq1 === "" ? "default" : "primary"}
-                        >
-                          {unit.fq1 === "" ? "Forward" : "Added"}
-                          <input
-                            data-idx={index}
-                            type="file"
-                            onChange={handleUnitFiles}
-                            id="fq1"
-                            name="fq1"
-                            accept=".fastq , .fq , .fastq.gz , .fq.gz"
-                            hidden
-                          />
-                        </Button>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Button
-                          variant="contained"
-                          component="label"
-                          color={unit.fq2 === "" ? "default" : "primary"}
-                        >
-                          {unit.fq2 === "" ? "Reverse" : "Added"}
-                          <input
-                            data-idx={index}
-                            type="file"
-                            onChange={handleUnitFiles}
-                            id="fq2"
-                            name="fq2"
-                            accept=".fastq , .fq , .fastq.gz , .fq.gz"
-                            hidden
-                          />
-                        </Button>
                       </TableCell>
                     </TableRow>
                   );
@@ -493,7 +470,7 @@ export default function NewTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={units.length}
+          count={comparisons.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}

@@ -29,6 +29,7 @@ const useProvideConfig = () => {
 
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);
+  const [comparisons, setComparisons] = useState([]);
 
   return {
     runState,
@@ -36,5 +37,7 @@ const useProvideConfig = () => {
     units,
     setUnits,
     initialRun,
+    comparisons,
+    setComparisons,
   };
 };
