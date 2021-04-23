@@ -2,6 +2,19 @@
 # yarn lockfile v1
 
 
+"@gmod/jbrowse-cli@^0.0.1-beta.23":
+  version "0.0.1-beta.23"
+  resolved "https://registry.yarnpkg.com/@gmod/jbrowse-cli/-/jbrowse-cli-0.0.1-beta.23.tgz#4a7b96a2bbcd7074a4c27b5f898eb739c4619bb1"
+  integrity sha512-t6MxCCLbbpfJdP4L/CKYdzB/nnfSWDa4sLLX3sXN8/iukrGsX2V+Jxvv71QWqE82FVYY0XGDu3d/QZiI5yaYSg==
+  dependencies:
+    "@oclif/command" "^1"
+    "@oclif/config" "^1"
+    "@oclif/plugin-help" "^3"
+    node-fetch "^2.6.0"
+    pako "^1.0.11"
+    tslib "^1"
+    unzipper "^0.10.11"
+
 "@jbrowse/cli@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@jbrowse/cli/-/cli-1.1.0.tgz#8873dd367ba6bf7423a32afa643f10e763452a32"

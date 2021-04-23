@@ -367,29 +367,35 @@ export default function VisualizationFill() {
           const labelId = `checkbox-list-label-${row}`;
           return (
             <div>
-              {row.samples.map((sample) => {
-                const samplePath = `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`;
+              {row.samples.map((sample, idx) => {
+                const samplePath = `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam`;
                 const associatedGenomePath = row.genome.replace(
                   /^.*[\\\/]/,
                   ""
                 );
-
+                console.log(sample);
                 const associatedGenome = path.parse(associatedGenomePath).name;
-
+                console.log(
+                  path.join(
+                    user.user.jbPath,
+                    `${associatedGenomePath}/${sample.samplePath}.deduplicated.bam`
+                  )
+                );
+                console.log(associatedGenomePath);
                 return (
                   <ListItem
-                    key={row._id}
+                    key={`${sample._id}-${idx}`}
                     button
                     disabled={
                       fileExist(samplePath) &&
                       !fileExist(
                         path.join(
                           user.user.jbPath,
-                          `${associatedGenome}/${sample.sampleName}.deduplicated.bam`
+                          `${associatedGenome}/${sample.samplePath}.deduplicated.bam`
                         )
                       ) &&
                       fileExist(
-                        path.join(user.user.jbPath, associatedGenomePath)
+                        path.join(user.user.jbPath, `${associatedGenomePath}`)
                       )
                         ? false
                         : true
@@ -397,7 +403,7 @@ export default function VisualizationFill() {
                     onClick={handleToggleTrack(
                       samplePath,
                       associatedGenome,
-                      row._id,
+                      `${sample._id}`,
                       sample.sample
                     )}
                   >
@@ -422,11 +428,11 @@ export default function VisualizationFill() {
                           fileExist(
                             path.join(
                               user.user.jbPath,
-                              `${associatedGenome}/${sample.sampleName}.deduplicated.bam`
+                              `${associatedGenome}/${sample.samplePath}.deduplicated.bam`
                             )
                           ) &&
                           fileExist(
-                            path.join(user.user.jbPath, associatedGenomePath)
+                            path.join(user.user.jbPath, associatedGenome)
                           )
                             ? false
                             : true

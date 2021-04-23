@@ -8,6 +8,11 @@ const {
 } = require("electron");
 const path = require("path");
 const fs = require("fs");
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
+const isDev = require("electron-is-dev");
+const { exec } = require("child_process");
 const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
@@ -34,22 +39,6 @@ try {
 const server = require("../src/backend/spawnServer.js");
 const uid = uuidv4();
 const sock = `/tmp/bissprop${uid}.sock`;
-
-setTimeout(function () {
-  server(sock);
-}, 4000);
-// const sock = "/tmp/bissprop.sock";
-
-global.sharedObj = { prop1: sock };
-
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
-const isDev = require("electron-is-dev");
-const { exec } = require("child_process");
-try {
-  require("electron-reloader")(module);
-} catch (_) {}
 exec(
   "bash " + path.join(__dirname, "resources/checkConda.sh") + " " + __dirname,
   (error, stdout, stderr) => {
@@ -64,6 +53,17 @@ exec(
     console.log(`stdout: ${stdout}`);
   }
 );
+setTimeout(function () {
+  server(sock);
+}, 4000);
+// const sock = "/tmp/bissprop.sock";
+
+global.sharedObj = { prop1: sock };
+
+try {
+  require("electron-reloader")(module);
+} catch (_) {}
+
 async function createJB(port) {
   // Create the browser window.
   // const newWindow = new BrowserWindow({

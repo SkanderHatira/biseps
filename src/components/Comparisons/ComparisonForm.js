@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { lighten, makeStyles } from "@material-ui/core/styles";
+import { lighten, makeStyles, useTheme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -25,6 +25,18 @@ import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
 import uuid from "react-uuid";
 import { useConfig } from "../../hooks/useConfig";
+import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import CommentIcon from "@material-ui/icons/Comment";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import Chip from "@material-ui/core/Chip";
+const path = require("path");
 const http = require("http");
 
 function descendingComparator(a, b, orderBy) {
@@ -36,22 +48,16 @@ function descendingComparator(a, b, orderBy) {
   }
   return 0;
 }
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const headCells = [
   {
@@ -207,6 +213,21 @@ EnhancedTableToolbar.propTypes = {
 };
 
 const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 500,
+    maxWidth: 600,
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  chip: {
+    margin: 2,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
   root: {
     width: "100%",
   },
@@ -230,7 +251,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NewTable() {
+export default function ComparisonForm() {
   const classes = useStyles();
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("calories");
@@ -240,7 +261,23 @@ export default function NewTable() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { comparisons, setComparisons } = useConfig();
   const [data, setData] = useState([]);
-
+  const theme = useTheme();
+  const [controlList, setControlList] = useState([]);
+  const [treatmentList, setTreatmentList] = useState([]);
+  const handleChangeTreatment = (event) => {
+    setTreatmentList(event.target.value);
+  };
+  const handleChangeControl = (event) => {
+    setControlList(event.target.value);
+  };
+  const handleUnitChange = (e, index) => {
+    const updatedUnits = [...comparisons];
+    console.log(e);
+    console.log(updatedUnits);
+    console.log(e.target.value);
+    updatedUnits[index][e.target.name] = e.target.value;
+    setComparisons(updatedUnits);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.jwtToken;
@@ -278,26 +315,49 @@ export default function NewTable() {
 
     fetchData();
   }, []);
-  console.log(data);
-  const blankSample = {};
-  const helper = {};
+  let result = [];
+  data.map((row) => {
+    row.samples.map((sample) => {
+      result.push(
+        `${row.outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`
+      );
+    });
+  });
+  // const blankSample = {};
+  // const helper = {};
+  // const result = data.reduce(function (r, o) {
+  //   console.log(r);
+  //   const key = o.genome;
+  //   const genome = path.basename(o.genome);
+  //   const genomePath = o.genome;
+  //   if (!helper[key]) {
+  //     helper[key] = Object.assign({ genome, genomePath }, blankSample); // create a copy of o
+  //     r.push(helper[key]);
+  //   }
+  //   return r;
+  // }, []);
 
-  const availableRds = data.reduce(function (r, o) {
-    console.log(r);
-    const key = o.mergedPath;
-    const mergedPath = o.mergedPath;
-    if (!helper[key]) {
-      helper[key] = Object.assign({ mergedPath }, blankSample); // create a copy of o
-      r.push(helper[key]);
-    }
-    return r;
-  }, []);
-  console.log(availableRds);
+  // console.log(result);
   const blankUnit = {
     id: uuid(),
-    control: "",
-    treatment: "",
+    control: [],
+    treatment: [],
   };
+  const [checked, setChecked] = useState([0]);
+
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
+
   const addUnit = () => {
     setComparisons([...comparisons, { ...blankUnit }]);
   };
@@ -317,12 +377,7 @@ export default function NewTable() {
     });
     console.log(comparisons);
   };
-  const handleUnitChange = (e) => {
-    const updatedUnits = [...comparisons];
-    console.log(e.target.dataset.idx);
-    updatedUnits[e.target.dataset.idx][e.target.id] = e.target.value;
-    setComparisons(updatedUnits);
-  };
+
   const handleUnitFiles = (e) => {
     const updatedUnits = [...comparisons];
     console.log(e.target.dataset.idx);
@@ -412,7 +467,7 @@ export default function NewTable() {
                 .map((comparison, index) => {
                   const isItemSelected = isSelected(index);
                   const labelId = `enhanced-table-checkbox-${index}`;
-
+                  console.log(index);
                   return (
                     <TableRow
                       hover
@@ -429,10 +484,53 @@ export default function NewTable() {
                           inputProps={{ "aria-labelledby": labelId }}
                         />
                       </TableCell>
-
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
+                      <TableCell>
+                        <FormControl className={classes.formControl}>
+                          <InputLabel id="demo-mutiple-checkbox-label">
+                            Control
+                          </InputLabel>
+                          <Select
+                            inputProps={{ "data-idx": index }}
+                            labelId="demo-mutiple-checkbox-label"
+                            name="control"
+                            multiple
+                            value={comparison.control}
+                            onClick={(event) => handleUnitChange(event, index)}
+                            input={<Input />}
+                            renderValue={(selected) => selected.join(", ")}
+                            MenuProps={MenuProps}
+                          >
+                            {result.map((res) => (
+                              <MenuItem key={res} value={res}>
+                                <Checkbox
+                                  checked={controlList.indexOf(res) > -1}
+                                />
+                                <ListItemText primary={path.parse(res).name} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        {/* <TextField
+                          classes={{ root: classes.root }}
+                          select
+                          name="userRoles"
+                          id="userRoles"
+                          variant="outlined"
+                          label="Control Biological Replicate(s)"
+                          SelectProps={{
+                            multiple: true,
+                            value: result,
+                          }}
+                        >
+                          {result.map((res) => {
+                            return (
+                              <MenuItem value={`${res}`}>
+                                {path.parse(res).name}
+                              </MenuItem>
+                            );
+                          })}
+                        </TextField> */}
+                        {/* <InputBase
                           inputProps={{ "data-idx": index }}
                           label={`control ${index}`}
                           type="text"
@@ -442,19 +540,44 @@ export default function NewTable() {
                           onChange={handleUnitChange}
                           id="control"
                           type="text"
-                        ></InputBase>
+                        ></InputBase> */}
                       </TableCell>
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
+                      <TableCell>
+                        <FormControl className={classes.formControl}>
+                          <InputLabel id="demo-mutiple-checkbox-label">
+                            Treatment
+                          </InputLabel>
+                          <Select
+                            inputProps={{ "data-idx": index }}
+                            labelId="demo-mutiple-checkbox-label"
+                            name="treatment"
+                            multiple
+                            value={comparison.treatment}
+                            onClick={(event) => handleUnitChange(event, index)}
+                            input={<Input />}
+                            renderValue={(selected) => selected.join(", ")}
+                            MenuProps={MenuProps}
+                          >
+                            {result.map((name) => (
+                              <MenuItem key={name} value={name}>
+                                <Checkbox
+                                  checked={treatmentList.indexOf(name) > -1}
+                                />
+                                <ListItemText primary={path.parse(name).name} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        {/* <InputBase
                           placeholder="Choose Treatment"
                           required
+                          name="treatment"
                           value={comparison.treatment}
                           onChange={handleUnitChange}
                           inputProps={{ "data-idx": index, min: "1" }}
                           id="treatment"
                           type="text"
-                        ></InputBase>
+                        ></InputBase> */}
                       </TableCell>
                     </TableRow>
                   );
