@@ -4,13 +4,14 @@ const spawnChild = (body) => {
     const http = require("http");
     const path = require("path");
     console.log("hereeeeee");
-    const jbrowse = require("@jbrowse/cli");
+    const jbrowse = "../node_modules/.bin/jbrowse";
     const script = path.join(__dirname, "../../resources/jbrowse.sh");
     const workflow = path.join(__dirname, "../../resources/jbrowse2");
-    const bams = "";
+    const bams = path.join(__dirname, "../node_modules/.bin/jbrowse");
     const options = {
         slient: false,
         detached: false,
+        cwd: __dirname,
     };
 
     // const child = execFileSync(
@@ -20,25 +21,35 @@ const spawnChild = (body) => {
     // );
     body.genomes.map(async (genome) => {
         console.log(path.extname(genome));
-        // const child = fork(
-        //     jbrowse,
-        //     ["add-assembly", genome, "--load", "copy", "--out", body.jbPath],
-        //     options
-        // );
-        exec(
-            `jbrowse add-assembly ${genome} --load copy --out ${body.jbPath}`,
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.log("bigerror");
+        console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
 
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-                console.log("success");
-            }
+        const child = spawn(
+            path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+            ["add-assembly", genome, "--load", "copy", "--out", body.jbPath],
+            options
         );
+        // child = fork(path.join(__dirname, "./node_modules/.bin/jbrowse"), [
+        //     "add-assembly",
+        //     genome,
+        //     "--load",
+        //     "copy",
+        //     "--out",
+        //     body.jbPath,
+        // ]);
+        // exec(
+        //     `jbrowse add-assembly ${genome} --load copy --out ${body.jbPath}`,
+        //     (error, stdout, stderr) => {
+        //         if (error) {
+        //             console.log("bigerror");
+
+        //             console.error(`exec error: ${error}`);
+        //             return;
+        //         }
+        //         console.log(`stdout: ${stdout}`);
+        //         console.error(`stderr: ${stderr}`);
+        //         console.log("success");
+        //     }
+        // );
 
         // const arrAss = [];
         // console.log("before", arrAss);
@@ -49,25 +60,25 @@ const spawnChild = (body) => {
         // console.log(assemblies);
         // --assemblyNames \'${assemblies}\' in exec command
         // no need for npx , node modules available in exec commands directly
-        // let data = "";
-        // for await (const chunk of child.stdout) {
-        //     console.log("stdout chunk: " + chunk);
-        //     data += chunk;
-        // }
+        let data = "";
+        for await (const chunk of child.stdout) {
+            console.log("stdout chunk: " + chunk);
+            data += chunk;
+        }
 
-        // let error = "";
-        // for await (const chunk of child.stderr) {
-        //     console.error("stderr chunk: " + chunk);
-        //     error += chunk;
-        // }
-        // const exitCode = await new Promise((resolve, reject) => {
-        //     child.on("close", resolve);
-        // });
+        let error = "";
+        for await (const chunk of child.stderr) {
+            console.error("stderr chunk: " + chunk);
+            error += chunk;
+        }
+        const exitCode = await new Promise((resolve, reject) => {
+            child.on("close", resolve);
+        });
 
-        // if (exitCode) {
-        //     throw new Error(`subprocess error exit ${exitCode}, ${error}`);
-        // }
-        // return data;
+        if (exitCode) {
+            throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+        }
+        return data;
     });
     body.tracks.map((track) => {
         exec(
