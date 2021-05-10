@@ -3,15 +3,17 @@ const Schema = mongoose.Schema;
 
 const SampleSchema = Schema({
     _id: {
-        type: Number, ref: 'Run'
+        type: Number,
+        ref: "Run",
     },
-    sample : {
+    sample: {
         type: String,
     },
-    config : {
-        type : Schema.Types.ObjectId, ref: 'Unit'
-    }
-  });
+    config: {
+        type: Schema.Types.ObjectId,
+        ref: "Unit",
+    },
+});
 
 // eslint-disable-next-line no-undef
-module.exports = Sample = mongoose.model('samples',SampleSchema)
+module.exports = Sample = mongoose.model("samples", SampleSchema);

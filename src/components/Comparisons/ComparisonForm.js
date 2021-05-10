@@ -61,6 +61,12 @@ const MenuProps = {
 
 const headCells = [
   {
+    id: "name",
+    numeric: false,
+    disablePadding: false,
+    label: "Comparison Label",
+  },
+  {
     id: "control",
     numeric: false,
     disablePadding: false,
@@ -262,19 +268,18 @@ export default function ComparisonForm() {
   const { comparisons, setComparisons } = useConfig();
   const [data, setData] = useState([]);
   const theme = useTheme();
-  const [controlList, setControlList] = useState([]);
-  const [treatmentList, setTreatmentList] = useState([]);
-  const handleChangeTreatment = (event) => {
-    setTreatmentList(event.target.value);
-  };
-  const handleChangeControl = (event) => {
-    setControlList(event.target.value);
+  const handleLabelChange = (e) => {
+    const updatedUnits = [...comparisons];
+    console.log(e.target.dataset.idx);
+    updatedUnits[e.target.dataset.idx][e.target.id] = e.target.value;
+    setComparisons(updatedUnits);
   };
   const handleUnitChange = (e, index) => {
     const updatedUnits = [...comparisons];
     console.log(e);
     console.log(updatedUnits);
     console.log(e.target.value);
+    console.log(comparisons);
     updatedUnits[index][e.target.name] = e.target.value;
     setComparisons(updatedUnits);
   };
@@ -340,6 +345,7 @@ export default function ComparisonForm() {
   // console.log(result);
   const blankUnit = {
     id: uuid(),
+    name: "",
     control: [],
     treatment: [],
   };
@@ -486,6 +492,22 @@ export default function ComparisonForm() {
                       </TableCell>
                       <TableCell>
                         <FormControl className={classes.formControl}>
+                          <TableCell padding="checkbox">
+                            <Input
+                              onChange={handleLabelChange}
+                              value={comparison.name}
+                              placeholder="Label"
+                              required
+                              inputProps={{ "data-idx": index }}
+                              id="name"
+                              type="text"
+                            ></Input>
+                          </TableCell>
+                        </FormControl>
+                      </TableCell>
+
+                      <TableCell>
+                        <FormControl className={classes.formControl}>
                           <InputLabel id="demo-mutiple-checkbox-label">
                             Control
                           </InputLabel>
@@ -503,7 +525,7 @@ export default function ComparisonForm() {
                             {result.map((res) => (
                               <MenuItem key={res} value={res}>
                                 <Checkbox
-                                  checked={controlList.indexOf(res) > -1}
+                                  checked={comparison.control.indexOf(res) > -1}
                                 />
                                 <ListItemText primary={path.parse(res).name} />
                               </MenuItem>
@@ -561,7 +583,9 @@ export default function ComparisonForm() {
                             {result.map((name) => (
                               <MenuItem key={name} value={name}>
                                 <Checkbox
-                                  checked={treatmentList.indexOf(name) > -1}
+                                  checked={
+                                    comparison.treatment.indexOf(name) > -1
+                                  }
                                 />
                                 <ListItemText primary={path.parse(name).name} />
                               </MenuItem>

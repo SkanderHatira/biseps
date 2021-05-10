@@ -119,11 +119,13 @@ export default function RunForm() {
     }, []);
 
     console.log(result);
+    console.log(user.user.email);
     const request = {
       ...runState,
       samples: result,
       units,
       userId: user.user.id,
+      email: user.user.email,
     };
     const token = localStorage.jwtToken;
 

@@ -255,44 +255,41 @@ export default function GlobalConfig() {
             }
             label="Toggle this option to execute in SLURM Cluster mode"
           ></FormControlLabel>
-          <Grid item xs={12} sm={6}>
+        </Grid>
+        {runState.cluster === "true" ? (
+          <Grid item xs={12} xm={6}>
             <FormControl className={classes.formControl}>
               <InputLabel>CPUs</InputLabel>
               <Select
-                defaultValue="All"
+                defaultValue="1"
                 labelId="cpu"
                 id="cpu"
                 name="cpu"
                 onChange={handleRunState}
               >
-                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="1">1</MenuItem>
                 <MenuItem value="2">2</MenuItem>
                 <MenuItem value="4">4</MenuItem>
                 <MenuItem value="6">6</MenuItem>
                 <MenuItem value="8">8</MenuItem>
               </Select>
               <FormHelperText>
-                Specify CPUs available. Default: All
+                Specify CPUs available. Default: 1
               </FormHelperText>
             </FormControl>
-          </Grid>
-        </Grid>
-        {runState.cluster === "true" ? (
-          <Grid item xs={12} sm={6}>
             <FormControl className={classes.formControl}>
               <InputLabel>Memory</InputLabel>
               <Select
-                defaultValue="All"
+                defaultValue="10G"
                 labelId="memMb"
                 id="memMb"
                 name="memMb"
                 onChange={handleRunState}
               >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
+                <MenuItem value="10G">10G</MenuItem>
+                <MenuItem value="50G">50G</MenuItem>
+                <MenuItem value="150G">150G</MenuItem>
+                <MenuItem value="300G">300G</MenuItem>
               </Select>
               <FormHelperText>
                 Specify Memory available. Default: All
@@ -314,32 +311,13 @@ export default function GlobalConfig() {
                 <MenuItem value="25">25</MenuItem>
               </Select>
               <FormHelperText>
-                Specify Jobs available. Default: All
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Jobs</InputLabel>
-              <Select
-                defaultValue="5"
-                labelId="Jobs"
-                id="Jobs"
-                name="Jobs"
-                onChange={handleRunState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="15">15</MenuItem>
-                <MenuItem value="25">25</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Jobs available. Default: All
+                Specify Maximum number of Parallel Jobs. Default: 5
               </FormHelperText>
             </FormControl>
             <FormControl className={classes.formControl}>
               <InputLabel>MaxTime</InputLabel>
               <Select
-                defaultValue="5"
+                defaultValue="1440"
                 labelId="minTime"
                 id="minTime"
                 name="minTime"
@@ -350,12 +328,32 @@ export default function GlobalConfig() {
                 <MenuItem value="2880">2880</MenuItem>
               </Select>
               <FormHelperText>
-                Specify MaxTime available. Default: 1 day
+                Specify Maximum Time before a job is terminated. Default: 1 day
               </FormHelperText>
             </FormControl>
           </Grid>
         ) : (
-          ""
+          <Grid item xs={12} sm={6}>
+            <FormControl className={classes.formControl}>
+              <InputLabel>CPUs</InputLabel>
+              <Select
+                defaultValue="All"
+                labelId="cpu"
+                id="cpu"
+                name="cpu"
+                onChange={handleRunState}
+              >
+                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="2">2</MenuItem>
+                <MenuItem value="4">4</MenuItem>
+                <MenuItem value="6">6</MenuItem>
+                <MenuItem value="8">8</MenuItem>
+              </Select>
+              <FormHelperText>
+                Specify CPUs available. Default: All
+              </FormHelperText>
+            </FormControl>
+          </Grid>
         )}
       </Grid>
     </React.Fragment>

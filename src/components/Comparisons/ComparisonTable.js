@@ -24,7 +24,6 @@ import Iframe from "react-iframe";
 
 const fs = require("fs");
 const portastic = require("portastic");
-
 const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow } = remote;
@@ -43,13 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    })
-  );
-}
 export default function InteractiveList() {
   const classes = useStyles();
   const [dense, setDense] = useState(false);
@@ -140,42 +132,6 @@ export default function InteractiveList() {
           </Button>
         </Box>
       </Grid>
-      {/* <Iframe
-        url="http://127.0.0.1:8080/"
-        position="absolute"
-        width="70%"
-        id="myId"
-        className="myClassname"
-        height="100%"
-        styles={{ height: "100%", border: "none" }}
-      /> */}
-
-      {/* <iframe
-        src="http://127.0.0.1:8080/"
-        style={{ border: "none", display: "true" }}
-        width="100%"
-        height="1000"
-      ></iframe> */}
-      {/* <FormGroup row>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={dense}
-              onChange={(event) => setDense(event.target.checked)}
-            />
-          }
-          label="Enable dense"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={secondary}
-              onChange={(event) => setSecondary(event.target.checked)}
-            />
-          }
-          label="Enable secondary text"
-        />
-      </FormGroup> */}
 
       <Grid container spacing={2}>
         {data.length > 0 ? (

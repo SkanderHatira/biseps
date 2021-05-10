@@ -28,6 +28,7 @@ router.post("/run", (req, res) => {
     } else {
         const uniqueDir = path.join(req.body.outdir, new Date().toISOString());
         const profile = path.join(uniqueDir, "config/profile");
+
         const newRun = new Run({
             outdir: uniqueDir,
             profile: profile,
@@ -59,7 +60,7 @@ router.post("/run", (req, res) => {
         createProfile(req.body, uniqueDir);
         createConfig(req.body, uniqueDir);
         createUnits(req.body, uniqueDir);
-        spawnChild(profile);
+        spawnChild(req.body, profile);
     }
 });
 router.delete("/:id", function (req, res) {

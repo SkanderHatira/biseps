@@ -72,7 +72,15 @@ const useStyles = makeStyles((theme) => ({
 const steps = ["Global configuration", "Expermiental design"];
 
 export default function RunForm() {
-  const { runState, setRunState, units, setUnits, initialRun } = useConfig();
+  const {} = useConfig();
+
+  const {
+    compState,
+    setCompState,
+    initialComp,
+    comparisons,
+    setComparisons,
+  } = useConfig();
   const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
@@ -98,38 +106,16 @@ export default function RunForm() {
     }
   }
   const handleRunSubmit = () => {
-    const blankSample = {};
-    const helper = {};
-    const result = units.reduce(function (r, o) {
-      console.log(r);
-      const key = o.sample + "-" + o.techrep + "-" + o.biorep;
-      const sampleName = `${o.sample}`;
-      const sample = `${o.sample} TechRep ${o.techrep} BioRep ${o.biorep}`;
-      const samplePath = `${o.sample}-TechRep_${o.techrep}-BioRep_${o.biorep}`;
-      const merged = `${o.sample} TechRep ${o.techrep}`;
-      const mergedPath = `${o.sample}-TechRep_${o.techrep}`;
-      if (!helper[key]) {
-        helper[key] = Object.assign(
-          { sampleName, sample, samplePath, merged, mergedPath },
-          blankSample
-        ); // create a copy of o
-        r.push(helper[key]);
-      }
-      return r;
-    }, []);
-
-    console.log(result);
     const request = {
-      ...runState,
-      samples: result,
-      units,
+      ...compState,
+      comparisons: comparisons,
       userId: user.user.id,
     };
     const token = localStorage.jwtToken;
 
     const options = {
       method: "POST",
-      path: "http://localhost/api/runs/run",
+      path: "http://localhost/api/comparisons/comparison",
       socketPath: sessionStorage.Sock,
       hostname: "unix",
       port: null,
@@ -157,8 +143,7 @@ export default function RunForm() {
           console.log("successful post request");
 
           setResponse(jsbody);
-          setRunState(initialRun);
-          setUnits([]);
+          setCompState(initialComp);
           history.push("/alignment");
         }
       });
@@ -168,8 +153,7 @@ export default function RunForm() {
     req.end();
   };
   const handleReset = () => {
-    setRunState(initialRun);
-    setUnits([]);
+    setCompState(initialComp);
   };
   return (
     <React.Fragment>

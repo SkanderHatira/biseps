@@ -118,44 +118,6 @@ export default function VisualizationFill() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.jwtToken;
-      const Sock = await sessionStorage.Sock;
-      const options = {
-        method: "GET",
-        path: "http://localhost/api/jbrowse",
-        socketPath: Sock,
-        port: null,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      };
-      const req = http.get(options, function (res) {
-        console.log("STATUS: " + res.statusCode);
-        console.log("HEADERS: " + JSON.stringify(res.headers));
-        // Buffer the body entirely for processing as a whole.
-        const bodyChunks = [];
-        res
-          .on("data", function (chunk) {
-            // You can process streamed parts here...
-            bodyChunks.push(chunk);
-          })
-          .on("end", function () {
-            const body = Buffer.concat(bodyChunks);
-            const jsbody = JSON.parse(body);
-            setViews(jsbody);
-          });
-      });
-      req.on("error", function (e) {
-        console.log("ERROR: " + e.message);
-      });
-    };
-
-    fetchData();
-  }, []);
-  console.log(views);
   const fileExist = (path) => {
     try {
       if (fs.existsSync(path)) {
@@ -275,9 +237,22 @@ export default function VisualizationFill() {
       console.log(user.user.jbPath);
       server.listen(user.user.port[0], () => {});
     } catch (err) {
-      return;
+      portastic
+        .find({
+          min: 30000,
+          max: 35000,
+          retrieve: 1,
+        })
+        .then(function (port) {
+          const server = http.createServer((request, response) => {
+            return handler(request, response, {
+              public: user.user.jbPath,
+            });
+          });
+          server.listen(user.user.port[0], () => {});
+          shell.openExternal(`http:///localhost:${port}`);
+        });
     }
-
     shell.openExternal(`http:///localhost:${user.user.port[0]}`);
   };
   return (

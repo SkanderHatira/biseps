@@ -35,12 +35,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function GlobalConfig() {
-  const { runState, setRunState } = useConfig();
+  const { compState, setCompState } = useConfig();
 
   const classes = useStyles();
   const handleGenome = (e) => {
-    setRunState({
-      ...runState,
+    setCompState({
+      ...compState,
       [e.target.id]: document.getElementById(e.target.id).files[0].path,
       outdir:
         document
@@ -50,21 +50,21 @@ export default function GlobalConfig() {
   };
 
   const handleRunState = (e) => {
-    setRunState({
-      ...runState,
+    setCompState({
+      ...compState,
       [e.target.name]: e.target.value,
     });
   };
   const handleCheckBox = (e) => {
-    setRunState({
-      ...runState,
+    setCompState({
+      ...compState,
       [e.target.name]: String(e.target.checked),
     });
   };
   const handleSlider = (e, newValue) => {
     console.log(e.target);
-    setRunState({
-      ...runState,
+    setCompState({
+      ...compState,
       [e.target.id]: newValue,
     });
   };
@@ -80,14 +80,19 @@ export default function GlobalConfig() {
             <InputLabel>Method</InputLabel>
             <Select
               defaultValue="bins"
+              value={compState.method}
               labelId="method"
               id="method"
               name="method"
               onChange={handleRunState}
             >
               <MenuItem value="bins">Bins</MenuItem>
-              <MenuItem value="neighbourhood">Neighbourhood</MenuItem>
-              <MenuItem value="noise_filter">Noise Filter</MenuItem>
+              <MenuItem value="neighbourhood">Neighbourhood</MenuItem>{" "}
+              {compState.test != "betareg" ? (
+                <MenuItem value="noise_filter">Noise Filter</MenuItem>
+              ) : (
+                ""
+              )}
             </Select>
             <FormHelperText>
               Choose DMR Calling method. Default: bins
@@ -99,14 +104,20 @@ export default function GlobalConfig() {
             <InputLabel>Statistical Test</InputLabel>
             <Select
               defaultValue="score"
-              value={runState.test}
+              value={compState.test}
               labelId="test"
               id="test"
               name="test"
               onChange={handleRunState}
             >
-              <MenuItem value="fisher">Fisher</MenuItem>
               <MenuItem value="score">Score</MenuItem>
+              <MenuItem value="fisher">Fisher</MenuItem>
+              {compState.method != "noise_filter" ? (
+                <MenuItem value="betareg">Betareg</MenuItem>
+              ) : (
+                ""
+              )}
+
               {/* <input
                 accept=".fa"
                 className={classes.input}
@@ -123,16 +134,101 @@ export default function GlobalConfig() {
             <FormHelperText>Choose test</FormHelperText>
           </FormControl>
         </Grid>
+
+        {compState.method === "neighbourhood" ? (
+          ""
+        ) : (
+          <Grid item xs={12} sm={4}>
+            <FormControl className={classes.formControl}>
+              <Typography gutterBottom>
+                {compState.method === "bins" ? "Bin Size" : "Window Size"}{" "}
+              </Typography>
+              <Slider
+                id="binsize"
+                name="binsize"
+                onChange={handleSlider}
+                value={compState.binsize}
+                step={200}
+                min={0}
+                max={5000}
+                valueLabelDisplay="auto"
+              />
+              <FormHelperText>
+                Choose bin size for Bins and Noise Filter methods. See{" "}
+                <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                  docs
+                </Link>
+                .
+              </FormHelperText>
+            </FormControl>
+          </Grid>
+        )}
+        {compState.test != "betareg" ? (
+          ""
+        ) : (
+          <>
+            <Grid item xs={12} sm={4}>
+              <FormControl className={classes.formControl}>
+                <Typography gutterBottom>
+                  Methylated Reads Pseudocount
+                </Typography>
+                <Input
+                  id="pseudocountM"
+                  name="pseudocountM"
+                  type="number"
+                  onChange={handleSlider}
+                  value={compState.pseudocountM}
+                  step={1}
+                  min={1}
+                  max={5}
+                  valueLabelDisplay="auto"
+                />
+                <FormHelperText>
+                  Numerical Value to be added to methylated reads before beta
+                  regression. See{" "}
+                  <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                    docs
+                  </Link>
+                  .
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <FormControl className={classes.formControl}>
+                <Typography gutterBottom>Total Reads Pseudocount</Typography>
+                <Input
+                  id="pseudocountN"
+                  name="pseudocountN"
+                  type="number"
+                  onChange={handleSlider}
+                  value={compState.pseudocountN}
+                  step={1}
+                  min={1}
+                  max={5}
+                  valueLabelDisplay="auto"
+                />
+                <FormHelperText>
+                  Numerical Value to be added to total reads before beta
+                  regression. See{" "}
+                  <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                    docs
+                  </Link>
+                  .
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+          </>
+        )}
         {/* <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
             <Button
               variant="contained"
               component="label"
-              color={runState.genome === "" ? "default" : "primary"}
+              color={compState.genome === "" ? "default" : "primary"}
             >
-              {runState.genome === ""
+              {compState.genome === ""
                 ? "upload genome"
-                : runState.genome.split(/[\\/]/).pop()}
+                : compState.genome.split(/[\\/]/).pop()}
               <input
                 type="file"
                 required
@@ -153,7 +249,7 @@ export default function GlobalConfig() {
           <FormControl className={classes.formControl}>
             <InputLabel>Number of Mismatches</InputLabel>
             <Select
-              value={runState.n}
+              value={compState.n}
               labelId="n"
               id="n"
               name="n"
@@ -175,7 +271,7 @@ export default function GlobalConfig() {
               name="minlen"
               id="minlen"
               onChange={handleSlider}
-              value={runState.minlen}
+              value={compState.minlen}
               aria-labelledby="minlen"
               step={10}
               min={30}
@@ -192,7 +288,7 @@ export default function GlobalConfig() {
               id="minscore"
               name="minscore"
               onChange={handleSlider}
-              value={runState.minscore}
+              value={compState.minscore}
               step={-0.1}
               min={-1}
               max={-0.2}
@@ -211,7 +307,7 @@ export default function GlobalConfig() {
           <FormControl className={classes.formControl}>
             <Typography gutterBottom>L</Typography>
             <Slider
-              value={runState.l}
+              value={compState.l}
               onChange={handleSlider}
               aria-labelledby="l"
               id="l"
@@ -257,44 +353,22 @@ export default function GlobalConfig() {
             }
             label="Toggle this option to execute in SLURM Cluster mode"
           ></FormControlLabel>
-          <Grid item xs={12} sm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>CPUs</InputLabel>
-              <Select
-                defaultValue="All"
-                labelId="cpu"
-                id="cpu"
-                name="cpu"
-                onChange={handleRunState}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify CPUs available. Default: All
-              </FormHelperText>
-            </FormControl>
-          </Grid>
         </Grid>
-        {runState.cluster === "true" ? (
-          <Grid item xs={12} sm={6}>
+        {compState.cluster === "true" ? (
+          <Grid item xs={12} xm={6}>
             <FormControl className={classes.formControl}>
               <InputLabel>Memory</InputLabel>
               <Select
-                defaultValue="All"
+                defaultValue="10G"
                 labelId="memMb"
                 id="memMb"
                 name="memMb"
                 onChange={handleRunState}
               >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
+                <MenuItem value="10G">10G</MenuItem>
+                <MenuItem value="50G">50G</MenuItem>
+                <MenuItem value="150G">150G</MenuItem>
+                <MenuItem value="300G">300G</MenuItem>
               </Select>
               <FormHelperText>
                 Specify Memory available. Default: All
@@ -316,32 +390,13 @@ export default function GlobalConfig() {
                 <MenuItem value="25">25</MenuItem>
               </Select>
               <FormHelperText>
-                Specify Jobs available. Default: All
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Jobs</InputLabel>
-              <Select
-                defaultValue="5"
-                labelId="Jobs"
-                id="Jobs"
-                name="Jobs"
-                onChange={handleRunState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="15">15</MenuItem>
-                <MenuItem value="25">25</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Jobs available. Default: All
+                Specify Maximum number of Parallel Jobs. Default: 5
               </FormHelperText>
             </FormControl>
             <FormControl className={classes.formControl}>
               <InputLabel>MaxTime</InputLabel>
               <Select
-                defaultValue="5"
+                defaultValue="1440"
                 labelId="minTime"
                 id="minTime"
                 name="minTime"
@@ -352,12 +407,32 @@ export default function GlobalConfig() {
                 <MenuItem value="2880">2880</MenuItem>
               </Select>
               <FormHelperText>
-                Specify MaxTime available. Default: 1 day
+                Specify Maximum Time before a job is terminated. Default: 1 day
               </FormHelperText>
             </FormControl>
           </Grid>
         ) : (
-          ""
+          <Grid item xs={12} sm={6}>
+            <FormControl className={classes.formControl}>
+              <InputLabel>CPUs</InputLabel>
+              <Select
+                defaultValue="All"
+                labelId="cpu"
+                id="cpu"
+                name="cpu"
+                onChange={handleRunState}
+              >
+                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="2">2</MenuItem>
+                <MenuItem value="4">4</MenuItem>
+                <MenuItem value="6">6</MenuItem>
+                <MenuItem value="8">8</MenuItem>
+              </Select>
+              <FormHelperText>
+                Specify CPUs available. Default: All
+              </FormHelperText>
+            </FormControl>
+          </Grid>
         )}
       </Grid>
     </React.Fragment>

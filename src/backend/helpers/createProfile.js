@@ -3,6 +3,7 @@ function createProfile(body, uniqueDir) {
     const fs = require("fs");
     const path = require("path");
     console.log("creating profile");
+    console.log(body);
 
     if (!fs.existsSync(uniqueDir)) {
         fs.mkdirSync(path.join(uniqueDir, "config/profile"), {
@@ -19,10 +20,8 @@ function createProfile(body, uniqueDir) {
     };
     const slurmProfile = {
         jobs: body.jobs,
-        cluster:
-            "sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards} ",
-        "default-resources": ["cpus=1", "mem_mb=5000", "time_min=240"],
-        resources: [
+        cluster: `sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards} --mail-user=${body.email} `,
+        "default-resources": [
             `cpus=${body.cpu}`,
             `mem_mb=${body.memMb}`,
             `time_min=${body.minTime}`,

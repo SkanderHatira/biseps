@@ -25,11 +25,21 @@ const useProvideConfig = () => {
     n: 0,
     subsample: false,
     cluster: false,
+    cpu: "1",
+    memMb: "10G",
+    jobs: "10",
+    minTime: "2880",
   };
-
+  const initialComp = {
+    method: "bins",
+    stat: "score",
+    binsize: 200,
+    cluster: false,
+  };
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);
   const [comparisons, setComparisons] = useState([]);
+  const [compState, setCompState] = useState(initialComp);
 
   return {
     runState,
@@ -39,5 +49,8 @@ const useProvideConfig = () => {
     initialRun,
     comparisons,
     setComparisons,
+    compState,
+    setCompState,
+    initialComp,
   };
 };

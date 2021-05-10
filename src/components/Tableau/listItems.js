@@ -17,7 +17,7 @@ export const mainListItems = (
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <ListItemText primary="Alignments" />
+      <ListItemText primary="Alignment" />
     </ListItem>
     <ListItem component={Link} to="/comparison" button>
       <ListItemIcon>
@@ -25,17 +25,17 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Comparison" />
     </ListItem>
-    <ListItem component={Link} to="/livedmr" button>
+    {/* <ListItem component={Link} to="/livedmr" button>
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
       <ListItemText primary="Live Browsing DMR's" />
-    </ListItem>
+    </ListItem> */}
     <ListItem component={Link} to="/visualization" button>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
-      <ListItemText primary="Visualisations" />
+      <ListItemText primary="Visualisation" />
     </ListItem>
   </div>
 );
