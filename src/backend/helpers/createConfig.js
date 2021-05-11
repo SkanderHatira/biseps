@@ -15,7 +15,11 @@ const createConfig = (body, uniqueDir) => {
             },
         },
         steps: {
-            subsample: { activated: body.subsample },
+            subsample: {
+                activated: `${body.subsample[0].toUpperCase()}${body.subsample.slice(
+                    1
+                )}`,
+            },
             trimming: { activated: "True" },
             quality: { activated: "True" },
             genome_preparation: { activated: "True" },

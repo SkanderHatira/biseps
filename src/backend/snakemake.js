@@ -4,7 +4,7 @@ const spawnChild = async (body, profile) => {
     const env = path.join(__dirname, "../resources/snakemake/bin");
     const slurmScript = path.join(__dirname, "../resources/slurmScript.sh");
     const localScript = path.join(__dirname, "../resources/snakemake.sh");
-    const workflow = path.join(__dirname, "../resources/bissprop/workflow");
+    const workflow = path.join(__dirname, "../resources/bissprop/");
     const conda = "/local/env/envconda.sh";
     const options = {
         slient: false,

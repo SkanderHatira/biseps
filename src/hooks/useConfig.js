@@ -23,7 +23,7 @@ const useProvideConfig = () => {
     minscore: -0.6,
     l: 20,
     n: 0,
-    subsample: false,
+    subsample: "false",
     cluster: false,
     cpu: "1",
     memMb: "10G",
