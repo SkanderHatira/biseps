@@ -147,7 +147,7 @@ export default function InteractiveList() {
     const request = {
       path: path,
     };
-    const token = localStorage.jwtToken;
+    const token = sessionStorage.jwtToken;
     const options = {
       method: "POST",
       path: "http://localhost/api/runs/rerun",
@@ -187,7 +187,7 @@ export default function InteractiveList() {
     const request = {
       user: user.user,
     };
-    const token = localStorage.jwtToken;
+    const token = sessionStorage.jwtToken;
     const options = {
       method: "DELETE",
       path: `http://localhost/api/runs/${id}`,
@@ -228,7 +228,7 @@ export default function InteractiveList() {
   };
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.jwtToken;
+      const token = sessionStorage.jwtToken;
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",

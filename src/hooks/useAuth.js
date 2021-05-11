@@ -90,7 +90,7 @@ const useProvideAuth = () => {
           // Save to localStorage
           // Set token to localStorage
           const { token } = jsbody;
-          localStorage.setItem("jwtToken", token);
+          sessionStorage.setItem("jwtToken", token);
           // Set token to Auth header
           // Decode token to get user data
           const decoded = jwt_decode(token);
@@ -108,9 +108,9 @@ const useProvideAuth = () => {
     req.end();
   };
   const checkauth = async (history, path) => {
-    if (await localStorage.jwtToken) {
+    if (await sessionStorage.jwtToken) {
       // Set auth token header auth
-      const token = localStorage.jwtToken;
+      const token = sessionStorage.jwtToken;
       console.log(token);
       // setAuthToken(token);
       // Decode token and get user info and exp

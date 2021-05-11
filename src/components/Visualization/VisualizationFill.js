@@ -82,7 +82,7 @@ export default function VisualizationFill() {
   const [views, setViews] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.jwtToken;
+      const token = sessionStorage.jwtToken;
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
@@ -135,7 +135,7 @@ export default function VisualizationFill() {
       userId: user.user.id,
       jbPath: user.user.jbPath,
     };
-    const token = localStorage.jwtToken;
+    const token = sessionStorage.jwtToken;
     const options = {
       method: "POST",
       path: "http://localhost/api/jbrowse/visualize",
@@ -175,7 +175,7 @@ export default function VisualizationFill() {
     const request = {
       jbPath: user.user.jbPath,
     };
-    const token = localStorage.jwtToken;
+    const token = sessionStorage.jwtToken;
     const options = {
       method: "POST",
       path: "http://localhost/api/jbrowse/resetJB",

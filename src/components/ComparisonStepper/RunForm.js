@@ -74,13 +74,8 @@ const steps = ["Global configuration", "Expermiental design"];
 export default function RunForm() {
   const {} = useConfig();
 
-  const {
-    compState,
-    setCompState,
-    initialComp,
-    comparisons,
-    setComparisons,
-  } = useConfig();
+  const { compState, setCompState, initialComp, comparisons, setComparisons } =
+    useConfig();
   const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
@@ -111,7 +106,7 @@ export default function RunForm() {
       comparisons: comparisons,
       userId: user.user.id,
     };
-    const token = localStorage.jwtToken;
+    const token = sessionStorage.jwtToken;
 
     const options = {
       method: "POST",

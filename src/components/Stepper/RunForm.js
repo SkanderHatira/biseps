@@ -127,7 +127,7 @@ export default function RunForm() {
       userId: user.user.id,
       email: user.user.email,
     };
-    const token = localStorage.jwtToken;
+    const token = sessionStorage.jwtToken;
 
     const options = {
       method: "POST",

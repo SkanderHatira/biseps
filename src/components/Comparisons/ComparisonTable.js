@@ -49,7 +49,7 @@ export default function InteractiveList() {
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.jwtToken;
+      const token = sessionStorage.jwtToken;
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",

@@ -285,7 +285,7 @@ export default function ComparisonForm() {
   };
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.jwtToken;
+      const token = sessionStorage.jwtToken;
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
