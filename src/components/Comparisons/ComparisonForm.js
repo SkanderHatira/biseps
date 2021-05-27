@@ -221,8 +221,8 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 500,
-    maxWidth: 600,
+    minWidth: "100%",
+    maxWidth: "100%",
   },
   chips: {
     display: "flex",
@@ -242,7 +242,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    minWidth: "100%",
+    maxWidth: "100%",
   },
   visuallyHidden: {
     border: 0,
@@ -492,17 +493,15 @@ export default function ComparisonForm() {
                       </TableCell>
                       <TableCell>
                         <FormControl className={classes.formControl}>
-                          <TableCell padding="checkbox">
-                            <Input
-                              onChange={handleLabelChange}
-                              value={comparison.name}
-                              placeholder="Label"
-                              required
-                              inputProps={{ "data-idx": index }}
-                              id="name"
-                              type="text"
-                            ></Input>
-                          </TableCell>
+                          <Input
+                            onChange={handleLabelChange}
+                            value={comparison.name}
+                            placeholder="Label"
+                            required
+                            inputProps={{ "data-idx": index }}
+                            id="name"
+                            type="text"
+                          ></Input>
                         </FormControl>
                       </TableCell>
 
@@ -519,7 +518,7 @@ export default function ComparisonForm() {
                             value={comparison.control}
                             onClick={(event) => handleUnitChange(event, index)}
                             input={<Input />}
-                            renderValue={(selected) => selected.join(", ")}
+                            renderValue={(selected) => "Modify Control Input"}
                             MenuProps={MenuProps}
                           >
                             {result.map((res) => (
@@ -577,7 +576,7 @@ export default function ComparisonForm() {
                             value={comparison.treatment}
                             onClick={(event) => handleUnitChange(event, index)}
                             input={<Input />}
-                            renderValue={(selected) => selected.join(", ")}
+                            renderValue={(selected) => "Modify Treatment Input"}
                             MenuProps={MenuProps}
                           >
                             {result.map((name) => (

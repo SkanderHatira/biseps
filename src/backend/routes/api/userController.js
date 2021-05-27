@@ -92,6 +92,7 @@ router.post("/login", (req, res) => {
                             email: user.email,
                             runs: user.runs,
                             views: user.runs,
+                            machines: user.machines,
                             port: port,
                         };
                         // Sign token
@@ -130,6 +131,7 @@ router.post("/login", (req, res) => {
 router.get("/:id", function (req, res) {
     User.findById(req.params.id)
         .populate("runs") // key to populate
+        .populate("machines")
         .then((user) => {
             res.json(user);
         })
@@ -143,32 +145,66 @@ router.get("/:id", function (req, res) {
     //     res.status(200).send(units);
     // });
 });
-router.put("/:id", function (req, res) {
+// router.put("/:id", function (req, res) {
+//     const updatedUser = new User({
+//         _id: req.params.id,
+//         name: req.body.name,
+//         email: req.body.email,
+//         password: req.body.password,
+//         machines: req.body.machines,
+//     });
+//     // Hash password before saving in database
+//     bcrypt.genSalt(10, (err, salt) => {
+//         bcrypt.hash(updatedUser.password, salt, (err, hash) => {
+//             if (err) throw err;
+//             updatedUser.password = hash;
+//             updatedUser.save();
+//         });
+//     });
+//     User.updateOne({ _id: req.params.id }, updatedUser)
+//         .then(() => {
+//             console.log(res);
+//             res.status(201).json({
+//                 message: "Thing updated successfully!",
+//             });
+//         })
+//         .catch((error) => {
+//             res.status(400).json({
+//                 error: error,
+//             });
+//         });
+
+//     // User.findByIdAndUpdate(
+//     //     req.params.id,
+//     //     updatedUser,
+//     //     { new: true },
+//     //     function (err, user) {
+//     //         console.log(updatedUser);
+//     //         if (err)
+//     //             return res
+//     //                 .status(500)
+//     //                 .send("There was a problem updating the user.");
+//     //         res.status(200).send(user);
+//     //     }
+//     // );
+// });
+router.put("/:id", (req, res, next) => {
     const updatedUser = new User({
+        _id: req.params.id,
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password,
+        machines: req.body.machines,
     });
-    // Hash password before saving in database
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(updatedUser.password, salt, (err, hash) => {
-            if (err) throw err;
-            updatedUser.password = hash;
-            updatedUser.save();
+    User.updateOne({ _id: req.params.id }, updatedUser)
+        .then(() => {
+            res.status(201).json({
+                message: "Thing updated successfully!",
+            });
+        })
+        .catch((error) => {
+            res.status(400).json({
+                error: error,
+            });
         });
-    });
-    User.findByIdAndUpdate(
-        req.params.id,
-        updatedUser,
-        { new: true },
-        function (err, user) {
-            console.log(updatedUser);
-            if (err)
-                return res
-                    .status(500)
-                    .send("There was a problem updating the user.");
-            res.status(200).send(user);
-        }
-    );
 });
 module.exports = router;

@@ -16,8 +16,8 @@ import { mainListItems, secondaryListItems } from "./listItems";
 import { useAuth } from "../../hooks/useAuth";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
-import Link from "@material-ui/core/Link";
-
+import { Link } from "react-router-dom";
+import SettingsIcon from "@material-ui/icons/Settings";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -103,7 +103,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://www.google.fr/">
-        bissprop{" "}
+        biseps{" "}
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -155,11 +155,6 @@ const DashLayout = ({ Filling }) => {
 
           {auth.user.isAuthenticated ? (
             <>
-              {/* <IconButton color="inherit">
-                <Badge color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton> */}
               <IconButton onClick={auth.signout} color="inherit">
                 <Typography
                   component="h1"
@@ -171,6 +166,9 @@ const DashLayout = ({ Filling }) => {
                   Logout
                 </Typography>
                 <ExitToAppIcon />
+              </IconButton>
+              <IconButton component={Link} to="/profile" color="inherit">
+                <SettingsIcon />
               </IconButton>
             </>
           ) : (

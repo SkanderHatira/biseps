@@ -19,12 +19,15 @@ const useProvideConfig = () => {
     adapters: "TruSeq2-SE",
     genome: "",
     outdir: "",
+    remoteOutdir: "",
     minlen: 80,
     minscore: -0.6,
     l: 20,
     n: 0,
-    subsample: "false",
+    subsample: false,
     cluster: false,
+    remote: false,
+    machine: {},
     cpu: "1",
     memMb: "10G",
     jobs: "10",
@@ -35,9 +38,18 @@ const useProvideConfig = () => {
     stat: "score",
     binsize: 200,
     cluster: false,
+    pseudocountN: 2,
+    pseudocountM: 1,
+    pValueThreshold: 0.05,
+    minCytosinesCount: 4,
+    minProportionDifference: 0.4,
+    minGap: 0,
+    minSize: 50,
+    minReadsPerCytosine: 4,
   };
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);
+  const [remoteunits, setRemoteUnits] = useState([]);
   const [comparisons, setComparisons] = useState([]);
   const [compState, setCompState] = useState(initialComp);
 
@@ -52,5 +64,7 @@ const useProvideConfig = () => {
     compState,
     setCompState,
     initialComp,
+    remoteunits,
+    setRemoteUnits,
   };
 };

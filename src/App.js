@@ -13,7 +13,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import Visualization from "./components/Visualization/Visualization";
 import Comparisons from "./components/Comparisons/Comparisons";
 import Comparison from "./components/Comparisons/Comparison";
-import Livedmr from "./components/Livedmr/Livedmr";
+import Profile from "./pages/Profile/Profile";
 
 import RunBoard from "./components/RunBoard/RunBoard";
 import NotFound from "./pages/NotFound";
@@ -30,7 +30,7 @@ function App() {
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/newrun" component={RunBoard} />
               <PrivateRoute exact path="/comparison" component={Comparisons} />
-              <PrivateRoute exact path="/livedmr" component={Livedmr} />
+              <PrivateRoute exact path="/profile" component={Profile} />
 
               <PrivateRoute
                 exact

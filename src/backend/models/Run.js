@@ -14,6 +14,11 @@ const RunSchema = new Schema({
         required: true,
         default: "",
     },
+    remoteOutdir: {
+        type: String,
+        required: false,
+        default: "",
+    },
     genome: {
         type: String,
         required: true,

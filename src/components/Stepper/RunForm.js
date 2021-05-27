@@ -18,7 +18,7 @@ import NewTable from "../Table/NewTable";
 import { useHistory } from "react-router-dom";
 
 const http = require("http");
-
+const path = require("path");
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -72,7 +72,8 @@ const useStyles = makeStyles((theme) => ({
 const steps = ["Global configuration", "Expermiental design"];
 
 export default function RunForm() {
-  const { runState, setRunState, units, setUnits, initialRun } = useConfig();
+  const { runState, setRunState, units, setUnits, initialRun, remoteunits } =
+    useConfig();
   const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
@@ -120,9 +121,13 @@ export default function RunForm() {
 
     console.log(result);
     console.log(user.user.email);
+
     const request = {
       ...runState,
+      outdir: path.dirname(runState.genome),
+      remoteOutdir: runState.remote ? "/groups/INVITE" : "",
       samples: result,
+      remoteunits,
       units,
       userId: user.user.id,
       email: user.user.email,

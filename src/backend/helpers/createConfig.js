@@ -1,12 +1,14 @@
-const createConfig = (body, uniqueDir) => {
+const createConfig = (body, uniqueDir, uniqueDirRemote) => {
     const yaml = require("js-yaml");
     const fs = require("fs");
     const path = require("path");
     console.log("creating config");
     const config = {
-        units: path.join(uniqueDir, "config/units.tsv"),
+        units: body.remote
+            ? "config/units.tsv"
+            : path.join(uniqueDir, "config/units.tsv"),
         general: {
-            outdir: uniqueDir + "/",
+            outdir: body.remote ? uniqueDirRemote + "/" : uniqueDir + "/",
             benchmark: body.benchmark || 1,
             genome_preparation: {
                 threads: 12,
@@ -16,9 +18,7 @@ const createConfig = (body, uniqueDir) => {
         },
         steps: {
             subsample: {
-                activated: `${body.subsample[0].toUpperCase()}${body.subsample.slice(
-                    1
-                )}`,
+                activated: body.subsample ? "True" : "False",
             },
             trimming: { activated: "True" },
             quality: { activated: "True" },
@@ -28,14 +28,17 @@ const createConfig = (body, uniqueDir) => {
         },
         resources: {
             ref: {
-                genome: body.genome,
+                genome: body.remote
+                    ? path.join("resources/genome", path.basename(body.genome))
+                    : body.genome,
             },
-            adapters:
-                path.join(
-                    __dirname,
-                    "../../../resources/adapters",
-                    body.adapters
-                ) || "",
+            adapters: body.remote
+                ? path.join(".test/resources/adapters", body.adapters)
+                : path.join(
+                      __dirname,
+                      "../../../resources/adapters",
+                      body.adapters
+                  ) || "",
         },
 
         params: {

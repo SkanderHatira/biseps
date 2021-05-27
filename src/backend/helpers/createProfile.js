@@ -1,17 +1,25 @@
-function createProfile(body, uniqueDir) {
+function createProfile(body, uniqueDir, uniqueDirRemote) {
     const yaml = require("js-yaml");
     const fs = require("fs");
     const path = require("path");
     console.log("creating profile");
     console.log(body);
 
-    if (!fs.existsSync(uniqueDir)) {
-        fs.mkdirSync(path.join(uniqueDir, "config/profile"), {
-            recursive: true,
-        });
+    if (!fs.existsSync(path.join(uniqueDir, "config"))) {
+        if (body.cluster) {
+            fs.mkdirSync(path.join(uniqueDir, "config/profiles/slurm"), {
+                recursive: true,
+            });
+        } else {
+            fs.mkdirSync(path.join(uniqueDir, "config/profiles/local"), {
+                recursive: true,
+            });
+        }
     }
     const localProfile = {
-        configfile: path.join(uniqueDir, "config/config.yaml"),
+        configfile: body.remote
+            ? "config/config.yaml"
+            : path.join(uniqueDir, "config/config.yaml"),
         "default-resources": ["cpus=1", "mem_mb=2000", "time_min=60"],
         "use-conda": true,
         "dry-run": body.subsample,
@@ -26,7 +34,9 @@ function createProfile(body, uniqueDir) {
             `mem_mb=${body.memMb}`,
             `time_min=${body.minTime}`,
         ],
-        configfile: path.join(uniqueDir, "config/config.yaml"),
+        configfile: body.remote
+            ? "config/config.yaml"
+            : path.join(uniqueDir, "config/config.yaml"),
         "use-conda": true,
         "keep-going": true,
         "dry-run": body.subsample,
@@ -34,14 +44,14 @@ function createProfile(body, uniqueDir) {
     if (body.cluster) {
         const yamlStr = yaml.dump(slurmProfile);
         fs.writeFileSync(
-            path.join(uniqueDir, "config/profile/config.yaml"),
+            path.join(uniqueDir, "config/profiles/slurm/config.yaml"),
             yamlStr,
             "utf8"
         );
     } else {
         const yamlStr = yaml.dump(localProfile);
         fs.writeFileSync(
-            path.join(uniqueDir, "config/profile/config.yaml"),
+            path.join(uniqueDir, "config/profiles/local/config.yaml"),
             yamlStr,
             "utf8"
         );

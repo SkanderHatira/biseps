@@ -34,6 +34,12 @@ const UserSchema = new Schema({
             ref: "views",
         },
     ],
+    machines: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "machines",
+        },
+    ],
 });
 
 // eslint-disable-next-line no-undef

@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const path = require("path");
 const users = require("../backend/routes/api/userController");
+const machines = require("../backend/routes/api/machineController");
+
 const runs = require("../backend/routes/api/runController");
 const views = require("../backend/routes/api/viewController");
 const comparisons = require("../backend/routes/api/comparisonController");
@@ -34,6 +36,12 @@ app.use(passport.initialize());
 require("../backend/config/passport")(passport);
 // Routes
 app.use("/api/users", users);
+app.use(
+    "/api/machines",
+    passport.authenticate("jwt", { session: false }),
+    machines
+);
+
 app.use("/api/runs", passport.authenticate("jwt", { session: false }), runs);
 app.use(
     "/api/jbrowse",

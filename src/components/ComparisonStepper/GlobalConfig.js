@@ -75,7 +75,7 @@ export default function GlobalConfig() {
         General configuration
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <InputLabel>Method</InputLabel>
             <Select
@@ -99,7 +99,7 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <InputLabel>Statistical Test</InputLabel>
             <Select
@@ -134,7 +134,28 @@ export default function GlobalConfig() {
             <FormHelperText>Choose test</FormHelperText>
           </FormControl>
         </Grid>
-
+        <Grid item xs={12} sm={4}>
+          <FormControl className={classes.formControl}>
+            <Typography gutterBottom>p-Value</Typography>
+            <Slider
+              id="pValueThreshold"
+              name="pValueThreshold"
+              onChange={handleSlider}
+              value={compState.pValueThreshold}
+              step={0.01}
+              min={0}
+              max={1}
+              valueLabelDisplay="auto"
+            />
+            <FormHelperText>
+              p-Value threshold. See{" "}
+              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                docs
+              </Link>
+              .
+            </FormHelperText>
+          </FormControl>
+        </Grid>
         {compState.method === "neighbourhood" ? (
           ""
         ) : (
@@ -219,6 +240,108 @@ export default function GlobalConfig() {
             </Grid>
           </>
         )}
+        <Grid item xs={12} sm={4}>
+          <FormControl className={classes.formControl}>
+            <Typography gutterBottom>Minimum Cytosines Count</Typography>
+            <Input
+              id="minCytosinesCount"
+              name="minCytosinesCount"
+              type="number"
+              onChange={handleSlider}
+              value={compState.minCytosinesCount}
+            />
+            <FormHelperText>
+              Minimum methylated cytosines count present in a region to be
+              qualified as DMR. See{" "}
+              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                docs
+              </Link>
+              .
+            </FormHelperText>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl className={classes.formControl}>
+            <Typography gutterBottom>Minimum Reads Per Cytosine </Typography>
+            <Input
+              id="minReadsPerCytosine"
+              name="minReadsPerCytosine"
+              type="number"
+              onChange={handleSlider}
+              value={compState.minReadsPerCytosine}
+            />
+            <FormHelperText>
+              Minimum reads covering methylated cytosines. See{" "}
+              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                docs
+              </Link>
+              .
+            </FormHelperText>
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={12} sm={4}>
+          <FormControl className={classes.formControl}>
+            <Typography gutterBottom>
+              Minimum Proportion Difference In Methylation
+            </Typography>
+            <Slider
+              id="minProportionDifference"
+              name="minProportionDifference"
+              onChange={handleSlider}
+              value={compState.minProportionDifference}
+              step={0.1}
+              min={0}
+              max={1}
+              valueLabelDisplay="auto"
+            />
+            <FormHelperText>
+              p-Value threshold. See{" "}
+              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                docs
+              </Link>
+              .
+            </FormHelperText>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl className={classes.formControl}>
+            <Typography gutterBottom>Minimum Gap</Typography>
+            <Input
+              id="minGap"
+              name="minGap"
+              type="number"
+              onChange={handleSlider}
+              value={compState.minGap}
+            />
+            <FormHelperText>
+              DMRs separated by a gap of at least minGap are not merged. See{" "}
+              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                docs
+              </Link>
+              .
+            </FormHelperText>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl className={classes.formControl}>
+            <Typography gutterBottom>Minimum Size</Typography>
+            <Input
+              id="minSize"
+              name="minSize"
+              type="number"
+              onChange={handleSlider}
+              value={compState.minSize}
+            />
+            <FormHelperText>
+              DMRs with a size smaller than minSize are discarded. See{" "}
+              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                docs
+              </Link>
+              .
+            </FormHelperText>
+          </FormControl>
+        </Grid>
         {/* <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
             <Button
@@ -359,16 +482,16 @@ export default function GlobalConfig() {
             <FormControl className={classes.formControl}>
               <InputLabel>Memory</InputLabel>
               <Select
-                defaultValue="10G"
+                defaultValue="10000"
                 labelId="memMb"
                 id="memMb"
                 name="memMb"
                 onChange={handleRunState}
               >
-                <MenuItem value="10G">10G</MenuItem>
-                <MenuItem value="50G">50G</MenuItem>
-                <MenuItem value="150G">150G</MenuItem>
-                <MenuItem value="300G">300G</MenuItem>
+                <MenuItem value="10000">10G</MenuItem>
+                <MenuItem value="50000">50G</MenuItem>
+                <MenuItem value="1500000">150G</MenuItem>
+                <MenuItem value="3000000">300G</MenuItem>
               </Select>
               <FormHelperText>
                 Specify Memory available. Default: All

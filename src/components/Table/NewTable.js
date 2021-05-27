@@ -25,7 +25,7 @@ import Button from "@material-ui/core/Button";
 import InputBase from "@material-ui/core/InputBase";
 import uuid from "react-uuid";
 import { useConfig } from "../../hooks/useConfig";
-
+const path = require("path");
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -251,7 +251,8 @@ export default function NewTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const { units, setUnits } = useConfig();
+  const { units, setUnits, runState, remoteunits, setRemoteUnits } =
+    useConfig();
 
   const blankUnit = {
     id: uuid(),
@@ -263,6 +264,9 @@ export default function NewTable() {
     fq2: "",
   };
   const addUnit = () => {
+    if (runState.remote) {
+      setRemoteUnits([...remoteunits, { ...blankUnit }]);
+    }
     setUnits([...units, { ...blankUnit }]);
   };
 
@@ -282,6 +286,13 @@ export default function NewTable() {
     console.log(units);
   };
   const handleUnitChange = (e) => {
+    if (runState.remote) {
+      const updatedRemoteUnits = [...remoteunits];
+      console.log(e.target.dataset.idx);
+      updatedRemoteUnits[e.target.dataset.idx][e.target.id] = e.target.value;
+      setRemoteUnits(updatedRemoteUnits);
+    }
+
     const updatedUnits = [...units];
     console.log(e.target.dataset.idx);
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.value;
@@ -290,6 +301,14 @@ export default function NewTable() {
   const handleUnitFiles = (e) => {
     const updatedUnits = [...units];
     console.log(e.target.dataset.idx);
+    if (runState.remote) {
+      const updatedRemoteUnits = [...remoteunits];
+      updatedRemoteUnits[e.target.dataset.idx][e.target.id] = path.join(
+        "data",
+        path.basename(e.target.files[0].path)
+      );
+      setRemoteUnits(updatedRemoteUnits);
+    }
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.files[0].path;
     setUnits(updatedUnits);
   };

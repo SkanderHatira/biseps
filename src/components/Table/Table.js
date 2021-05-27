@@ -97,9 +97,13 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import ActionRowing from "material-ui/svg-icons/action/rowing";
-const fs = require("fs");
-const portastic = require("portastic");
+import uuid from "react-uuid";
 
+const fs = require("fs");
+const path = require("path");
+const portastic = require("portastic");
+let Client = require("ssh2-sftp-client");
+let sftp = new Client();
 const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
@@ -139,7 +143,64 @@ export default function InteractiveList() {
   const handleClickOpen = () => {
     setOpen(true);
   };
+  const handleRemoteFiles = () => {
+    const homedir = require("os").homedir();
+    const bisspropTemp = path.join(homedir, ".bisspropRemoteTemp/");
 
+    console.log(homedir);
+
+    if (!fs.existsSync(bisspropTemp)) {
+      fs.mkdirSync(bisspropTemp);
+    }
+    let remoteDir = "/groups/INVITE/FullAnalysis/";
+    let remotePath =
+      remoteDir + "results/Annaglo-TechRep_1-BioRep_2019-1/multiqc_report.html";
+    let localPath = uuid() + "multiqc_report.html";
+    sftp
+      .connect({
+        host: "genossh.genouest.org",
+        port: 22,
+        username: "shatira",
+        privateKey: require("fs").readFileSync("/home/shatira/.ssh/id_rsa_gen"),
+      })
+      .then(() => {
+        return sftp.fastGet(remotePath, path.join(bisspropTemp, localPath));
+      })
+      .then((data) => {
+        createBrowserWindow(path.join(bisspropTemp, localPath));
+        sftp.end();
+      })
+      .catch((err) => {
+        console.log(err, "catch error");
+      });
+    // var conn = new Client();
+    // conn
+    //   .on("ready", function () {
+    //     console.log("Client :: ready");
+    //     conn.exec("uptime", function (err, stream) {
+    //       if (err) throw err;
+    //       stream
+    //         .on("close", function (code, signal) {
+    //           console.log(
+    //             "Stream :: close :: code: " + code + ", signal: " + signal
+    //           );
+    //           conn.end();
+    //         })
+    //         .on("data", function (data) {
+    //           console.log("STDOUT: " + data);
+    //         })
+    //         .stderr.on("data", function (data) {
+    //           console.log("STDERR: " + data);
+    //         });
+    //     });
+    //   })
+    //   .connect({
+    //     host: "genossh.genouest.org",
+    //     port: 22,
+    //     username: "shatira",
+    //     privateKey: require("fs").readFileSync("/home/shatira/.ssh/id_rsa_gen"),
+    //   });
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -301,6 +362,15 @@ export default function InteractiveList() {
           >
             New Alignment
           </Button>
+          {/* <Button
+            alignItems="center"
+            variant="contained"
+            variant="outlined"
+            color="primary"
+            onClick={handleRemoteFiles}
+          >
+            New Button
+          </Button> */}
         </Box>
       </Grid>
 

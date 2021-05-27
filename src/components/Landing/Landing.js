@@ -51,7 +51,7 @@ const Landing = () => {
             >
               <b>Run</b> our powerful DMR Identification Pipeline{" "}
               <b>
-                <span style={{ fontFamily: "monospace" }}>BiSSProP</span>
+                <span style={{ fontFamily: "monospace" }}>BiSePS</span>
               </b>{" "}
               from a User-Friendly <b>GUI!</b>
             </Typography>

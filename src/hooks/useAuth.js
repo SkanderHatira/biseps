@@ -107,6 +107,97 @@ const useProvideAuth = () => {
     req.write(JSON.stringify(userData));
     req.end();
   };
+  const handleEditProfile = async (userData, dispatch, history) => {
+    const options = {
+      method: "PUT",
+      path: `http://localhost/api/users/${user.user.id}`,
+      socketPath: sessionStorage.Sock,
+      hostname: "unix",
+      port: null,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const req = http.request(options, function (res) {
+      const chunks = [];
+
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
+        const jsbody = JSON.parse(body);
+        if (!jsbody.token) {
+          dispatch({
+            type: GET_ERRORS,
+            payload: jsbody,
+          });
+          console.log(jsbody);
+          history.push("/alignment");
+        } else {
+          // Save to localStorage
+          // Set token to localStorage
+          const { token } = jsbody;
+          sessionStorage.setItem("jwtToken", token);
+          // Set token to Auth header
+          // Decode token to get user data
+          const decoded = jwt_decode(token);
+          // Set current user
+          dispatchUser({
+            type: SET_CURRENT_USER,
+            payload: decoded,
+          });
+          history.push("/alignment");
+        }
+      });
+    });
+
+    req.write(JSON.stringify(userData));
+    req.end();
+  };
+  // const handleEditProfile = (userData) => {
+  //   const request = {
+  //     name: userData.name,
+  //     email: userData.email,
+  //   };
+  //   console.log(request);
+  //   const token = sessionStorage.jwtToken;
+  //   const options = {
+  //     method: "PUT",
+  //     path: `http://localhost/api/users/${user.user.id}`,
+  //     socketPath: sessionStorage.Sock,
+  //     hostname: "unix",
+  //     port: null,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: token,
+  //     },
+  //   };
+  //   const req = http.request(options, function (res) {
+  //     const chunks = [];
+  //     console.log("STATUS: " + res.statusCode);
+  //     console.log("HEADERS: " + JSON.stringify(res.headers));
+  //     res.on("data", function (chunk) {
+  //       chunks.push(chunk);
+  //     });
+  //     res.on("error", (err) => console.log(err));
+  //     res.on("end", function () {
+  //       const body = Buffer.concat(chunks).toString();
+
+  //       const jsbody = JSON.parse(body);
+  //       if (res.statusCode !== 201) {
+  //         console.log("failed post request");
+  //       } else {
+  //         console.log("successful post request");
+  //       }
+  //     });
+  //   });
+  //   req.on("error", (err) => console.log(err));
+  //   req.write(JSON.stringify(request));
+  //   req.end();
+  // };
   const checkauth = async (history, path) => {
     if (await sessionStorage.jwtToken) {
       // Set auth token header auth
@@ -123,7 +214,7 @@ const useProvideAuth = () => {
         // Remove token from local storage
         console.log(currentTime);
         console.log(decoded.exp);
-        localStorage.removeItem("jwtToken");
+        sessionStorage.removeItem("jwtToken");
         // setAuthToken(false);
         dispatchUser({
           type: SET_CURRENT_USER,
@@ -144,7 +235,7 @@ const useProvideAuth = () => {
   };
   const signout = async () => {
     // Remove token from local storage
-    localStorage.removeItem("jwtToken");
+    sessionStorage.removeItem("jwtToken");
     // Remove auth header for future requests
     // await setAuthToken(false);
     // Set current user to empty object {} which will set isAuthenticated to false
@@ -160,5 +251,6 @@ const useProvideAuth = () => {
     signup,
     checkauth,
     signout,
+    handleEditProfile,
   };
 };

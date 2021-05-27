@@ -8,6 +8,7 @@ const {
 } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const running = require("is-running");
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
@@ -17,16 +18,29 @@ const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
 );
+const homedir = require("os").homedir();
+const bisspropTemp = path.join(homedir, ".bisspropRemoteTemp/");
 const mongod = require("./backend/spawnMongod.js");
 try {
   if (fs.existsSync(mongodLock)) {
     fs.stat(mongodLock, function (err, stats) {
-      console.log(!err);
-
       if (stats.size === 0) {
         mongod();
       } else {
-        console.log("database already running on /tmp/bisspropmongodb.sock");
+        fs.readFile(mongodLock, "utf8", function (err, data) {
+          if (err) {
+            return console.log(err);
+          }
+          if (running(data)) {
+            console.log(
+              "database already running on /tmp/bisspropmongodb.sock pid : " +
+                data
+            );
+          } else {
+            fs.unlinkSync(mongodLock);
+            mongod();
+          }
+        });
       }
     });
   } else {
@@ -148,6 +162,9 @@ app.on("ready", createWindow);
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
+    fs.rmdirSync(bisspropTemp, {
+      recursive: true,
+    });
     fs.unlinkSync(sock);
     console.log("App Successfully Terminated");
     app.quit();
