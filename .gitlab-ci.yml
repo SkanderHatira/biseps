@@ -13,7 +13,7 @@ stages:
   - build
 
 build:
-  image: 4tqrgqe5yrgfd/electron
+  image: jlarky/electron-forge:latest
   stage: build
   script:
     - cd $CI_PROJECT_DIR/
