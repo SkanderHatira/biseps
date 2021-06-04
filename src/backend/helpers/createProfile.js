@@ -20,7 +20,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
         configfile: body.remote
             ? "config/config.yaml"
             : path.join(uniqueDir, "config/config.yaml"),
-        "default-resources": ["cpus=1", "mem_mb=2000", "time_min=60"],
+        "default-resources": ["cpus=1", "mem_mb=10000", "time_min=5440"],
         "use-conda": true,
         "dry-run": body.subsample,
         "keep-going": true,
@@ -29,11 +29,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
     const slurmProfile = {
         jobs: body.jobs,
         cluster: `sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards} --mail-user=${body.email} `,
-        "default-resources": [
-            `cpus=${body.cpu}`,
-            `mem_mb=${body.memMb}`,
-            `time_min=${body.minTime}`,
-        ],
+        "default-resources": ["cpus=1", "mem_mb=10000", "time_min=5440"],
         configfile: body.remote
             ? "config/config.yaml"
             : path.join(uniqueDir, "config/config.yaml"),
@@ -41,20 +37,18 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
         "keep-going": true,
         "dry-run": body.subsample,
     };
-    if (body.cluster) {
-        const yamlStr = yaml.dump(slurmProfile);
-        fs.writeFileSync(
-            path.join(uniqueDir, "config/profiles/slurm/config.yaml"),
-            yamlStr,
-            "utf8"
-        );
-    } else {
-        const yamlStr = yaml.dump(localProfile);
-        fs.writeFileSync(
-            path.join(uniqueDir, "config/profiles/local/config.yaml"),
-            yamlStr,
-            "utf8"
-        );
-    }
+
+    const yamlStrSlurm = yaml.dump(slurmProfile);
+    fs.writeFileSync(
+        path.join(uniqueDir, "config/profiles/slurm/config.yaml"),
+        yamlStrSlurm,
+        "utf8"
+    );
+    const yamlStrLocal = yaml.dump(localProfile);
+    fs.writeFileSync(
+        path.join(uniqueDir, "config/profiles/local/config.yaml"),
+        yamlStrLocal,
+        "utf8"
+    );
 }
 module.exports = createProfile;

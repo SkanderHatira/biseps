@@ -16,7 +16,11 @@ import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
 import { useConfig } from "../../hooks/useConfig";
 import Link from "@material-ui/core/Link";
+const http = require("http");
 
+const electron = window.require("electron");
+const remote = electron.remote;
+const { BrowserWindow, dialog, Menu } = remote;
 const styles = {
   hidden: {
     display: "none",
@@ -36,7 +40,54 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function GlobalConfig() {
   const { compState, setCompState } = useConfig();
+  const [data, setData] = useState([]);
+  const createBrowserWindow = (path) => {
+    const win = new BrowserWindow({
+      height: 720,
+      width: 1080,
+    });
+    console.log("here");
 
+    win.loadURL(path);
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = sessionStorage.jwtToken;
+      const Sock = await sessionStorage.Sock;
+      const options = {
+        method: "GET",
+        path: "http://localhost/api/machines/",
+        socketPath: Sock,
+        port: null,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      };
+      const req = http.get(options, function (res) {
+        console.log("STATUS: " + res.statusCode);
+        console.log("HEADERS: " + JSON.stringify(res.headers));
+        // Buffer the body entirely for processing as a whole.
+        const bodyChunks = [];
+        res
+          .on("data", function (chunk) {
+            // You can process streamed parts here...
+            bodyChunks.push(chunk);
+          })
+          .on("end", function () {
+            const body = Buffer.concat(bodyChunks);
+            const jsbody = JSON.parse(body);
+            setData(jsbody);
+          });
+      });
+      req.on("error", function (e) {
+        console.log("ERROR: " + e.message);
+      });
+    };
+
+    fetchData();
+  }, []);
+  console.log(data);
   const classes = useStyles();
   const handleGenome = (e) => {
     setCompState({
@@ -49,7 +100,7 @@ export default function GlobalConfig() {
     });
   };
 
-  const handleRunState = (e) => {
+  const handleCompState = (e) => {
     setCompState({
       ...compState,
       [e.target.name]: e.target.value,
@@ -58,7 +109,7 @@ export default function GlobalConfig() {
   const handleCheckBox = (e) => {
     setCompState({
       ...compState,
-      [e.target.name]: String(e.target.checked),
+      [e.target.name]: e.target.checked,
     });
   };
   const handleSlider = (e, newValue) => {
@@ -75,6 +126,36 @@ export default function GlobalConfig() {
         General configuration
       </Typography>
       <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          <FormControl className={classes.formControl}>
+            <Button
+              variant="contained"
+              component="label"
+              color={compState.outdir === "" ? "default" : "primary"}
+            >
+              {compState && compState.outdir === ""
+                ? "Output Directory "
+                : compState.outdir.split(/[\\/]/).pop()}
+              <input
+                required
+                id="outdir"
+                name="outdir"
+                label="Output Directory"
+                onClick={() =>
+                  dialog.showOpenDialog(
+                    { properties: ["openDirectory"] },
+                    (dirs) => {
+                      console.log(dirs);
+                    }
+                  )
+                }
+                hidden
+              />
+            </Button>
+
+            <FormHelperText>Choose output directory</FormHelperText>
+          </FormControl>
+        </Grid>
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <InputLabel>Method</InputLabel>
@@ -84,7 +165,7 @@ export default function GlobalConfig() {
               labelId="method"
               id="method"
               name="method"
-              onChange={handleRunState}
+              onChange={handleCompState}
             >
               <MenuItem value="bins">Bins</MenuItem>
               <MenuItem value="neighbourhood">Neighbourhood</MenuItem>{" "}
@@ -108,7 +189,7 @@ export default function GlobalConfig() {
               labelId="test"
               id="test"
               name="test"
-              onChange={handleRunState}
+              onChange={handleCompState}
             >
               <MenuItem value="score">Score</MenuItem>
               <MenuItem value="fisher">Fisher</MenuItem>
@@ -149,7 +230,13 @@ export default function GlobalConfig() {
             />
             <FormHelperText>
               p-Value threshold. See{" "}
-              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+              <Link
+                onClick={() =>
+                  createBrowserWindow(
+                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                  )
+                }
+              >
                 docs
               </Link>
               .
@@ -176,7 +263,13 @@ export default function GlobalConfig() {
               />
               <FormHelperText>
                 Choose bin size for Bins and Noise Filter methods. See{" "}
-                <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                <Link
+                  onClick={() =>
+                    createBrowserWindow(
+                      "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                    )
+                  }
+                >
                   docs
                 </Link>
                 .
@@ -207,7 +300,13 @@ export default function GlobalConfig() {
                 <FormHelperText>
                   Numerical Value to be added to methylated reads before beta
                   regression. See{" "}
-                  <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                  <Link
+                    onClick={() =>
+                      createBrowserWindow(
+                        "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                      )
+                    }
+                  >
                     docs
                   </Link>
                   .
@@ -231,7 +330,13 @@ export default function GlobalConfig() {
                 <FormHelperText>
                   Numerical Value to be added to total reads before beta
                   regression. See{" "}
-                  <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+                  <Link
+                    onClick={() =>
+                      createBrowserWindow(
+                        "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                      )
+                    }
+                  >
                     docs
                   </Link>
                   .
@@ -253,7 +358,13 @@ export default function GlobalConfig() {
             <FormHelperText>
               Minimum methylated cytosines count present in a region to be
               qualified as DMR. See{" "}
-              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+              <Link
+                onClick={() =>
+                  createBrowserWindow(
+                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                  )
+                }
+              >
                 docs
               </Link>
               .
@@ -272,7 +383,13 @@ export default function GlobalConfig() {
             />
             <FormHelperText>
               Minimum reads covering methylated cytosines. See{" "}
-              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+              <Link
+                onClick={() =>
+                  createBrowserWindow(
+                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                  )
+                }
+              >
                 docs
               </Link>
               .
@@ -297,7 +414,13 @@ export default function GlobalConfig() {
             />
             <FormHelperText>
               p-Value threshold. See{" "}
-              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+              <Link
+                onClick={() =>
+                  createBrowserWindow(
+                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                  )
+                }
+              >
                 docs
               </Link>
               .
@@ -316,7 +439,13 @@ export default function GlobalConfig() {
             />
             <FormHelperText>
               DMRs separated by a gap of at least minGap are not merged. See{" "}
-              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+              <Link
+                onClick={() =>
+                  createBrowserWindow(
+                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                  )
+                }
+              >
                 docs
               </Link>
               .
@@ -335,7 +464,13 @@ export default function GlobalConfig() {
             />
             <FormHelperText>
               DMRs with a size smaller than minSize are discarded. See{" "}
-              <Link href="https://bioconductor.org/packages/release/bioc/html/DMRcaller.html">
+              <Link
+                onClick={() =>
+                  createBrowserWindow(
+                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                  )
+                }
+              >
                 docs
               </Link>
               .
@@ -347,11 +482,11 @@ export default function GlobalConfig() {
             <Button
               variant="contained"
               component="label"
-              color={compState.genome === "" ? "default" : "primary"}
+              color={compState.outdir === "" ? "default" : "primary"}
             >
-              {compState.genome === ""
+              {compState.outdir === ""
                 ? "upload genome"
-                : compState.genome.split(/[\\/]/).pop()}
+                : compState.outdir.split(/[\\/]/).pop()}
               <input
                 type="file"
                 required
@@ -376,7 +511,7 @@ export default function GlobalConfig() {
               labelId="n"
               id="n"
               name="n"
-              onChange={handleRunState}
+              onChange={handleCompState}
             >
               <MenuItem value={0}>0</MenuItem>
               <MenuItem value={1}>1</MenuItem>
@@ -464,6 +599,74 @@ export default function GlobalConfig() {
             Execution Parameters{" "}
           </Typography>
         </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel
+            className={classes.formControl}
+            control={
+              <Checkbox
+                onChange={handleCheckBox}
+                color="secondary"
+                name="remote"
+                checked={compState.remote}
+              />
+            }
+            label="Toggle this to choose a remote machine"
+          ></FormControlLabel>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel
+            className={classes.formControl}
+            control={
+              <Checkbox
+                onChange={handleCheckBox}
+                color="secondary"
+                name="subsample"
+                checked={compState.subsample}
+              />
+            }
+            label="Toggle this option to execute a minimal run"
+          ></FormControlLabel>
+        </Grid>
+        {compState.remote === true ? (
+          <Grid item xs={12} xm={6}>
+            <FormControl className={classes.formControl}>
+              <InputLabel>Machine</InputLabel>
+              <Select
+                defaultValue={compState.machine}
+                labelId="machine"
+                id="machine"
+                name="machine"
+                onChange={handleCompState}
+              >
+                {data &&
+                  data.map((machine, idx) => {
+                    return (
+                      <MenuItem key={idx} value={machine}>
+                        {machine.hostname}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+              <FormHelperText>Specify Remote machine</FormHelperText>
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <TextField
+                autoFocus
+                value={compState.remoteOutdir}
+                onChange={handleCompState}
+                margin="dense"
+                id="remoteOutdir"
+                name="remoteOutdir"
+                label="Remote Output Directory"
+                type="text"
+                fullWidth
+              />
+              <FormHelperText>Specify Remote Output directory</FormHelperText>
+            </FormControl>
+          </Grid>
+        ) : (
+          ""
+        )}
         <Grid item xs={12}>
           <FormControlLabel
             className={classes.formControl}
@@ -472,13 +675,32 @@ export default function GlobalConfig() {
                 onChange={handleCheckBox}
                 color="secondary"
                 name="cluster"
+                checked={compState.cluster}
               />
             }
             label="Toggle this option to execute in SLURM Cluster mode"
           ></FormControlLabel>
         </Grid>
-        {compState.cluster === "true" ? (
+        {compState.cluster === true ? (
           <Grid item xs={12} xm={6}>
+            <FormControl className={classes.formControl}>
+              <InputLabel>CPUs</InputLabel>
+              <Select
+                labelId="cpu"
+                id="cpu"
+                name="cpu"
+                onChange={handleCompState}
+              >
+                <MenuItem value="1">1</MenuItem>
+                <MenuItem value="2">2</MenuItem>
+                <MenuItem value="4">4</MenuItem>
+                <MenuItem value="6">6</MenuItem>
+                <MenuItem value="8">8</MenuItem>
+              </Select>
+              <FormHelperText>
+                Specify CPUs available. Default: 1
+              </FormHelperText>
+            </FormControl>
             <FormControl className={classes.formControl}>
               <InputLabel>Memory</InputLabel>
               <Select
@@ -486,12 +708,12 @@ export default function GlobalConfig() {
                 labelId="memMb"
                 id="memMb"
                 name="memMb"
-                onChange={handleRunState}
+                onChange={handleCompState}
               >
                 <MenuItem value="10000">10G</MenuItem>
                 <MenuItem value="50000">50G</MenuItem>
-                <MenuItem value="1500000">150G</MenuItem>
-                <MenuItem value="3000000">300G</MenuItem>
+                <MenuItem value="150000">150G</MenuItem>
+                <MenuItem value="300000">300G</MenuItem>
               </Select>
               <FormHelperText>
                 Specify Memory available. Default: All
@@ -504,7 +726,7 @@ export default function GlobalConfig() {
                 labelId="jobs"
                 id="jobs"
                 name="jobs"
-                onChange={handleRunState}
+                onChange={handleCompState}
               >
                 <MenuItem value="1">1</MenuItem>
                 <MenuItem value="5">5</MenuItem>
@@ -523,7 +745,7 @@ export default function GlobalConfig() {
                 labelId="minTime"
                 id="minTime"
                 name="minTime"
-                onChange={handleRunState}
+                onChange={handleCompState}
               >
                 <MenuItem value="240">240</MenuItem>
                 <MenuItem value="1440">1440</MenuItem>
@@ -539,11 +761,10 @@ export default function GlobalConfig() {
             <FormControl className={classes.formControl}>
               <InputLabel>CPUs</InputLabel>
               <Select
-                defaultValue="All"
                 labelId="cpu"
                 id="cpu"
                 name="cpu"
-                onChange={handleRunState}
+                onChange={handleCompState}
               >
                 <MenuItem value="All">All</MenuItem>
                 <MenuItem value="2">2</MenuItem>

@@ -46,6 +46,8 @@ const useProvideConfig = () => {
     minGap: 0,
     minSize: 50,
     minReadsPerCytosine: 4,
+    outdir: "",
+    remote: "",
   };
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);

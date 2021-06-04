@@ -32,7 +32,7 @@ router.post("/run", (req, res) => {
         if (!req.body.remote) {
             const uniqueDir = path.join(
                 req.body.outdir,
-                new Date().toISOString()
+                new Date().getTime().toString()
             );
             const profile = path.join(uniqueDir, "config/profiles/local");
 
@@ -69,15 +69,17 @@ router.post("/run", (req, res) => {
             createUnits(req.body, uniqueDir);
             spawnChild(req.body, profile);
         } else {
-            const date = new Date().toISOString();
+            const date = new Date().getTime().toString();
             const uniqueDir = path.join(req.body.outdir, date);
             const uniqueDirRemote = path.join(req.body.remoteOutdir, date);
+            const homeDir = path.join(".", date);
+            console.log(homeDir);
             const profile = req.body.cluster
                 ? path.join(uniqueDir, "config/profiles/slurm")
                 : path.join(uniqueDir, "config/profiles/local");
 
             const newRun = new Run({
-                outdir: uniqueDirRemote,
+                outdir: uniqueDir,
                 remoteOutdir: uniqueDirRemote,
                 profile: profile,
                 genome: req.body.genome,
@@ -105,13 +107,13 @@ router.post("/run", (req, res) => {
                 .catch((err) => console.log(err));
 
             console.log("POST method");
-            cloneBiseps(uniqueDir);
+            cloneBiseps(req.body, uniqueDir);
             createSymlink(req.body, uniqueDir);
             createProfile(req.body, uniqueDir, uniqueDirRemote);
             createConfig(req.body, uniqueDir, uniqueDirRemote);
             createUnits(req.body, uniqueDir);
             // createArchive(uniqueDir);
-            spawnChild(req.body, profile, uniqueDir);
+            spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
         }
     }
 });

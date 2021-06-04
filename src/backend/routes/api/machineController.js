@@ -28,6 +28,7 @@ router.post("/machine", (req, res) => {
             port: req.body.port,
             privateKey: req.body.privateKey,
             script: req.body.script,
+            password: req.body.password,
             createdBy: req.body.userId,
         });
         newMachine

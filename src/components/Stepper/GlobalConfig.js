@@ -306,6 +306,7 @@ export default function GlobalConfig() {
             <FormControl className={classes.formControl}>
               <InputLabel>Machine</InputLabel>
               <Select
+                defaultValue={runState.machine}
                 labelId="machine"
                 id="machine"
                 name="machine"
@@ -325,8 +326,11 @@ export default function GlobalConfig() {
             <FormControl className={classes.formControl}>
               <TextField
                 autoFocus
+                value={runState.remoteOutdir}
+                onChange={handleRunState}
                 margin="dense"
                 id="remoteOutdir"
+                name="remoteOutdir"
                 label="Remote Output Directory"
                 type="text"
                 fullWidth

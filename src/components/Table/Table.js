@@ -505,7 +505,7 @@ export default function InteractiveList() {
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        primary={sample.sample}
+                        primary={`${sample.sample} MultiQC Report`}
                         secondary={secondary ? "Secondary text" : null}
                       />
                     </ListItem>

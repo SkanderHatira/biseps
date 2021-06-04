@@ -125,7 +125,6 @@ export default function RunForm() {
     const request = {
       ...runState,
       outdir: path.dirname(runState.genome),
-      remoteOutdir: runState.remote ? "/groups/INVITE" : "",
       samples: result,
       remoteunits,
       units,

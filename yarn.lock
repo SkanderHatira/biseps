@@ -4408,6 +4408,11 @@ boolean@^3.0.1:
   resolved "https://registry.yarnpkg.com/boolean/-/boolean-3.0.2.tgz#df1baa18b6a2b0e70840475e1d93ec8fe75b2570"
   integrity sha512-RwywHlpCRc3/Wh81MiCKun4ydaIFyW5Ea6JbL6sRCVx5q5irDw7pMXBUFYF/jArQ6YrG36q0kpovc9P/Kd3I4g==
 
+bootstrap@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.0.1.tgz#e7939d599119dc818a90478a2a299bdaff037e09"
+  integrity sha512-Fl79+wsLOZKoiU345KeEaWD0ik8WKRI5zm0YSPj2oF1Qr+BO7z0fco6GbUtqjoG1h4VI89PeKJnMsMMVQdKKTw==
+
 bowser@^1.7.3:
   version "1.9.4"
   resolved "https://registry.yarnpkg.com/bowser/-/bowser-1.9.4.tgz#890c58a2813a9d3243704334fa81b96a5c150c9a"
@@ -15080,6 +15085,11 @@ react-color@^2.19.3:
     prop-types "^15.5.10"
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
+
+react-csv-to-table@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/react-csv-to-table/-/react-csv-to-table-0.0.4.tgz#e8f65560282db73031dc3650e6719c0295d18fdd"
+  integrity sha512-YHdhavi7WgksHn3/S/pIHDy4zepeYjTQkTfmKcQv976OwNSWIUB7RlYJKmCFXAgfqkbiCNbtEIHnX1n3/rTfJA==
 
 react-d3-axis@^0.1.2:
   version "0.1.2"

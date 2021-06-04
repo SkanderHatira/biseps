@@ -78,6 +78,7 @@ export default function VisualizationFill() {
 
     setCheckedTrack(newChecked);
   };
+
   const [data, setData] = useState([]);
   const [views, setViews] = useState([]);
   useEffect(() => {
@@ -267,8 +268,7 @@ export default function VisualizationFill() {
             <Button
               alignItems="center"
               variant="contained"
-              variant="outlined"
-              color="primary"
+              color="default"
               onClick={handleServe}
             >
               Start Jbrowse{" "}
@@ -277,8 +277,7 @@ export default function VisualizationFill() {
               onClick={handleReset}
               alignItems="center"
               variant="contained"
-              variant="outlined"
-              color="primary"
+              color="secondary"
             >
               Reset Jbrowse{" "}
             </Button>
@@ -293,8 +292,7 @@ export default function VisualizationFill() {
           </ButtonGroup>
         </Box>
       </Grid>
-
-      <List subheader={"Genomes"}>
+      <List subheader={result.length > 0 ? "Genomes" : ""}>
         {result.map((genome, idx) => {
           const labelId = `checkbox-list-label-${genome}`;
           console.log(idx);
@@ -337,7 +335,7 @@ export default function VisualizationFill() {
           );
         })}
       </List>
-      <List subheader={"Bam Files"}>
+      <List subheader={result.length > 0 ? "Bam Files" : ""}>
         {data.map((row) => {
           const labelId = `checkbox-list-label-${row}`;
           return (

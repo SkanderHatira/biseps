@@ -1,0 +1,16 @@
+dist
+Gala_vs_Annaglo-CG.bed
+hooks.js
+node_modules
+out
+package.json
+remote
+resources
+src
+testing.ls.txt
+test.js
+webpack.main.config.js
+webpack.renderer.config.js
+webpack.rules.js
+yarn-error.log
+yarn.lock

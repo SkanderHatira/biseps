@@ -1,0 +1,28 @@
+# https://<example.com>/<namespace>/<project>/-/jobs/artifacts/<tag>/download?job=pages
+# https://<example.com>/<namespace>/<project>/-/jobs/artifacts/<tag>/raw/<path_to_file>?job=pages
+# Where:
+# example.com - domain name your gitlab server
+# namespace - your name user on the gitlab
+# project - your project
+# tag - ref of current job.
+# If job run on only by tags, than ref will be named as tag name
+# If job run on only master, than ref will be named as "master", i.e.: https://<example.com>/<namespace>/<project>/-/jobs/artifacts/master/download?job=pages
+# path_to_file - path to file relative from root workspace folder
+
+stages:
+  - build
+
+build:
+  image: 4tqrgqe5yrgfd/electron
+  stage: build
+  script:
+    - cd $CI_PROJECT_DIR/
+    - npm i
+    - npm run make
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - $CI_PROJECT_DIR/make/deb/*.deb
+      - $CI_PROJECT_DIR/make/rpm/*.rpm
+  only:
+    - master

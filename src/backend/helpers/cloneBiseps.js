@@ -1,4 +1,4 @@
-const cloneBiseps = (uniqueDir) => {
+const cloneBiseps = (body, uniqueDir) => {
     const { execSync } = require("child_process");
     const path = require("path");
     const fs = require("fs");
@@ -15,6 +15,14 @@ const cloneBiseps = (uniqueDir) => {
                 return;
             }
             console.log(`stdout: ${stdout}`);
+        }
+    );
+    fs.copyFile(
+        body.machine.script,
+        path.join(uniqueDir, "script.sh"),
+        (err) => {
+            if (err) throw err;
+            console.log("script  was copied to destination");
         }
     );
 };

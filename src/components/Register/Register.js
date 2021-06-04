@@ -109,7 +109,7 @@ const Register = () => {
                 variant="outlined"
                 required
                 fullWidth
-                label="First Name"
+                label="Account Name"
                 autoFocus
               />
             </Grid>

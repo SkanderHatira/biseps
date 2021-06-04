@@ -27,6 +27,9 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
+import { InputAdornment } from "@material-ui/core";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -59,13 +62,16 @@ const blankMachine = {
   port: 22,
   privateKey: "",
   script: "",
+  password: "",
 };
 const ProfileForm = () => {
   const { user, handleEditProfile, signin } = useAuth();
   const [data, setData] = useState([]);
   const [machines, setMachines] = useState([]);
   const [machine, setMachine] = useState(blankMachine);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = () => setShowPassword(!showPassword);
   const handleAddMachine = () => {
     const request = {
       ...machine,
@@ -234,12 +240,11 @@ const ProfileForm = () => {
             <LockOutlinedIcon />
           </Avatar>
 
-          <Typography component="h1" variant="h5">
-            Configure Remote Machines
+          <Typography gutterBottom component="h1" variant="h5">
+            Available Machines{" "}
           </Typography>
-          <form className={classes.form} noValidate onSubmit={onSubmit}>
-            <Grid container spacing={2}>
-              {/* <Grid item xs={12}>
+          <Grid container spacing={2}>
+            {/* <Grid item xs={12}>
                 <TextField
                   onChange={onChange}
                   value={state.name}
@@ -260,7 +265,7 @@ const ProfileForm = () => {
                 />
               </Grid> */}
 
-              {/* <Grid item xs={12}>
+            {/* <Grid item xs={12}>
                 <TextField
                   value={state.email}
                   onChange={onChange}
@@ -288,47 +293,62 @@ const ProfileForm = () => {
                   Submit Changes{" "}
                 </Button>
               </Grid> */}
-              <Grid item xs={12}>
-                {data &&
-                  data.map((machine) => {
-                    console.log(machine);
-                    return (
-                      <Card className={classes.root}>
-                        <CardActionArea>
-                          <CardContent>
-                            <Typography
-                              gutterBottom
-                              variant="h5"
-                              component="h2"
-                            >
-                              {machine.hostname}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              component="p"
-                            >
-                              {machine.username}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                        <CardActions>
-                          <Button
-                            size="small"
-                            color="primary"
-                            onClick={() => {
-                              handleDelete(machine._id);
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        </CardActions>
-                      </Card>
-                    );
-                  })}
-              </Grid>
-            </Grid>
 
+            <Grid item xs={12}>
+              {data && data.length === 0 ? (
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  align="center"
+                  component="h2"
+                  color="textSecondary"
+                >
+                  You have yet to configure remote machines
+                </Typography>
+              ) : (
+                data.map((machine) => {
+                  console.log(machine);
+                  return (
+                    <Card className={classes.root}>
+                      <CardActionArea>
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="h2">
+                            {machine.hostname}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            component="p"
+                          >
+                            {machine.username}
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                      <CardActions>
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={() => {
+                            handleDelete(machine._id);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  );
+                })
+              )}
+            </Grid>
+          </Grid>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+
+          <Typography component="h1" variant="h5">
+            New Remote Machine
+          </Typography>
+          <form className={classes.form} noValidate onSubmit={onSubmit}>
             <div>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -395,6 +415,32 @@ const ProfileForm = () => {
                       hidden
                     />
                   </Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Password"
+                    variant="outlined"
+                    id="password"
+                    name="password"
+                    fullWidth
+                    value={machine.password}
+                    type={showPassword ? "text" : "password"} // <-- This is where the magic happens
+                    onChange={handleMachinesChange}
+                    InputProps={{
+                      // <-- This is where the toggle button is added.
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                          >
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 </Grid>
                 <Grid item xs={12} m={6}>
                   <Button

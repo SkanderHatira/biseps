@@ -100,7 +100,7 @@ export default function RunForm() {
         throw new Error("Unknown step");
     }
   }
-  const handleRunSubmit = () => {
+  const handleComparisonSubmit = () => {
     const request = {
       ...compState,
       comparisons: comparisons,
@@ -189,13 +189,13 @@ export default function RunForm() {
                     color="primary"
                     onClick={
                       activeStep === steps.length - 1
-                        ? handleRunSubmit
+                        ? handleComparisonSubmit
                         : handleNext
                     }
                     className={classes.button}
                   >
                     {activeStep === steps.length - 1
-                      ? "Launch analysis"
+                      ? "Launch comparison"
                       : "Next"}
                   </Button>
                   <Button
