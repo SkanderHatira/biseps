@@ -15,6 +15,6 @@ build:
   artifacts:
     expire_in: 1 day
     paths:
-      - $CI_PROJECT_DIR/out/make/deb/*.deb
+      - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
   only:
     - master
