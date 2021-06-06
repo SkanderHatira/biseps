@@ -1,12 +1,15 @@
 image: electronjs/build:latest
 stages:
   - build
+before_script:
+  - sudo npm install --global yarn
+
 build:
   stage: build
   script:
     - cd $CI_PROJECT_DIR/
-    - npm i
-    - npm run make
+    - sudo yarn
+    - sudo yarn make
   artifacts:
     expire_in: 1 day
     paths:
