@@ -1,14 +1,6 @@
-# https://<example.com>/<namespace>/<project>/-/jobs/artifacts/<tag>/download?job=pages
-# https://<example.com>/<namespace>/<project>/-/jobs/artifacts/<tag>/raw/<path_to_file>?job=pages
-# Where:
-# example.com - domain name your gitlab server
-# namespace - your name user on the gitlab
-# project - your project
-# tag - ref of current job.
-# If job run on only by tags, than ref will be named as tag name
-# If job run on only master, than ref will be named as "master", i.e.: https://<example.com>/<namespace>/<project>/-/jobs/artifacts/master/download?job=pages
-# path_to_file - path to file relative from root workspace folder
-
+image: docker:19.03.12
+services:
+  - docker:19.03.12-dind
 stages:
   - build
 
