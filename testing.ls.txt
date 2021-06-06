@@ -1,5 +1,4 @@
 dist
-Gala_vs_Annaglo-CG.bed
 hooks.js
 node_modules
 out

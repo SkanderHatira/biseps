@@ -33,11 +33,12 @@ const createConfig = (body, uniqueDir, uniqueDirRemote) => {
                     : body.genome,
             },
             adapters: body.remote
-                ? path.join(".test/resources/adapters", body.adapters)
+                ? path.join(".test/resources/adapters", body.adapters, ".fa")
                 : path.join(
                       __dirname,
                       "../../../resources/adapters",
-                      body.adapters
+                      body.adapters,
+                      ".fa"
                   ) || "",
         },
 

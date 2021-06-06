@@ -4,7 +4,7 @@ const createArchive = (uniqueDir) => {
     const fs = require("fs");
 
     execSync(
-        `git clone -b slurm git@forgemia.inra.fr:skander.hatira/bissprop.git ${uniqueDir}`,
+        `git clone git@forgemia.inra.fr:skander.hatira/biseps.git ${uniqueDir}`,
         (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);

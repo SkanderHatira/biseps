@@ -75,23 +75,68 @@ const spawnChild = async (
                 if (body.cluster) {
                     connect(host, function (err, ssh) {
                         exec(
-                            `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf ${homeDir}/.snakemake && sbatch slurmScript.sh > slurm.out.txt `,
+                            `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/  && sbatch exec_scripts/slurmScript.sh `,
                             { ssh: ssh },
                             (err, stdout, stderr) => {
-                                console.log(stdout);
+                                console.log("stdout is:", stdout);
+                                console.log("stderr is:", stderr);
+                                console.log("errors is:", err);
                             }
                         );
+                        // exec(
+                        //     `cd ${homeDir} &&  sbatch slurmScript.sh`,
+                        //     { ssh: ssh },
+                        //     (err, stdout, stderr) => {
+                        //         console.log(stdout);
+                        //     }
+                        // );
                     });
+                    // connect(host, function (err, ssh) {
+                    //     child = exec(
+                    //         {
+                    //             command: `cd ${homeDir} && sbatch slurmScript.sh`,
+                    //             ssh: ssh,
+                    //         },
+                    //         function (err, stdout, stderr) {
+                    //             console.log(stdout);
+                    //         }
+                    //     );
+                    //     child.stdout.on("data", function (data) {
+                    //         console.log(data);
+                    //     });
+                    //     child.on("exit", function (code) {
+                    //         console.log("Exit", code);
+                    //     });
+                    // });
                 } else {
                     connect(host, function (err, ssh) {
                         exec(
-                            `cd ${homeDir} && tar -xf workflow.tar.gz  && rm -rf ${homeDir}/.snakemake && bash localScript.sh > local.out.txt`,
+                            `cd ${homeDir} && tar -xf workflow.tar.gz  && rm -rf .snakemake/ && source exec_scripts/script.sh &&  bash exec_scripts/localScript.sh`,
                             { ssh: ssh },
                             (err, stdout, stderr) => {
-                                console.log(stdout);
+                                console.log("stdout is:", stdout);
+                                console.log("stderr is:", stderr);
+                                console.log("errors is:", err);
                             }
                         );
                     });
+                    // connect(host, function (err, ssh) {
+                    //     child = exec(
+                    //         {
+                    //             command: `cd ${homeDir} && source localScript.sh`,
+                    //             ssh: ssh,
+                    //         },
+                    //         function (err, stdout, stderr) {
+                    //             console.log(stdout);
+                    //         }
+                    //     );
+                    //     child.stdout.on("data", function (data) {
+                    //         console.log(data);
+                    //     });
+                    //     child.on("exit", function (code) {
+                    //         console.log("Exit", code);
+                    //     });
+                    // });
                     // const child = execFile(
                     //     localScript,
                     //     [env, profile, workflow],
