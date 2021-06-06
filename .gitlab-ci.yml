@@ -10,6 +10,8 @@ build:
     - cd $CI_PROJECT_DIR/
     - sudo yarn
     - sudo yarn make
+    - ls -al
+    - ls -al out/
   artifacts:
     expire_in: 1 day
     paths:
