@@ -8,6 +8,7 @@ create:
   script:
     - cd $CI_PROJECT_DIR/
     - /opt/conda/bin/conda config --set always_yes yes --set changeps1 no --set add_pip_as_python_dependency no
+    - /opt/conda/bin/conda install -c conda-forge conda-pack
     - /opt/conda/bin/conda env create  -n snakemake -f resources/snakeMinimal.yaml
     - /opt/conda/bin/conda env create  -n mongo -f resources/mongodb.yaml
     - /opt/conda/bin/conda run -n snakemake conda pack -n snakemake
