@@ -1,26 +1,12 @@
 image: electronjs/build:latest
 stages:
+  - create
   - build
-  - create-env
 before_script:
   - sudo npm install --global yarn
-
-build:
-  stage: build
-  needs: [create-env]
-  script:
-    - cd $CI_PROJECT_DIR/
-    - sudo yarn
-    - sudo yarn make
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
-  only:
-    - master
-create-env:
+create:
+  stage: create
   image: continuumio/miniconda3:latest
-  stage: create-env
   script:
     - cd $CI_PROJECT_DIR/
     - /opt/conda/bin/conda config --set always_yes yes --set changeps1 no --set add_pip_as_python_dependency no
@@ -35,5 +21,17 @@ create-env:
     paths:
       - $CI_PROJECT_DIR/resources/snakemake/
       - $CI_PROJECT_DIR/resources/database/mongo/
+  only:
+    - master
+build:
+  stage: build
+  script:
+    - cd $CI_PROJECT_DIR/
+    - sudo yarn
+    - sudo yarn make
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
   only:
     - master
