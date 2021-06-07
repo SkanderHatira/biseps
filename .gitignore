@@ -35,6 +35,7 @@ build/Release
 # Dependency directories
 mongo/
 snakemake/
+snakemake/**
 node_modules/
 jspm_packages/
 server-linux
