@@ -2,8 +2,6 @@ image: electronjs/build:latest
 stages:
   - create
   - build
-before_script:
-  - sudo npm install --global yarn
 create:
   stage: create
   image: continuumio/miniconda3:latest
@@ -26,6 +24,7 @@ create:
 build:
   stage: build
   script:
+    - sudo npm install --global yarn
     - cd $CI_PROJECT_DIR/
     - sudo yarn
     - sudo yarn make
