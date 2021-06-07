@@ -13,6 +13,8 @@ create:
     - /opt/conda/bin/conda env create  -n mongo -f resources/mongodb.yaml
     - /opt/conda/bin/conda run -n snakemake conda pack -n snakemake
     - /opt/conda/bin/conda run -n mongo conda pack -n mongo
+    - mkdir resources/snakemake/
+    - mkdir resources/database/mongo
     - tar -xf snakemake.tar.gz -C resources/snakemake/
     - tar -xf mongo.tar.gz -C resources/database/mongo
   artifacts:
