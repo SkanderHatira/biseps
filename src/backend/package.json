@@ -34,6 +34,10 @@
     "react-spinners-css": "^1.2.2",
     "scp": "^0.0.3",
     "serve": "^11.3.2",
+    "ssh2": "^1.1.0",
+    "ssh2-connect": "^3.1.0",
+    "ssh2-exec": "^0.6.0",
+    "ssh2-sftp-client": "^6.0.1",
     "validator": "^13.5.2"
   },
   "devDependencies": {
