@@ -341,6 +341,7 @@ export default function VisualizationFill() {
           return (
             <div>
               {row.samples.map((sample, idx) => {
+                console.log(sample);
                 const samplePath = `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam`;
                 const associatedGenomePath = row.genome.replace(
                   /^.*[\\\/]/,

@@ -1,11 +1,12 @@
 const express = require("express");
 const path = require("path");
 const router = express.Router();
-const createJB = require("../../helpers/createJbrowse");
-const spawnJbrowse = require("../../helpers/spawnJbrowse");
+const createUnitsComparison = require("../../helpers/createUnitsComparison");
+const createProfileComparison = require("../../helpers/createProfileComparison");
+const spawnChild = require("../../snakemake");
 
 // Load input validation
-const validateConfigurationInput = require("../../validation/viewValidation");
+const validateConfigurationInput = require("../../validation/comparisonConfiguration");
 // Load Run model
 
 const Comparison = require("../../models/Comparison");
@@ -14,43 +15,58 @@ const User = require("../../models/User");
 // @route POST api/runs/Run
 // @desc Run
 // @access Public
+
 router.post("/comparison", (req, res) => {
     console.log(req.body);
-});
-router.post("/comparison", (req, res) => {
-    console.log(req.body);
+
     // Form validation
     const { errors, isValid } = validateConfigurationInput(req.body);
     // Check validation
     if (!isValid) {
+        console.log("invalidate");
         return res.status(400).json(errors);
     } else {
+        console.log("made validation");
         if (!req.body.remote) {
-            const uniqueDir = path.join(
-                req.body.outdir,
-                new Date().toISOString()
-            );
-            const profile = path.join(uniqueDir, "config/profiles/local");
+            const date = new Date().getTime().toString();
 
-            const newRun = new Run({
+            const uniqueDir = path.join(
+                __dirname,
+                "../../../bisepsComparison/",
+                date
+            );
+            const profile = path.join(
+                uniqueDir,
+                "config/profiles/localComparison"
+            );
+
+            const newComparison = new Comparison({
                 outdir: uniqueDir,
+                remoteDir: req.body.remoteDir,
                 profile: profile,
-                genome: req.body.genome,
-                adapters: req.body.adapters,
-                steps: {
-                    subsample: req.body.subsample,
-                },
-                samples: req.body.samples,
-                units: req.body.units,
+                comparisons: req.body.comparisons,
+                method: req.body.method,
+                stat: req.body.stat,
+                binSize: req.body.binSize,
+                pseudocountN: req.body.pseudocountN,
+                pseudocountM: req.body.pseudocountM,
+                pValueThreshold: req.body.pValueThreshold,
+                minCytosinesCount: req.body.minCytosinesCount,
+                minProportionDifference: req.body.minProportionDifference,
+                minGap: req.body.minGap,
+                minSize: req.body.minSize,
+                minReadsPerCytosine: req.body.minReadsPerCytosine,
+                remote: req.body.remote,
+                cluster: req.body.cluster,
                 createdBy: req.body.userId,
             });
-            newRun
+            newComparison
                 .save()
-                .then((run) => {
-                    res.json(run);
+                .then((comparison) => {
+                    res.json(comparison);
                     User.findByIdAndUpdate(
-                        run.createdBy,
-                        { $push: { runs: run._id } },
+                        comparison.createdBy,
+                        { $push: { comparisons: comparison._id } },
                         { safe: true, upsert: true, new: true },
                         function (err, model) {
                             console.log(err);
@@ -58,40 +74,52 @@ router.post("/comparison", (req, res) => {
                     );
                 })
                 .catch((err) => console.log(err));
-
+            console.log(newComparison);
             console.log("POST method");
-            createProfile(req.body, uniqueDir);
-            createConfig(req.body, uniqueDir);
-            createUnits(req.body, uniqueDir);
-            spawnChild(req.body, profile);
+            createProfileComparison(req.body, uniqueDir);
+            createUnitsComparison(req.body, uniqueDir);
+            // createProfile(req.body, uniqueDir);
+            // createConfig(req.body, uniqueDir);
+            // createUnits(req.body, uniqueDir);
+            // spawnChild(req.body, profile);
         } else {
-            const date = new Date().toISOString();
-            const uniqueDir = path.join(req.body.outdir, date);
+            const date = new Date().getTime().toString();
+            const uniqueDir = path.join(
+                __dirname,
+                "../../../bisepsComparison/",
+                date
+            );
             const uniqueDirRemote = path.join(req.body.remoteOutdir, date);
             const profile = req.body.cluster
                 ? path.join(uniqueDir, "config/profiles/slurm")
                 : path.join(uniqueDir, "config/profiles/local");
 
-            const newRun = new Run({
+            const newComparison = new Comparison({
                 outdir: uniqueDir,
-                remoteOutdir: uniqueDirRemote,
                 profile: profile,
-                genome: req.body.genome,
-                adapters: req.body.adapters,
-                steps: {
-                    subsample: req.body.subsample,
-                },
-                samples: req.body.samples,
-                units: req.body.remoteunits,
+                comparisons: req.body.comparisons,
+                method: req.body.method,
+                stat: req.body.stat,
+                binSize: req.body.binSize,
+                pseudocountN: req.body.pseudocountN,
+                pseudocountM: req.body.pseudocountM,
+                pValueThreshold: req.body.pValueThreshold,
+                minCytosinesCount: req.body.minCytosinesCount,
+                minProportionDifference: req.body.minProportionDifference,
+                minGap: req.body.minGap,
+                minSize: req.body.minSize,
+                minReadsPerCytosine: req.body.minReadsPerCytosine,
+                remote: req.body.remote,
+                cluster: req.body.cluster,
                 createdBy: req.body.userId,
             });
-            newRun
+            newComparison
                 .save()
-                .then((run) => {
-                    res.json(run);
+                .then((comparison) => {
+                    res.json(comparison);
                     User.findByIdAndUpdate(
-                        run.createdBy,
-                        { $push: { runs: run._id } },
+                        comparison.createdBy,
+                        { $push: { comparisons: comparison._id } },
                         { safe: true, upsert: true, new: true },
                         function (err, model) {
                             console.log(err);
@@ -101,23 +129,23 @@ router.post("/comparison", (req, res) => {
                 .catch((err) => console.log(err));
 
             console.log("POST method");
-            cloneBiseps(req.body, uniqueDir);
-            createSymlink(req.body, uniqueDir);
-            createProfile(req.body, uniqueDir, uniqueDirRemote);
-            createConfig(req.body, uniqueDir, uniqueDirRemote);
-            createUnits(req.body, uniqueDir);
-            // createArchive(uniqueDir);
-            spawnChild(req.body, profile, uniqueDir, uniqueDirRemote);
+            // cloneBiseps(req.body, uniqueDir);
+            // createSymlink(req.body, uniqueDir);
+            // createProfile(req.body, uniqueDir, uniqueDirRemote);
+            // createConfig(req.body, uniqueDir, uniqueDirRemote);
+            // createUnits(req.body, uniqueDir);
+            // // createArchive(uniqueDir);
+            // spawnChild(req.body, profile, uniqueDir, uniqueDirRemote);
         }
     }
 });
 router.get("/", function (req, res) {
-    Run.find({}, function (err, runs) {
+    Comparison.find({}, function (err, comparisons) {
         if (err)
             return res
                 .status(500)
-                .send("There was a problem finding the runs.");
-        res.status(200).send(runs);
+                .send("There was a problem finding the comparisons.");
+        res.status(200).send(comparisons);
     }).populate("createdBy");
     console.log("GET method");
 });

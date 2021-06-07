@@ -69,7 +69,6 @@ const useProvideAuth = () => {
         "Content-Type": "application/json",
       },
     };
-
     const req = http.request(options, function (res) {
       const chunks = [];
 

@@ -7,7 +7,6 @@ const passport = require("passport");
 const path = require("path");
 const users = require("../backend/routes/api/userController");
 const machines = require("../backend/routes/api/machineController");
-
 const runs = require("../backend/routes/api/runController");
 const views = require("../backend/routes/api/viewController");
 const comparisons = require("../backend/routes/api/comparisonController");

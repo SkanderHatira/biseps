@@ -34,9 +34,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     maxWidth: 752,
   },
-  demo: {
-    backgroundColor: theme.palette.background.paper,
-  },
+  demo: {},
   title: {
     margin: theme.spacing(4, 0, 2),
   },
@@ -138,36 +136,33 @@ export default function InteractiveList() {
           data.map((row) => (
             <Grid key={row._id} item xs={12} md={6}>
               <Typography variant="h6" className={classes.title}>
-                Analysis created by {row.createdBy.name}
+                Comparison created by {row.createdBy.name}
               </Typography>
               <div className={classes.demo}>
                 <List dense={dense}>
-                  {row.samples.map((sample) => (
+                  {row.comparisons.map((comparison) => (
                     <ListItem
                       button
-                      disabled={
-                        fileExist(
-                          `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`
-                        )
-                          ? false
-                          : true
-                      }
-                      key={sample._id}
-                      onClick={() => {
-                        const path = `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`;
-                        console.log(path);
-                        createBrowserWindow(path);
-                      }}
+                      // disabled={
+                      //   fileExist(
+                      //     `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`
+                      //   )
+                      //     ? false
+                      //     : true
+                      // }
+                      key={comparison._id}
+                      // onClick={() => {
+                      //   const path = `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`;
+                      //   console.log(path);
+                      //   createBrowserWindow(path);
+                      // }}
                     >
                       <ListItemAvatar>
                         <Avatar>
                           <FolderIcon />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText
-                        primary={sample.sample}
-                        secondary={secondary ? "Secondary text" : null}
-                      />
+                      <ListItemText primary={comparison.name} />
                     </ListItem>
                   ))}
                   {/* {generate(

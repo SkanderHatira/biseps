@@ -101,6 +101,7 @@ export default function GlobalConfig() {
   };
 
   const handleCompState = (e) => {
+    console.log(e.target.value);
     setCompState({
       ...compState,
       [e.target.name]: e.target.value,
@@ -126,7 +127,7 @@ export default function GlobalConfig() {
         General configuration
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+        {/* <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <Button
               variant="contained"
@@ -141,21 +142,21 @@ export default function GlobalConfig() {
                 id="outdir"
                 name="outdir"
                 label="Output Directory"
+                value
                 onClick={() =>
                   dialog.showOpenDialog(
                     { properties: ["openDirectory"] },
                     (dirs) => {
-                      console.log(dirs);
+                      handleCompState();
                     }
                   )
                 }
                 hidden
               />
             </Button>
-
             <FormHelperText>Choose output directory</FormHelperText>
           </FormControl>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <InputLabel>Method</InputLabel>
@@ -169,7 +170,7 @@ export default function GlobalConfig() {
             >
               <MenuItem value="bins">Bins</MenuItem>
               <MenuItem value="neighbourhood">Neighbourhood</MenuItem>{" "}
-              {compState.test != "betareg" ? (
+              {compState.stat != "betareg" ? (
                 <MenuItem value="noise_filter">Noise Filter</MenuItem>
               ) : (
                 ""
@@ -180,15 +181,16 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
+
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <InputLabel>Statistical Test</InputLabel>
             <Select
               defaultValue="score"
-              value={compState.test}
-              labelId="test"
-              id="test"
-              name="test"
+              value={compState.stat}
+              labelId="stat"
+              id="stat"
+              name="stat"
               onChange={handleCompState}
             >
               <MenuItem value="score">Score</MenuItem>
@@ -277,7 +279,7 @@ export default function GlobalConfig() {
             </FormControl>
           </Grid>
         )}
-        {compState.test != "betareg" ? (
+        {compState.stat != "betareg" ? (
           ""
         ) : (
           <>
@@ -290,12 +292,8 @@ export default function GlobalConfig() {
                   id="pseudocountM"
                   name="pseudocountM"
                   type="number"
-                  onChange={handleSlider}
+                  onChange={handleCompState}
                   value={compState.pseudocountM}
-                  step={1}
-                  min={1}
-                  max={5}
-                  valueLabelDisplay="auto"
                 />
                 <FormHelperText>
                   Numerical Value to be added to methylated reads before beta
@@ -320,12 +318,8 @@ export default function GlobalConfig() {
                   id="pseudocountN"
                   name="pseudocountN"
                   type="number"
-                  onChange={handleSlider}
+                  onChange={handleCompState}
                   value={compState.pseudocountN}
-                  step={1}
-                  min={1}
-                  max={5}
-                  valueLabelDisplay="auto"
                 />
                 <FormHelperText>
                   Numerical Value to be added to total reads before beta
@@ -352,7 +346,7 @@ export default function GlobalConfig() {
               id="minCytosinesCount"
               name="minCytosinesCount"
               type="number"
-              onChange={handleSlider}
+              onChange={handleCompState}
               value={compState.minCytosinesCount}
             />
             <FormHelperText>
@@ -378,7 +372,7 @@ export default function GlobalConfig() {
               id="minReadsPerCytosine"
               name="minReadsPerCytosine"
               type="number"
-              onChange={handleSlider}
+              onChange={handleCompState}
               value={compState.minReadsPerCytosine}
             />
             <FormHelperText>
@@ -434,7 +428,7 @@ export default function GlobalConfig() {
               id="minGap"
               name="minGap"
               type="number"
-              onChange={handleSlider}
+              onChange={handleCompState}
               value={compState.minGap}
             />
             <FormHelperText>
@@ -458,9 +452,9 @@ export default function GlobalConfig() {
             <Input
               id="minSize"
               name="minSize"
-              type="number"
-              onChange={handleSlider}
               value={compState.minSize}
+              type="number"
+              onChange={handleCompState}
             />
             <FormHelperText>
               DMRs with a size smaller than minSize are discarded. See{" "}
@@ -613,170 +607,66 @@ export default function GlobalConfig() {
             label="Toggle this to choose a remote machine"
           ></FormControlLabel>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControlLabel
-            className={classes.formControl}
-            control={
-              <Checkbox
-                onChange={handleCheckBox}
-                color="secondary"
-                name="subsample"
-                checked={compState.subsample}
-              />
-            }
-            label="Toggle this option to execute a minimal run"
-          ></FormControlLabel>
-        </Grid>
+
         {compState.remote === true ? (
-          <Grid item xs={12} xm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Machine</InputLabel>
-              <Select
-                defaultValue={compState.machine}
-                labelId="machine"
-                id="machine"
-                name="machine"
-                onChange={handleCompState}
-              >
-                {data &&
-                  data.map((machine, idx) => {
-                    return (
-                      <MenuItem key={idx} value={machine}>
-                        {machine.hostname}
-                      </MenuItem>
-                    );
-                  })}
-              </Select>
-              <FormHelperText>Specify Remote machine</FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <TextField
-                autoFocus
-                value={compState.remoteOutdir}
-                onChange={handleCompState}
-                margin="dense"
-                id="remoteOutdir"
-                name="remoteOutdir"
-                label="Remote Output Directory"
-                type="text"
-                fullWidth
-              />
-              <FormHelperText>Specify Remote Output directory</FormHelperText>
-            </FormControl>
+          <Grid container>
+            <Grid item xs={4}>
+              <FormControl className={classes.formControl}>
+                <InputLabel>Machine</InputLabel>
+                <Select
+                  defaultValue={compState.machine}
+                  labelId="machine"
+                  id="machine"
+                  name="machine"
+                  onChange={handleCompState}
+                >
+                  {data &&
+                    data.map((machine, idx) => {
+                      return (
+                        <MenuItem key={idx} value={machine}>
+                          {machine.hostname}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+                <FormHelperText>Specify Remote machine</FormHelperText>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormControl className={classes.formControl}>
+                <TextField
+                  autoFocus
+                  value={compState.remoteDir}
+                  onChange={handleCompState}
+                  margin="dense"
+                  id="remoteDir"
+                  name="remoteDir"
+                  label="Remote Output Directory"
+                  type="text"
+                  fullWidth
+                />
+                <FormHelperText>Specify Remote Output directory</FormHelperText>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormControlLabel
+                className={classes.formControl}
+                control={
+                  <Checkbox
+                    onChange={handleCheckBox}
+                    color="secondary"
+                    name="cluster"
+                    checked={compState.cluster}
+                  />
+                }
+                label="Toggle this option to execute in SLURM Cluster mode"
+              ></FormControlLabel>
+            </Grid>
           </Grid>
         ) : (
           ""
-        )}
-        <Grid item xs={12}>
-          <FormControlLabel
-            className={classes.formControl}
-            control={
-              <Checkbox
-                onChange={handleCheckBox}
-                color="secondary"
-                name="cluster"
-                checked={compState.cluster}
-              />
-            }
-            label="Toggle this option to execute in SLURM Cluster mode"
-          ></FormControlLabel>
-        </Grid>
-        {compState.cluster === true ? (
-          <Grid item xs={12} xm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>CPUs</InputLabel>
-              <Select
-                labelId="cpu"
-                id="cpu"
-                name="cpu"
-                onChange={handleCompState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify CPUs available. Default: 1
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Memory</InputLabel>
-              <Select
-                defaultValue="10000"
-                labelId="memMb"
-                id="memMb"
-                name="memMb"
-                onChange={handleCompState}
-              >
-                <MenuItem value="10000">10G</MenuItem>
-                <MenuItem value="50000">50G</MenuItem>
-                <MenuItem value="150000">150G</MenuItem>
-                <MenuItem value="300000">300G</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Memory available. Default: All
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Jobs</InputLabel>
-              <Select
-                defaultValue="5"
-                labelId="jobs"
-                id="jobs"
-                name="jobs"
-                onChange={handleCompState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="15">15</MenuItem>
-                <MenuItem value="25">25</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Maximum number of Parallel Jobs. Default: 5
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>MaxTime</InputLabel>
-              <Select
-                defaultValue="1440"
-                labelId="minTime"
-                id="minTime"
-                name="minTime"
-                onChange={handleCompState}
-              >
-                <MenuItem value="240">240</MenuItem>
-                <MenuItem value="1440">1440</MenuItem>
-                <MenuItem value="2880">2880</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Maximum Time before a job is terminated. Default: 1 day
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-        ) : (
-          <Grid item xs={12} sm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>CPUs</InputLabel>
-              <Select
-                labelId="cpu"
-                id="cpu"
-                name="cpu"
-                onChange={handleCompState}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify CPUs available. Default: All
-              </FormHelperText>
-            </FormControl>
-          </Grid>
         )}
       </Grid>
     </React.Fragment>

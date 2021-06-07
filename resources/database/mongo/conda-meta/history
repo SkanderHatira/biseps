@@ -1,0 +1,15 @@
+==> 2021-02-19 03:34:05 <==
+# cmd: /home/shatira/miniconda3/bin/conda create -c anaconda -n mongodb mongodb
+# conda version: 4.9.2
++anaconda/linux-64::ca-certificates-2020.10.14-0
++anaconda/linux-64::krb5-1.18.2-h173b8e3_0
++anaconda/linux-64::libcurl-7.71.1-h20c2e04_1
++anaconda/linux-64::libedit-3.1.20191231-h14c3975_1
++anaconda/linux-64::libgcc-ng-9.1.0-hdf63c60_0
++anaconda/linux-64::libssh2-1.9.0-h1ba5d50_1
++anaconda/linux-64::libstdcxx-ng-9.1.0-hdf63c60_0
++anaconda/linux-64::ncurses-6.2-he6710b0_1
++anaconda/linux-64::openssl-1.1.1h-h7b6447c_0
++anaconda/linux-64::zlib-1.2.11-h7b6447c_3
++defaults/linux-64::mongodb-4.0.3-h597af5e_0
+# update specs: ['mongodb']

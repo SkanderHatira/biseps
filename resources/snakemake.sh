@@ -7,5 +7,6 @@ which conda
 which python
 source  $sourceEnv/activate
 cd $workflow
+pwd
 $sourceEnv/snakemake --profile $profile --unlock
 $sourceEnv/snakemake --profile $profile --rerun-incomplete

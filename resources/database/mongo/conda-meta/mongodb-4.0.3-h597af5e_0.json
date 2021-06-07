@@ -1,0 +1,72 @@
+{
+ "build": "h597af5e_0",
+ "build_number": 0,
+ "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+ "constrains": [],
+ "depends": [
+  "libcurl >=7.61.1,<8.0a0",
+  "libgcc-ng >=7.3.0",
+  "libstdcxx-ng >=7.3.0",
+  "openssl >=1.1.1a,<1.1.2a"
+ ],
+ "extracted_package_dir": "",
+ "features": "",
+ "files": [
+  "bin/install_compass",
+  "bin/mongo",
+  "bin/mongod",
+  "bin/mongos"
+ ],
+ "fn": "mongodb-4.0.3-h597af5e_0.conda",
+ "legacy_bz2_md5": "521b5930bc2c27409dad4d9a2abaa1e3",
+ "license": "AGPLv3",
+ "license_family": "AGPL",
+ "link": {
+  "source": "",
+  "type": 1
+ },
+ "md5": "d863ffc52f3d38e2e76ea3754e1296c9",
+ "name": "mongodb",
+ "package_tarball_full_path": "",
+ "paths_data": {
+  "paths": [
+   {
+    "_path": "bin/install_compass",
+    "path_type": "hardlink",
+    "sha256": "43d9a8a6887283f71cc4c5503b4a7b9bea55c551a73153366bb37c6ef3d9e2e4",
+    "sha256_in_prefix": "43d9a8a6887283f71cc4c5503b4a7b9bea55c551a73153366bb37c6ef3d9e2e4",
+    "size_in_bytes": 5792
+   },
+   {
+    "_path": "bin/mongo",
+    "path_type": "hardlink",
+    "sha256": "276aeef92ef0939814803cce9798d72931672bdb6a72cd114932d9001b8e3f0f",
+    "sha256_in_prefix": "276aeef92ef0939814803cce9798d72931672bdb6a72cd114932d9001b8e3f0f",
+    "size_in_bytes": 31692440
+   },
+   {
+    "_path": "bin/mongod",
+    "path_type": "hardlink",
+    "sha256": "03dc4bec42f11a76cdc23563323fb45fb267139e6961644f7eb09a98209ae782",
+    "sha256_in_prefix": "03dc4bec42f11a76cdc23563323fb45fb267139e6961644f7eb09a98209ae782",
+    "size_in_bytes": 50228336
+   },
+   {
+    "_path": "bin/mongos",
+    "path_type": "hardlink",
+    "sha256": "4cd0361ea178360f4304817469fd3bc79c95100857d11eeafe1ef409494b2fde",
+    "sha256_in_prefix": "4cd0361ea178360f4304817469fd3bc79c95100857d11eeafe1ef409494b2fde",
+    "size_in_bytes": 28129080
+   }
+  ],
+  "paths_version": 1
+ },
+ "requested_spec": "mongodb",
+ "sha256": "82e5790079bc8c078037a1ae7e51ca7423a21a189172d2fbc47d313bf1f0050c",
+ "size": 19999200,
+ "subdir": "linux-64",
+ "timestamp": 1541024139648,
+ "track_features": "",
+ "url": "https://repo.anaconda.com/pkgs/main/linux-64/mongodb-4.0.3-h597af5e_0.conda",
+ "version": "4.0.3"
+}

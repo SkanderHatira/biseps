@@ -100,10 +100,12 @@ export default function RunForm() {
         throw new Error("Unknown step");
     }
   }
+  console.log(comparisons);
+
   const handleComparisonSubmit = () => {
     const request = {
       ...compState,
-      comparisons: comparisons,
+      comparisons,
       userId: user.user.id,
     };
     const token = sessionStorage.jwtToken;
@@ -139,7 +141,8 @@ export default function RunForm() {
 
           setResponse(jsbody);
           setCompState(initialComp);
-          history.push("/alignment");
+          setComparisons([]);
+          history.push("/comparison");
         }
       });
     });

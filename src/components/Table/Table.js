@@ -115,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 752,
   },
   demo: {
-    backgroundColor: theme.palette.background.paper,
+    // backgroundColor: theme.palette.background.paper,
   },
   title: {
     margin: theme.spacing(4, 0, 2),

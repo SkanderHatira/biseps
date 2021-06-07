@@ -19,7 +19,7 @@ const cloneBiseps = (body, uniqueDir) => {
     );
     fs.copyFile(
         body.machine.script,
-        path.join(uniqueDir, "script.sh"),
+        path.join(uniqueDir, "exec_scripts", "script.sh"),
         (err) => {
             if (err) throw err;
             console.log("script  was copied to destination");
