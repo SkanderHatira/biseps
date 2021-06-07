@@ -33,7 +33,7 @@ coverage
 build/Release
 
 # Dependency directories
-mongo/
+mongo/**
 snakemake/
 node_modules/
 jspm_packages/

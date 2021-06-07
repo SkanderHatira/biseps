@@ -24,9 +24,11 @@ router.post("/register", (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
-    User.findOne({ email: req.body.email }).then((user) => {
+    User.findOne({ name: req.body.name }).then((user) => {
         if (user) {
-            return res.status(400).json({ email: "Email already exists" });
+            return res
+                .status(400)
+                .json({ name: "Account Name already exists" });
         } else {
             const jbPath = path.join(
                 __dirname,
@@ -64,13 +66,15 @@ router.post("/login", (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
-    const email = req.body.email;
+    const name = req.body.name;
     const password = req.body.password;
-    // Find user by email
-    User.findOne({ email }).then((user) => {
+    // Find user by name
+    User.findOne({ name }).then((user) => {
         // Check if user exists
         if (!user) {
-            return res.status(404).json({ emailnotfound: "Email not found" });
+            return res
+                .status(404)
+                .json({ namenotfound: "Account name not found" });
         }
         // Check password
         bcrypt.compare(password, user.password).then((isMatch) => {

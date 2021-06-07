@@ -36,8 +36,8 @@ const useProvideConfig = () => {
   const initialComp = {
     method: "bins",
     stat: "score",
+    remoteDir: "",
     binsize: 200,
-    cluster: false,
     pseudocountN: 2,
     pseudocountM: 1,
     pValueThreshold: 0.05,
@@ -47,7 +47,8 @@ const useProvideConfig = () => {
     minSize: 50,
     minReadsPerCytosine: 4,
     outdir: "",
-    remote: "",
+    remote: false,
+    cluster: false,
   };
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);

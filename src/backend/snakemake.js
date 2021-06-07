@@ -9,14 +9,12 @@ const spawnChild = async (
     let Client = require("ssh2-sftp-client");
     const path = require("path");
     const env = path.join(__dirname, "../resources/snakemake/bin");
-    const slurmScript = path.join(__dirname, "../resources/slurmScript.sh");
     const remoteScript = path.join(
         __dirname,
         "../resources/remoteSnakemake.sh"
     );
     const localScript = path.join(__dirname, "../resources/snakemake.sh");
-    const workflow = path.join(__dirname, "../resources/bissprop/");
-    const conda = "/local/env/envconda.sh";
+    const workflow = path.join(__dirname, "../resources/biseps/");
     const options = {
         slient: false,
         detached: true,
@@ -150,6 +148,11 @@ const spawnChild = async (
                 console.log(err, "catch error");
             });
     } else {
+        console.log("this is env", env);
+        console.log("this is profile", profile);
+
+        console.log("this is workflow", workflow);
+
         const child = execFile(localScript, [env, profile, workflow], options);
         let data = "";
         for await (const chunk of child.stdout) {

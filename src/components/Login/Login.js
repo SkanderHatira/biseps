@@ -57,7 +57,7 @@ const Login = () => {
   const classes = useStyles();
 
   const initialStateForm = {
-    email: "",
+    name: "",
     password: "",
     errors: {},
   };
@@ -77,7 +77,7 @@ const Login = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     const userData = {
-      email: state.email,
+      name: state.name,
       password: state.password,
     };
     signup(userData, dispatch, history);
@@ -97,21 +97,21 @@ const Login = () => {
         <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField
             onChange={onChange}
-            value={state.email}
-            error={errors.email === ""}
-            helperText={errors.email === "" ? "Empty!" : errors.email}
+            value={state.name}
+            error={errors.name === ""}
+            helperText={errors.name === "" ? "Empty!" : errors.name}
             className={classnames("", {
-              invalid: errors.email || errors.emailnotfound,
+              invalid: errors.name || errors.namenotfound,
             })}
-            id="email"
-            type="email"
+            id="name"
+            type="text"
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            label="Account Name"
+            name="name"
+            autoComplete="name"
             autoFocus
           />
           <TextField

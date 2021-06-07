@@ -6,21 +6,18 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
     console.log(body);
 
     if (!fs.existsSync(path.join(uniqueDir, "config"))) {
-        if (body.cluster) {
-            fs.mkdirSync(path.join(uniqueDir, "config/profiles/slurm"), {
-                recursive: true,
-            });
-        } else {
-            fs.mkdirSync(path.join(uniqueDir, "config/profiles/local"), {
-                recursive: true,
-            });
-        }
+        fs.mkdirSync(path.join(uniqueDir, "config/profiles/slurm"), {
+            recursive: true,
+        });
+
+        fs.mkdirSync(path.join(uniqueDir, "config/profiles/local"), {
+            recursive: true,
+        });
     }
     const localProfile = {
         configfile: body.remote
             ? "config/config.yaml"
             : path.join(uniqueDir, "config/config.yaml"),
-        "default-resources": ["cpus=1", "mem_mb=10000", "time_min=5440"],
         "use-conda": true,
         "dry-run": body.subsample,
         "rerun-incomplete": true,

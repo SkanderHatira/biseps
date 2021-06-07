@@ -37,6 +37,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 const path = require("path");
+const fs = require("fs");
 const http = require("http");
 
 function descendingComparator(a, b, orderBy) {
@@ -54,11 +55,19 @@ const MenuProps = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
+      width: "69%",
     },
   },
 };
-
+const fileExist = (path) => {
+  try {
+    if (fs.existsSync(path)) {
+      return true;
+    }
+  } catch (err) {
+    return false;
+  }
+};
 const headCells = [
   {
     id: "name",
@@ -277,11 +286,13 @@ export default function ComparisonForm() {
   };
   const handleUnitChange = (e, index) => {
     const updatedUnits = [...comparisons];
-    console.log(e);
-    console.log(updatedUnits);
-    console.log(e.target.value);
-    console.log(comparisons);
     updatedUnits[index][e.target.name] = e.target.value;
+    setComparisons(updatedUnits);
+  };
+  const handleSelectChange = (e, index) => {
+    const updatedUnits = [...comparisons];
+    updatedUnits[index][e.target.name + "s"] = e.target.value;
+    updatedUnits[index][e.target.name] = e.target.value.join();
     setComparisons(updatedUnits);
   };
   useEffect(() => {
@@ -347,8 +358,10 @@ export default function ComparisonForm() {
   const blankUnit = {
     id: uuid(),
     name: "",
-    control: [],
-    treatment: [],
+    controls: [],
+    treatments: [],
+    control: "",
+    treatment: "",
   };
   const [checked, setChecked] = useState([0]);
 
@@ -511,20 +524,30 @@ export default function ComparisonForm() {
                             Control
                           </InputLabel>
                           <Select
-                            inputProps={{ "data-idx": index }}
                             labelId="demo-mutiple-checkbox-label"
                             name="control"
                             multiple
-                            value={comparison.control}
-                            onClick={(event) => handleUnitChange(event, index)}
+                            value={comparison.controls}
+                            onChange={(event) =>
+                              handleSelectChange(event, index)
+                            }
                             input={<Input />}
-                            renderValue={(selected) => "Modify Control Input"}
-                            MenuProps={MenuProps}
+                            renderValue={(selected) =>
+                              selected.join(", ").length > 25
+                                ? selected.join(", ").substring(0, 25) + "..."
+                                : selected.join(", ")
+                            }
                           >
                             {result.map((res) => (
-                              <MenuItem key={res} value={res}>
+                              <MenuItem
+                                disabled={fileExist(res) ? false : true}
+                                key={res}
+                                value={res}
+                              >
                                 <Checkbox
-                                  checked={comparison.control.indexOf(res) > -1}
+                                  checked={
+                                    comparison.controls.indexOf(res) > -1
+                                  }
                                 />
                                 <ListItemText primary={path.parse(res).name} />
                               </MenuItem>
@@ -556,7 +579,7 @@ export default function ComparisonForm() {
                           label={`control ${index}`}
                           type="text"
                           placeholder="Choose Control"
-                          value={comparison.control}
+                          value={comparison.controls}
                           required
                           onChange={handleUnitChange}
                           id="control"
@@ -573,17 +596,28 @@ export default function ComparisonForm() {
                             labelId="demo-mutiple-checkbox-label"
                             name="treatment"
                             multiple
-                            value={comparison.treatment}
-                            onClick={(event) => handleUnitChange(event, index)}
+                            value={comparison.treatments}
+                            onChange={(event) =>
+                              handleSelectChange(event, index)
+                            }
                             input={<Input />}
-                            renderValue={(selected) => "Modify Treatment Input"}
-                            MenuProps={MenuProps}
+                            renderValue={(selected) =>
+                              selected.join(", ").length > 25
+                                ? selected.join(", ").substring(0, 25) + "..."
+                                : selected.join(", ")
+                            }
+
+                            // renderValue={(selected) => "Modify Treatment Input"}
                           >
                             {result.map((name) => (
-                              <MenuItem key={name} value={name}>
+                              <MenuItem
+                                disabled={fileExist(name) ? false : true}
+                                key={name}
+                                value={name}
+                              >
                                 <Checkbox
                                   checked={
-                                    comparison.treatment.indexOf(name) > -1
+                                    comparison.treatments.indexOf(name) > -1
                                   }
                                 />
                                 <ListItemText primary={path.parse(name).name} />
