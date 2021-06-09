@@ -355,7 +355,7 @@ export default function GlobalConfig() {
             label="Toggle this option to execute in SLURM Cluster mode"
           ></FormControlLabel>
         </Grid>
-        {runState.cluster === true ? (
+        {/* {runState.cluster === true ? (
           <Grid item xs={12} xm={6}>
             <FormControl className={classes.formControl}>
               <InputLabel>CPUs</InputLabel>
@@ -451,7 +451,7 @@ export default function GlobalConfig() {
               </FormHelperText>
             </FormControl>
           </Grid>
-        )}
+        )} */}
       </Grid>
     </React.Fragment>
   );

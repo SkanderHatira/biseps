@@ -28,6 +28,8 @@ build:
   stage: build
   script:
     - sudo npm install --global yarn
+    - cd $CI_PROJECT_DIR/src/backend
+    - sudo yarn
     - cd $CI_PROJECT_DIR/
     - sudo yarn
     - sudo yarn make

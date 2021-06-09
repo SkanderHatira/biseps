@@ -23,13 +23,7 @@ router.post("/machine", (req, res) => {
         return res.status(400).json(errors);
     } else {
         const newMachine = new Machine({
-            hostname: req.body.hostname,
-            username: req.body.username,
-            port: req.body.port,
-            privateKey: req.body.privateKey,
-            script: req.body.script,
-            password: req.body.password,
-            createdBy: req.body.userId,
+            ...req.body,
         });
         newMachine
             .save()

@@ -88,6 +88,7 @@ Based on:
 - [MultiQC](https://multiqc.info/)
 - [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 - [MethGet](https://github.com/Jason-Teng/MethGET)
+- [Jbrowse2](https://jbrowse.org/jb2/)
 
 ## License
 
