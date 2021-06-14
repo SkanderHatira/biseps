@@ -22,12 +22,7 @@
     "forge": {
       "packagerConfig": {},
       "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "biseps"
-          }
-        },
+
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
@@ -36,6 +31,10 @@
         },
         {
           "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-squirrel",
           "config": {}
         }
       ],

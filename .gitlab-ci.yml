@@ -44,11 +44,10 @@ build-win:
   image: hackash/electron-windows-build
   stage: build-win
   script:
-    - sudo npm install --global yarn
     - cd $CI_PROJECT_DIR/src/backend
-    - sudo yarn
+    - npm i
     - cd $CI_PROJECT_DIR/
-    - npm run build-windows
+    - npm run make
   artifacts:
     expire_in: 1 week
     paths:
