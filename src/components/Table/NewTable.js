@@ -272,19 +272,15 @@ export default function NewTable() {
 
   const removeUnit = () => {
     const updatedUnits = [...units];
-    const updatedSelection = [...selected];
-    console.log(updatedSelection);
-    selected.map((item) => {
-      updatedUnits.splice([item], 1);
-      const filtered = updatedSelection.filter(function (value, index, arr) {
-        return value !== item;
-      });
-      updatedSelection.splice(item, 1);
-      setUnits(updatedUnits);
-      setSelected(filtered);
-    });
-    console.log(units);
+    const updatedSelected = [...selected];
+    while (updatedSelected.length) {
+      updatedUnits.splice(updatedSelected.pop(), 1);
+    }
+    setUnits(updatedUnits);
+    setSelected([]);
   };
+  console.log(selected);
+  console.log(units);
   const handleUnitChange = (e) => {
     if (runState.remote) {
       const updatedRemoteUnits = [...remoteunits];
@@ -346,6 +342,7 @@ export default function NewTable() {
 
     setSelected(newSelected);
   };
+  console.log(selected);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

@@ -4,10 +4,11 @@ const spawnServer = async (sock) => {
     const options = {
         slient: false,
         detached: false,
+        shell: true,
     };
-    const child = fork(
-        path.join(__dirname, "backend/server.js"),
-        [sock],
+    const child = spawn(
+        "node",
+        [path.join(__dirname, "backend/server.js"), sock],
         options
     );
 

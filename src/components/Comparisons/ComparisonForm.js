@@ -172,7 +172,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected, addUnit, removeUnit } = props;
+  const { numSelected, addUnit, removeComparison } = props;
 
   return (
     <Toolbar
@@ -202,7 +202,7 @@ const EnhancedTableToolbar = (props) => {
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton onClick={removeUnit} aria-label="delete">
+          <IconButton onClick={removeComparison} aria-label="delete">
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -382,20 +382,15 @@ export default function ComparisonForm() {
     setComparisons([...comparisons, { ...blankUnit }]);
   };
 
-  const removeUnit = () => {
-    const updatedUnits = [...comparisons];
-    const updatedSelection = [...selected];
-    console.log(updatedSelection);
-    selected.map((item) => {
-      updatedUnits.splice([item], 1);
-      const filtered = updatedSelection.filter(function (value, index, arr) {
-        return value !== item;
-      });
-      updatedSelection.splice(item, 1);
-      setComparisons(updatedUnits);
-      setSelected(filtered);
-    });
-    console.log(comparisons);
+  const removeComparison = () => {
+    const updatedComparisons = [...comparisons];
+    const updatedSelected = [...selected];
+
+    while (updatedSelected.length) {
+      updatedComparisons.splice(updatedSelected.pop(), 1);
+    }
+    setComparisons(updatedComparisons);
+    setSelected([]);
   };
 
   const handleUnitFiles = (e) => {
@@ -461,7 +456,7 @@ export default function ComparisonForm() {
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar
-          removeUnit={removeUnit}
+          removeComparison={removeComparison}
           addUnit={addUnit}
           numSelected={selected.length}
         />
