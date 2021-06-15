@@ -16,6 +16,12 @@ import { useConfig } from "../../hooks/useConfig";
 import { useAuth } from "../../hooks/useAuth";
 import NewTable from "../Table/NewTable";
 import { useHistory } from "react-router-dom";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const http = require("http");
 const path = require("path");
@@ -33,6 +39,12 @@ function Copyright() {
 }
 
 const useStyles = makeStyles((theme) => ({
+  toast: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
   appBar: {
     position: "relative",
   },
@@ -77,9 +89,23 @@ export default function RunForm() {
   const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const history = useHistory();
+  const [activeStep, setActiveStep] = useState(0);
+  const [errors, setErrors] = useState();
 
+  const history = useHistory();
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -98,7 +124,31 @@ export default function RunForm() {
         throw new Error("Unknown step");
     }
   }
+  function validate(runState) {
+    // we are going to store errors for all fields
+    // in a signle array
+    const errors = [];
+
+    if (runState.genome.length === 0) {
+      errors.push("You have to specify a genome");
+    }
+    if (runState.remote) {
+      if (runState.remoteOutdir.length === 0) {
+        errors.push(
+          "You have to specify a remote output directory when using a remote machine"
+        );
+      }
+    }
+    return errors;
+  }
   const handleRunSubmit = () => {
+    const errors = validate(runState);
+    if (errors.length > 0) {
+      console.log(errors);
+      setErrors(errors);
+      handleClick(true);
+      return errors;
+    }
     const blankSample = {};
     const helper = {};
     const result = units.reduce(function (r, o) {
@@ -179,6 +229,17 @@ export default function RunForm() {
   };
   return (
     <React.Fragment>
+      <Snackbar open={open} autoHideDuration={10000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={errors && errors.length > 0 ? "error" : "success"}
+        >
+          {errors && errors.length > 0
+            ? `You can't submit because : ${errors}`
+            : "Your Run has been submitted"}
+        </Alert>
+      </Snackbar>
+
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar>

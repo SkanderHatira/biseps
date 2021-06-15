@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const router = express.Router();
 const createUnitsComparison = require("../../helpers/createUnitsComparison");
+const createConfigComparison = require("../../helpers/createConfigComparison");
 const createProfileComparison = require("../../helpers/createProfileComparison");
 const spawnChild = require("../../snakemake");
 
@@ -78,6 +79,7 @@ router.post("/comparison", (req, res) => {
             console.log("POST method");
             createProfileComparison(req.body, uniqueDir);
             createUnitsComparison(req.body, uniqueDir);
+            createConfigComparison(req.body, uniqueDir);
             // createProfile(req.body, uniqueDir);
             // createConfig(req.body, uniqueDir);
             // createUnits(req.body, uniqueDir);

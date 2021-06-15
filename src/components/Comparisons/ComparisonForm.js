@@ -36,6 +36,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
+import classnames from "classnames";
+
 const path = require("path");
 const fs = require("fs");
 const http = require("http");
@@ -117,7 +119,6 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "default"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -385,9 +386,11 @@ export default function ComparisonForm() {
   const removeComparison = () => {
     const updatedComparisons = [...comparisons];
     const updatedSelected = [...selected];
+    const sorted = updatedSelected.sort((a, b) => a - b);
+    while (sorted.length) {
+      console.log(sorted);
 
-    while (updatedSelected.length) {
-      updatedComparisons.splice(updatedSelected.pop(), 1);
+      updatedComparisons.splice(sorted.pop(), 1);
     }
     setComparisons(updatedComparisons);
     setSelected([]);
@@ -413,7 +416,21 @@ export default function ComparisonForm() {
     }
     setSelected([]);
   };
+  const [errors, setErrors] = useState();
 
+  function validate(comparison) {
+    // we are going to store errors for all fields
+    // in a signle array
+    const errors = [];
+
+    if (comparison.id.length === 0) {
+      errors.push(
+        "You need to enter a unique ID for this comparison example 'Control_VS_Treatment'"
+      );
+    }
+
+    return errors;
+  }
   const handleClick = (event, index) => {
     const selectedIndex = selected.indexOf(index);
     let newSelected = [];
@@ -504,6 +521,7 @@ export default function ComparisonForm() {
                           <Input
                             onChange={handleLabelChange}
                             value={comparison.name}
+                            error={comparison.name.length === 0}
                             placeholder="Label"
                             required
                             inputProps={{ "data-idx": index }}
@@ -522,6 +540,7 @@ export default function ComparisonForm() {
                             labelId="demo-mutiple-checkbox-label"
                             name="control"
                             multiple
+                            error={comparison.controls.length === 0}
                             value={comparison.controls}
                             onChange={(event) =>
                               handleSelectChange(event, index)
@@ -589,6 +608,7 @@ export default function ComparisonForm() {
                           <Select
                             inputProps={{ "data-idx": index }}
                             labelId="demo-mutiple-checkbox-label"
+                            error={comparison.treatments.length === 0}
                             name="treatment"
                             multiple
                             value={comparison.treatments}

@@ -38,19 +38,6 @@ build:
     expire_in: 1 week
     paths:
       - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
-  only:
-    - master
-build-win:
-  image: hackash/electron-windows-build
-  stage: build-win
-  script:
-    - cd $CI_PROJECT_DIR/src/backend
-    - npm i
-    - cd $CI_PROJECT_DIR/
-    - npm run make
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - $CI_PROJECT_DIR/out/make/deb/x64/*.exe
+      - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
   only:
     - master

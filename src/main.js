@@ -6,8 +6,6 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
-if (require("electron-squirrel-startup")) app.quit();
-
 const path = require("path");
 const fs = require("fs");
 const running = require("is-running");

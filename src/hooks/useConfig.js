@@ -20,6 +20,7 @@ const useProvideConfig = () => {
     genome: "",
     outdir: "",
     remoteOutdir: "",
+    machine: {},
     minlen: 80,
     minscore: -0.6,
     l: 20,
@@ -36,6 +37,7 @@ const useProvideConfig = () => {
   const initialComp = {
     method: "bins",
     stat: "score",
+    genome: "",
     remoteDir: "",
     binsize: 200,
     pseudocountN: 2,

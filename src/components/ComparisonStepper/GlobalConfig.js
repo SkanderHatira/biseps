@@ -471,6 +471,32 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControl className={classes.formControl}>
+            <Button
+              variant="contained"
+              component="label"
+              color={compState.genome === "" ? "default" : "primary"}
+            >
+              {compState.genome === ""
+                ? "upload genome"
+                : compState.genome.split(/[\\/]/).pop()}
+              <input
+                type="file"
+                required
+                id="genome"
+                name="genome"
+                label="Genome"
+                accept=".fasta , .fa , .fq , .fq.gz"
+                onChange={handleGenome}
+                type="file"
+                hidden
+              />
+            </Button>
+
+            <FormHelperText>Choose genome in .fasta Format</FormHelperText>
+          </FormControl>
+        </Grid>
         {/* <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
             <Button

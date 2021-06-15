@@ -109,7 +109,6 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "default"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -269,12 +268,26 @@ export default function NewTable() {
     }
     setUnits([...units, { ...blankUnit }]);
   };
+  const [errors, setErrors] = useState();
+  function validate(unit) {
+    // we are going to store errors for all fields
+    // in a signle array
+    const errors = [];
 
+    if (unit.name.length === 0) {
+      errors.push("Sample name can't be empty");
+    }
+
+    return errors;
+  }
   const removeUnit = () => {
     const updatedUnits = [...units];
     const updatedSelected = [...selected];
-    while (updatedSelected.length) {
-      updatedUnits.splice(updatedSelected.pop(), 1);
+    const sorted = updatedSelected.sort((a, b) => a - b);
+    while (sorted.length) {
+      console.log(sorted);
+
+      updatedUnits.splice(sorted.pop(), 1);
     }
     setUnits(updatedUnits);
     setSelected([]);
@@ -371,7 +384,7 @@ export default function NewTable() {
         />
         <TableContainer>
           <Table
-            className={classes.table}
+            className={classes.root}
             aria-labelledby="tableTitle"
             size={dense ? "small" : "medium"}
             aria-label="enhanced table"

@@ -281,10 +281,15 @@ export default function GlobalConfig() {
                 onChange={handleCheckBox}
                 color="secondary"
                 name="remote"
+                disabled={data.length > 0 ? false : true}
                 checked={runState.remote}
               />
             }
-            label="Toggle this to choose a remote machine"
+            label={
+              data.length > 0
+                ? "Toggle this to choose a remote machine"
+                : "add a remote machine first"
+            }
           ></FormControlLabel>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -302,59 +307,66 @@ export default function GlobalConfig() {
           ></FormControlLabel>
         </Grid>
         {runState.remote === true ? (
-          <Grid item xs={12} xm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Machine</InputLabel>
-              <Select
-                defaultValue={runState.machine}
-                labelId="machine"
-                id="machine"
-                name="machine"
-                onChange={handleRunState}
-              >
-                {data &&
-                  data.map((machine, idx) => {
-                    return (
-                      <MenuItem key={idx} value={machine}>
-                        {machine.hostname}
-                      </MenuItem>
-                    );
-                  })}
-              </Select>
-              <FormHelperText>Specify Remote machine</FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <TextField
-                autoFocus
-                value={runState.remoteOutdir}
-                onChange={handleRunState}
-                margin="dense"
-                id="remoteOutdir"
-                name="remoteOutdir"
-                label="Remote Output Directory"
-                type="text"
-                fullWidth
-              />
-              <FormHelperText>Specify Remote Output directory</FormHelperText>
-            </FormControl>
+          <Grid container>
+            <Grid item xs={4}>
+              <FormControl className={classes.formControl}>
+                <InputLabel>Machine</InputLabel>
+                <Select
+                  defaultValue={runState.machine}
+                  labelId="machine"
+                  id="machine"
+                  name="machine"
+                  onChange={handleRunState}
+                >
+                  {data &&
+                    data.map((machine, idx) => {
+                      return (
+                        <MenuItem key={idx} value={machine}>
+                          {machine.hostname}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+                <FormHelperText>Specify Remote machine</FormHelperText>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormControl className={classes.formControl}>
+                <TextField
+                  autoFocus
+                  value={runState.remoteDir}
+                  onChange={handleRunState}
+                  margin="dense"
+                  id="remoteDir"
+                  name="remoteDir"
+                  label="Remote Output Directory"
+                  type="text"
+                  fullWidth
+                />
+                <FormHelperText>Specify Remote Output directory</FormHelperText>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormControlLabel
+                className={classes.formControl}
+                control={
+                  <Checkbox
+                    onChange={handleCheckBox}
+                    color="secondary"
+                    name="cluster"
+                    checked={runState.cluster}
+                  />
+                }
+                label="Toggle this option to execute in SLURM Cluster mode"
+              ></FormControlLabel>
+            </Grid>
           </Grid>
         ) : (
           ""
         )}
-        <Grid item xs={12}>
-          <FormControlLabel
-            className={classes.formControl}
-            control={
-              <Checkbox
-                onChange={handleCheckBox}
-                color="secondary"
-                name="cluster"
-                checked={runState.cluster}
-              />
-            }
-            label="Toggle this option to execute in SLURM Cluster mode"
-          ></FormControlLabel>
-        </Grid>
+
         {/* {runState.cluster === true ? (
           <Grid item xs={12} xm={6}>
             <FormControl className={classes.formControl}>
