@@ -2,7 +2,7 @@ const createUnitsComparison = (body, uniqueDir) => {
     const { parse } = require("json2csv");
     const fs = require("fs");
     const path = require("path");
-    const fields = ["name", "control", "treatment"];
+    const fields = ["id", "control", "treatment"];
     const opts = { fields, delimiter: "\t" };
     console.log("creating comparison.tsv");
     if (body.remote) {

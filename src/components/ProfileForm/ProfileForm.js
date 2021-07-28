@@ -30,6 +30,8 @@ import CardContent from "@material-ui/core/CardContent";
 import { InputAdornment } from "@material-ui/core";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import { FormControl } from "@material-ui/core";
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -50,8 +52,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const initialState = {
-  name: "",
-  email: "",
+  hostname: "",
+  username: "",
   password: "",
   password2: "",
   errors: {},
@@ -63,6 +65,7 @@ const blankMachine = {
   privateKey: "",
   script: "",
   password: "",
+  errors: {},
 };
 const ProfileForm = () => {
   const { user, handleEditProfile, signin } = useAuth();
@@ -207,7 +210,7 @@ const ProfileForm = () => {
     email: user.user.email,
     errors: {},
   };
-  const [state, dispatch] = useReducer(formReducer, initialState);
+  const [state, dispatch] = useReducer(formReducer, blankMachine);
   const history = useHistory();
   const onChange = (e) => {
     e.persist();
@@ -228,7 +231,6 @@ const ProfileForm = () => {
     console.log("Modify profile information");
     handleEditProfile(state, dispatch, history);
   };
-  const bull = <span className={classes.bullet}>•</span>;
 
   const { errors } = state;
   return (
@@ -348,7 +350,8 @@ const ProfileForm = () => {
           <Typography component="h1" variant="h5">
             New Remote Machine
           </Typography>
-          <form className={classes.form} noValidate onSubmit={onSubmit}>
+
+          <form className={classes.form} onSubmit={onSubmit}>
             <div>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -359,6 +362,10 @@ const ProfileForm = () => {
                     type="text"
                     autoComplete="hostname"
                     name="hostname"
+                    error={errors.hostname === ""}
+                    helperText={
+                      errors.hostname === "" ? "Empty!" : errors.hostname
+                    }
                     variant="outlined"
                     required
                     fullWidth

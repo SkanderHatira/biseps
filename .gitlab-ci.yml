@@ -1,7 +1,6 @@
 stages:
   - create
   - build
-  - build-win
 create:
   stage: create
   image: continuumio/miniconda3:latest

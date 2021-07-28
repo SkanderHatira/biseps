@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import axios from "axios";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
@@ -16,6 +16,9 @@ import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
 import { useConfig } from "../../hooks/useConfig";
 import Link from "@material-ui/core/Link";
+import clsx from "clsx";
+import ListItemText from "@material-ui/core/ListItemText";
+import Chip from "@material-ui/core/Chip";
 const http = require("http");
 
 const electron = window.require("electron");
@@ -89,6 +92,13 @@ export default function GlobalConfig() {
   }, []);
   console.log(data);
   const classes = useStyles();
+  const handleChange = (event) => {
+    setCompState({
+      ...compState,
+      [event.target.name]: event.target.value,
+    });
+  };
+  console.log(compState);
   const handleGenome = (e) => {
     setCompState({
       ...compState,
@@ -99,7 +109,12 @@ export default function GlobalConfig() {
           .files[0].path.match(/(.*)[\/\\]/)[0] || "",
     });
   };
-
+  const handleFile = (e) => {
+    setCompState({
+      ...compState,
+      [e.target.id]: document.getElementById(e.target.id).files[0].path,
+    });
+  };
   const handleCompState = (e) => {
     console.log(e.target.value);
     setCompState({
@@ -161,7 +176,6 @@ export default function GlobalConfig() {
           <FormControl className={classes.formControl}>
             <InputLabel>Method</InputLabel>
             <Select
-              defaultValue="bins"
               value={compState.method}
               labelId="method"
               id="method"
@@ -181,12 +195,41 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
-
+        <Grid item xs={12} sm={4}>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="contexts-checkbox-label">Context</InputLabel>
+            <Select
+              labelId="contexts-checkbox-label"
+              id="contexts"
+              multiple
+              name="contexts"
+              value={compState.contexts}
+              onChange={handleChange}
+              input={<Input />}
+              renderValue={(selected) => selected.join(", ")}
+            >
+              <MenuItem key={1} value="CG">
+                <Checkbox checked={compState.contexts.indexOf("CG") > -1} />
+                <ListItemText primary={"CG"} />
+              </MenuItem>
+              <MenuItem key={2} value={"CHG"}>
+                <Checkbox checked={compState.contexts.indexOf("CHG") > -1} />
+                <ListItemText primary={"CHG"} />
+              </MenuItem>
+              <MenuItem key={3} value={"CHH"}>
+                <Checkbox checked={compState.contexts.indexOf("CHH") > -1} />
+                <ListItemText primary={"CHH"} />
+              </MenuItem>
+            </Select>
+            <FormHelperText>
+              Choose contexts to perform DMR analysis on.
+            </FormHelperText>
+          </FormControl>
+        </Grid>
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <InputLabel>Statistical Test</InputLabel>
             <Select
-              defaultValue="score"
               value={compState.stat}
               labelId="stat"
               id="stat"
@@ -471,7 +514,34 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6}>
+
+        {compState.method != "noise_filter" ? (
+          ""
+        ) : (
+          <Grid item xs={12} sm={4}>
+            <FormControl className={classes.formControl}>
+              <InputLabel>Kernel Function</InputLabel>
+              <Select
+                value={compState.kernelFunction}
+                labelId="kernelFunction"
+                id="kernelFunction"
+                name="kernelFunction"
+                onChange={handleCompState}
+              >
+                <MenuItem value="uniform">Uniform</MenuItem>
+                <MenuItem value="triangular">Triangular</MenuItem>{" "}
+                <MenuItem value="gaussian">Gaussian</MenuItem>
+                <MenuItem value="epanechnicov">Epanechnicov</MenuItem>
+              </Select>
+              <FormHelperText>
+                Choose kernel function to be used with noise filter method.
+                Default : uniform.
+              </FormHelperText>
+            </FormControl>
+          </Grid>
+        )}
+
+        <Grid item sm={12}>
           <FormControl className={classes.formControl}>
             <Button
               variant="contained"
@@ -494,9 +564,35 @@ export default function GlobalConfig() {
               />
             </Button>
 
-            <FormHelperText>Choose genome in .fasta Format</FormHelperText>
+            <FormHelperText>Choose genome in .fasta Format </FormHelperText>
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <Button
+              variant="contained"
+              component="label"
+              color={compState.annot === "" ? "default" : "primary"}
+            >
+              {compState.annot === ""
+                ? "upload annotation"
+                : compState.annot.split(/[\\/]/).pop()}
+              <input
+                type="file"
+                id="annot"
+                name="annot"
+                label="Annotation"
+                accept=".gff , .bed , .tsv , .gff3"
+                onChange={handleFile}
+                type="file"
+                hidden
+              />
+            </Button>
+
+            <FormHelperText>
+              Choose annotation file in gff/bed Format
+            </FormHelperText>
           </FormControl>
         </Grid>
+
         {/* <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
             <Button
@@ -611,8 +707,7 @@ export default function GlobalConfig() {
                 name="subsample"
               />
             }
-            label="Toggle this option to execute a minimal run"
-          ></FormControlLabel>
+         ></FormControlLabel>
         </Grid> */}
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom>
@@ -627,10 +722,15 @@ export default function GlobalConfig() {
                 onChange={handleCheckBox}
                 color="secondary"
                 name="remote"
+                disabled={data.length > 0 ? false : true}
                 checked={compState.remote}
               />
             }
-            label="Toggle this to choose a remote machine"
+            label={
+              data.length > 0
+                ? "Toggle this to choose a remote machine"
+                : "add a remote machine first"
+            }
           ></FormControlLabel>
         </Grid>
 

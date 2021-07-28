@@ -37,6 +37,7 @@ const useProvideConfig = () => {
   const initialComp = {
     method: "bins",
     stat: "score",
+    annot: "",
     genome: "",
     remoteDir: "",
     binsize: 200,
@@ -51,6 +52,8 @@ const useProvideConfig = () => {
     outdir: "",
     remote: false,
     cluster: false,
+    contexts: ["CG"],
+    kernelFunction: "triangular",
   };
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);

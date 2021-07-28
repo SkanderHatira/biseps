@@ -357,8 +357,7 @@ export default function ComparisonForm() {
 
   // console.log(result);
   const blankUnit = {
-    id: uuid(),
-    name: "",
+    id: "",
     controls: [],
     treatments: [],
     control: "",
@@ -520,12 +519,12 @@ export default function ComparisonForm() {
                         <FormControl className={classes.formControl}>
                           <Input
                             onChange={handleLabelChange}
-                            value={comparison.name}
-                            error={comparison.name.length === 0}
+                            value={comparison.id}
+                            error={comparison.id.length === 0}
                             placeholder="Label"
                             required
                             inputProps={{ "data-idx": index }}
-                            id="name"
+                            id="id"
                             type="text"
                           ></Input>
                         </FormControl>
