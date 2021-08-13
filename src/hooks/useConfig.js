@@ -19,7 +19,8 @@ const useProvideConfig = () => {
     adapters: "TruSeq2-SE",
     genome: "",
     outdir: "",
-    remoteOutdir: "",
+    remoteDir: "",
+
     machine: {},
     minlen: 80,
     minscore: -0.6,

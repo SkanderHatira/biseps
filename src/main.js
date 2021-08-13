@@ -6,6 +6,8 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
+const os = require("os");
+
 const path = require("path");
 const fs = require("fs");
 const running = require("is-running");
@@ -18,8 +20,11 @@ const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
 );
+
 const homedir = require("os").homedir();
-const bisspropTemp = path.join(homedir, ".bisspropRemoteTemp/");
+const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+console.log(bisepsTemp);
+
 const mongod = require("./backend/spawnMongod.js");
 try {
   if (fs.existsSync(mongodLock)) {
@@ -162,7 +167,8 @@ app.on("ready", createWindow);
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
-    fs.rmdirSync(bisspropTemp, {
+    console.log(os.tmpdir());
+    fs.rmdirSync(bisepsTemp, {
       recursive: true,
     });
     fs.unlinkSync(sock);

@@ -98,7 +98,12 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import ActionRowing from "material-ui/svg-icons/action/rowing";
 import uuid from "react-uuid";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 const fs = require("fs");
 const path = require("path");
 const portastic = require("portastic");
@@ -108,7 +113,8 @@ const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
 const http = require("http");
-
+const homedir = require("os").homedir();
+const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -132,46 +138,99 @@ function generate(element) {
     })
   );
 }
+
 export default function InteractiveList() {
   const classes = useStyles();
   const [dense, setDense] = useState(false);
   const [secondary, setSecondary] = useState(false);
   const [data, setData] = useState([]);
   const { user } = useAuth();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState("");
+  const [openAlert, setOpenAlert] = useState(false);
+  const [deleted, setDeleted] = useState("");
+  const [selectedRow, setSelectedRow] = useState({});
 
-  const handleClickOpen = () => {
+  const handleChange = (e) => {
+    setDeleted(e.target.value);
+  };
+  console.log(deleted);
+  const handleClickOpen = (row) => {
+    setSelectedRow(row);
     setOpen(true);
   };
-  const handleRemoteFiles = () => {
-    const homedir = require("os").homedir();
-    const bisspropTemp = path.join(homedir, ".bisspropRemoteTemp/");
-
-    console.log(homedir);
-
-    if (!fs.existsSync(bisspropTemp)) {
-      fs.mkdirSync(bisspropTemp);
-    }
-    let remoteDir = "/groups/INVITE/FullAnalysis/";
-    let remotePath =
-      remoteDir + "results/Annaglo-TechRep_1-BioRep_2019-1/multiqc_report.html";
-    let localPath = uuid() + "multiqc_report.html";
+  const handleLog = (row) => {
+    console.log(row);
+    let remotePath = `${row.remoteDir}/biseps.txt`;
+    let localPath = row.date + "biseps.txt";
+    console.log(path.join(bisepsTemp, localPath));
     sftp
       .connect({
-        host: "genossh.genouest.org",
-        port: 22,
-        username: "shatira",
-        privateKey: require("fs").readFileSync("/home/shatira/.ssh/id_rsa_gen"),
+        host: row.machine.hostname,
+        port: row.machine.port,
+        username: row.machine.username,
+        ...(!(row.machine.privateKey === "") && {
+          privateKey: require("fs").readFileSync(row.machine.privateKey),
+        }),
+        password: row.machine.password,
       })
       .then(() => {
-        return sftp.fastGet(remotePath, path.join(bisspropTemp, localPath));
+        console.log(remotePath);
+        console.log(localPath);
+        console.log("made it all the way here?");
+        if (!fs.existsSync(path.join(bisepsTemp, localPath))) {
+          return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
+        }
       })
       .then((data) => {
-        createBrowserWindow(path.join(bisspropTemp, localPath));
+        console.log("done done done");
+        createBrowserWindow(path.join(bisepsTemp, localPath));
         sftp.end();
       })
       .catch((err) => {
         console.log(err, "catch error");
+        setErrors("File isn't ready yet");
+        handleOpenAlert();
+        sftp.end();
+      });
+  };
+  const handleRemoteFiles = (row, sample) => {
+    if (!fs.existsSync(bisepsTemp)) {
+      fs.mkdirSync(bisepsTemp);
+    }
+    let remoteDir = row.remoteDir;
+    let remotePath = `${remoteDir}/results/${sample.samplePath}/multiqc_report.html`;
+    let localPath = sample.samplePath + "-multiqc_report.html";
+    sftp
+      .connect({
+        host: row.machine.hostname,
+        port: row.machine.port,
+        username: row.machine.username,
+        ...(!(row.machine.privateKey === "") && {
+          privateKey: require("fs").readFileSync(row.machine.privateKey),
+        }),
+        ...(row.machine.privateKey === "" && {
+          password: row.machine.password,
+        }),
+      })
+      .then(() => {
+        console.log(remotePath);
+        console.log(localPath);
+        console.log("made it all the way here?");
+        if (!fs.existsSync(path.join(bisepsTemp, localPath))) {
+          return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
+        }
+      })
+      .then((data) => {
+        console.log("done done done");
+        createBrowserWindow(path.join(bisepsTemp, localPath));
+        sftp.end();
+      })
+      .catch((err) => {
+        console.log(err, "catch error");
+        setErrors("File isn't ready yet");
+        handleOpenAlert();
+        sftp.end();
       });
     // var conn = new Client();
     // conn
@@ -204,9 +263,15 @@ export default function InteractiveList() {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleRerun = (path) => {
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+  };
+  const handleOpenAlert = () => {
+    setOpenAlert(true);
+  };
+  const handleRerun = (row) => {
     const request = {
-      path: path,
+      ...row,
     };
     const token = sessionStorage.jwtToken;
     const options = {
@@ -244,48 +309,57 @@ export default function InteractiveList() {
     req.end();
     window.location.reload(false);
   };
-  const handleDelete = (id, user, outdir) => {
-    const request = {
-      user: user.user,
-    };
-    const token = sessionStorage.jwtToken;
-    const options = {
-      method: "DELETE",
-      path: `http://localhost/api/runs/${id}`,
-      socketPath: sessionStorage.Sock,
-      hostname: "unix",
-      port: null,
-      data: request,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-    };
-    const req = http.request(options, function (res) {
-      const chunks = [];
-      console.log("STATUS: " + res.statusCode);
-      console.log("HEADERS: " + JSON.stringify(res.headers));
-      res.on("data", function (chunk) {
-        chunks.push(chunk);
-      });
-      res.on("error", (err) => console.log(err));
-      res.on("end", function () {
-        const body = Buffer.concat(chunks).toString();
+  const handleDelete = (id, user, outdir, deleted) => {
+    console.log(id);
 
-        const jsbody = JSON.parse(body);
-        if (res.statusCode !== 200) {
-          console.log("failed post request");
-        } else {
-          console.log("successful post request");
-        }
-      });
-    });
-    req.on("error", (err) => console.log(err));
-    console.log(request);
-    req.end();
-    fs.rmdirSync(outdir, { recursive: true });
+    if (deleted === "DELETE") {
+      const request = {
+        user: user.user,
+      };
+      const token = sessionStorage.jwtToken;
+      const options = {
+        method: "DELETE",
+        path: `http://localhost/api/runs/${id}`,
+        socketPath: sessionStorage.Sock,
+        hostname: "unix",
+        port: null,
+        data: request,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      };
+      const req = http.request(options, function (res) {
+        const chunks = [];
+        console.log("STATUS: " + res.statusCode);
+        console.log("HEADERS: " + JSON.stringify(res.headers));
+        res.on("data", function (chunk) {
+          chunks.push(chunk);
+        });
+        res.on("error", (err) => console.log(err));
+        res.on("end", function () {
+          const body = Buffer.concat(chunks).toString();
 
-    window.location.reload(false);
+          const jsbody = JSON.parse(body);
+          if (res.statusCode !== 200) {
+            console.log("failed post request");
+          } else {
+            console.log("successful post request");
+          }
+        });
+      });
+      req.on("error", (err) => console.log(err));
+      console.log(request);
+      req.end();
+      fs.rmdirSync(outdir, { recursive: true });
+
+      handleClose();
+      window.location.reload(false);
+    } else {
+      console.log("write DELETE to confirm");
+      setErrors("write DELETE to confirm or Cancel");
+      handleOpenAlert();
+    }
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -348,12 +422,27 @@ export default function InteractiveList() {
   const openInFolder = (path) => {
     shell.showItemInFolder(path);
   };
+  console.log(data);
+
   return (
-    <Container maxWidth="lg" className={classes.container} gutterBottom>
-      <Grid container direction="column" alignItems="center" gutterBottom>
+    <Container maxWidth="lg" className={classes.container}>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={10000}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={errors && errors.length > 0 ? "error" : "success"}
+        >
+          {errors && errors.length > 0
+            ? `Error : ${errors}`
+            : "Remote file copied locally successfully"}
+        </Alert>
+      </Snackbar>
+      <Grid container direction="column" alignItems="center">
         <Box m={3}>
           <Button
-            alignItems="center"
             variant="contained"
             variant="outlined"
             color="primary"
@@ -402,8 +491,50 @@ export default function InteractiveList() {
           label="Enable secondary text"
         />
       </FormGroup> */}
-
       <Grid container spacing={2}>
+        <Dialog
+          key={selectedRow._id}
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Confirm Delete for</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This action will definitively delete all Run information as well
+              as corresponding files, please Confirm by writing DELETE in all
+              caps.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="confirmation"
+              value={deleted}
+              onChange={handleChange}
+              label="write DELETE"
+              type="text"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                handleDelete(
+                  selectedRow._id,
+                  user,
+                  selectedRow.outdir,
+                  deleted
+                );
+              }}
+              color="primary"
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
         {data.length > 0 ? (
           data.map((row) => (
             <Grid key={row._id} item xs={12} md={6}>
@@ -416,68 +547,49 @@ export default function InteractiveList() {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={handleClickOpen}
+                  onClick={() => handleClickOpen(row)}
                   className={classes.button}
                   startIcon={<DeleteIcon />}
                 >
                   Delete
                 </Button>
                 {/* This Button uses a Font Icon, see the installation instructions in the Icon component docs. */}
-                <Dialog
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="form-dialog-title"
-                >
-                  <DialogTitle id="form-dialog-title">
-                    Confirm Delete
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      This action will definitively delete all Run information
-                      as well as corresponding files, please Confirm by writing
-                      DELETE in all caps.
-                    </DialogContentText>
-                    <TextField
-                      autoFocus
-                      margin="dense"
-                      id="confirmation"
-                      label="write DELETE"
-                      type="text"
-                      fullWidth
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        handleDelete(row._id, user, row.outdir);
-                        handleClose();
-                      }}
-                      color="primary"
-                    >
-                      Delete
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+
                 <Button
                   variant="contained"
                   color="primary"
+                  disabled={row.remote ? true : false}
                   onClick={() => openInFolder(`${row.outdir}/results`)}
                   className={classes.button}
-                  endIcon={<Icon>send</Icon>}
+                  endIcon={row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>}
                 >
-                  Open
+                  {row.remote ? "Remote" : "Open Folder"}
                 </Button>
                 <Button
                   variant="contained"
                   color="default"
-                  onClick={() => handleRerun(row.outdir)}
+                  onClick={() => handleRerun(row)}
                   className={classes.button}
                   startIcon={<RefreshIcon />}
                 >
                   Rerun
+                </Button>
+
+                <Button
+                  variant="contained"
+                  color="default"
+                  onClick={
+                    row.remote
+                      ? () => handleLog(row)
+                      : () =>
+                          createBrowserWindow(
+                            path.join(row.outdir, "biseps.txt")
+                          )
+                  }
+                  className={classes.button}
+                  startIcon={<RefreshIcon />}
+                >
+                  Show Log
                 </Button>
               </div>
               <div className={classes.demo}>
@@ -486,17 +598,24 @@ export default function InteractiveList() {
                     <ListItem
                       button
                       disabled={
-                        fileExist(
-                          `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`
-                        )
+                        row.remote
+                          ? false
+                          : fileExist(
+                              `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`
+                            )
                           ? false
                           : true
                       }
                       key={sample._id}
                       onClick={() => {
-                        const path = `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`;
-                        console.log(path);
-                        createBrowserWindow(path);
+                        if (row.remote) {
+                          handleRemoteFiles(row, sample);
+                        } else {
+                          console.log(sample);
+                          const path = `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`;
+                          console.log(path);
+                          createBrowserWindow(path);
+                        }
                       }}
                     >
                       <ListItemAvatar>
@@ -534,6 +653,7 @@ export default function InteractiveList() {
           ))
         ) : (
           <Grid
+            key={0}
             container
             spacing={0}
             direction="column"

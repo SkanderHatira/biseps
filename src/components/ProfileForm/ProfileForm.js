@@ -31,7 +31,13 @@ import { InputAdornment } from "@material-ui/core";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { FormControl } from "@material-ui/core";
+import { GET_ERRORS } from "../../actions/types";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -51,13 +57,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-const initialState = {
-  hostname: "",
-  username: "",
-  password: "",
-  password2: "",
-  errors: {},
-};
 const blankMachine = {
   hostname: "",
   username: "",
@@ -67,6 +66,7 @@ const blankMachine = {
   password: "",
   errors: {},
 };
+
 const ProfileForm = () => {
   const { user, handleEditProfile, signin } = useAuth();
   const [data, setData] = useState([]);
@@ -75,7 +75,24 @@ const ProfileForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   const handleAddMachine = () => {
+    dispatch({
+      type: GET_ERRORS,
+      payload: {},
+    });
     const request = {
       ...machine,
     };
@@ -105,15 +122,21 @@ const ProfileForm = () => {
         const jsbody = JSON.parse(body);
         if (res.statusCode !== 200) {
           console.log("failed post request");
+          dispatch({
+            type: GET_ERRORS,
+            payload: jsbody,
+          });
+          handleClick(true);
         } else {
           console.log("successful post request");
+          handleClick(true);
+          window.location.reload(false);
         }
       });
     });
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
-    window.location.reload(false);
   };
   const classes = useStyles();
   const handleDelete = (id) => {
@@ -205,11 +228,6 @@ const ProfileForm = () => {
     });
   };
 
-  const initialState = {
-    name: user.user.name,
-    email: user.user.email,
-    errors: {},
-  };
   const [state, dispatch] = useReducer(formReducer, blankMachine);
   const history = useHistory();
   const onChange = (e) => {
@@ -231,8 +249,9 @@ const ProfileForm = () => {
     console.log("Modify profile information");
     handleEditProfile(state, dispatch, history);
   };
-
   const { errors } = state;
+  console.log(Object.keys(errors).length);
+
   return (
     <div>
       <Container component="main" minWidth="xs" maxWidth="md">
@@ -295,6 +314,26 @@ const ProfileForm = () => {
                   Submit Changes{" "}
                 </Button>
               </Grid> */}
+            <Snackbar
+              open={open}
+              autoHideDuration={10000}
+              onClose={handleClose}
+            >
+              <Alert
+                onClose={handleClose}
+                severity={
+                  errors && Object.keys(errors).length > 0 ? "error" : "success"
+                }
+              >
+                {errors && Object.keys(errors).length > 0
+                  ? `You can't submit because : ${Object.keys(errors)
+                      .map(function (k) {
+                        return errors[k];
+                      })
+                      .join(",")}`
+                  : "Remote machine added successfully"}
+              </Alert>
+            </Snackbar>
 
             <Grid item xs={12}>
               {data && data.length === 0 ? (
@@ -362,7 +401,7 @@ const ProfileForm = () => {
                     type="text"
                     autoComplete="hostname"
                     name="hostname"
-                    error={errors.hostname === ""}
+                    error={"hostname" in errors}
                     helperText={
                       errors.hostname === "" ? "Empty!" : errors.hostname
                     }
@@ -379,6 +418,10 @@ const ProfileForm = () => {
                     value={machine.username}
                     id="username"
                     type="text"
+                    error={"username" in errors}
+                    helperText={
+                      errors.username === "" ? "Empty!" : errors.username
+                    }
                     autoComplete="username"
                     name="username"
                     variant="outlined"

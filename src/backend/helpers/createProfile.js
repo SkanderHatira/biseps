@@ -21,19 +21,21 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
         "use-conda": true,
         "dry-run": body.subsample,
         "rerun-incomplete": true,
-        "latency-wait": 20,
+        "latency-wait": 200,
         "keep-going": true,
         cores: body.cpu || "all",
     };
     const slurmProfile = {
         jobs: parseInt(body.jobs),
-        cluster: `"sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards} --mail-user=${body.email}"`,
+        cluster:
+            "sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards} --mail-type=FAIL,END --mail-user=" +
+            body.email,
         "default-resources": ["cpus=1", "mem_mb=10000", "time_min=5440"],
         configfile: body.remote
             ? "config/config.yaml"
             : path.join(uniqueDir, "config/config.yaml"),
         "use-conda": true,
-        "latency-wait": 20,
+        "latency-wait": 200,
         "rerun-incomplete": true,
         "keep-going": true,
         "dry-run": body.subsample,

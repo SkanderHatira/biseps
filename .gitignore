@@ -34,6 +34,8 @@ build/Release
 
 # Dependency directories
 mongo/
+resources/database/data/**
+resources/users/INVITE/**
 snakemake/
 snakemake/**
 node_modules/

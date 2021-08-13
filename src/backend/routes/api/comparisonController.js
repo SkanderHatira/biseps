@@ -30,12 +30,15 @@ router.post("/comparison", (req, res) => {
         console.log("made validation");
         if (!req.body.remote) {
             const date = new Date().getTime().toString();
-
             const uniqueDir = path.join(
-                __dirname,
-                "../../../bisepsComparison/",
-                date
+                req.body.outdir,
+                new Date().getTime().toString()
             );
+            // const uniqueDir = path.join(
+            //     __dirname,
+            //     "../../../bisepsComparison/",
+            //     date
+            // );
             const profile = path.join(
                 uniqueDir,
                 "config/profiles/localComparison"
@@ -91,7 +94,7 @@ router.post("/comparison", (req, res) => {
                 "../../../bisepsComparison/",
                 date
             );
-            const uniqueDirRemote = path.join(req.body.remoteOutdir, date);
+            const uniqueDirRemote = path.join(req.body.remoteDir, date);
             const profile = req.body.cluster
                 ? path.join(uniqueDir, "config/profiles/slurm")
                 : path.join(uniqueDir, "config/profiles/local");

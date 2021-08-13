@@ -24,7 +24,9 @@ const spawnChild = async (
             host: body.machine.hostname,
             port: body.machine.port,
             username: body.machine.username,
-            privateKey: require("fs").readFileSync(body.machine.privateKey),
+            ...(!(body.machine.privateKey === "") && {
+                privateKey: require("fs").readFileSync(body.machine.privateKey),
+            }),
             password: body.machine.password,
         };
 
@@ -59,6 +61,7 @@ const spawnChild = async (
             });
         });
         console.log(uniqueDir);
+        console.log("homedir:", homeDir);
         let sftp = new Client();
         sftp.connect(host)
             .then(() => {

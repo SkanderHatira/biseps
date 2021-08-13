@@ -40,6 +40,7 @@ router.post("/run", (req, res) => {
                 outdir: uniqueDir,
                 profile: profile,
                 genome: req.body.genome,
+                remote: req.body.remote,
                 adapters: req.body.adapters,
                 steps: {
                     subsample: req.body.subsample,
@@ -71,8 +72,8 @@ router.post("/run", (req, res) => {
         } else {
             const date = new Date().getTime().toString();
             const uniqueDir = path.join(req.body.outdir, date);
-            const uniqueDirRemote = path.join(req.body.remoteOutdir, date);
-            const homeDir = path.join(".", date);
+            const uniqueDirRemote = path.join(req.body.remoteDir, date);
+            const homeDir = path.join(req.body.remoteDir, date);
             console.log(homeDir);
             const profile = req.body.cluster
                 ? path.join(uniqueDir, "config/profiles/slurm")
@@ -80,8 +81,10 @@ router.post("/run", (req, res) => {
 
             const newRun = new Run({
                 outdir: uniqueDir,
-                remoteOutdir: uniqueDirRemote,
+                remoteDir: uniqueDirRemote,
                 profile: profile,
+                remote: req.body.remote,
+                machine: req.body.machine,
                 genome: req.body.genome,
                 adapters: req.body.adapters,
                 steps: {
@@ -157,8 +160,17 @@ router.get("/:id", function (req, res) {
     }).populate("createdBy");
 });
 router.post("/rerun", function (req, res) {
-    const profile = path.join(req.body.path, "config/profile");
-    spawnChild(profile);
-    console.log("Rerun Snakemake", profile);
+    console.log(req.body);
+
+    if (!req.body.remote) {
+        const profile = path.join(req.body.outdir, "config/profiles/local");
+        spawnChild(req.body, profile);
+        console.log("Rerun Snakemake", profile);
+    } else {
+        const uniqueDir = req.body.outdir;
+        const uniqueDirRemote = req.body.remoteDir;
+        const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);
+        spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
+    }
 });
 module.exports = router;

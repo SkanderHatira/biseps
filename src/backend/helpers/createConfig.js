@@ -1,4 +1,4 @@
-const createConfig = (body, uniqueDir, uniqueDirRemote) => {
+const createConfig = (body, uniqueDir) => {
     const yaml = require("js-yaml");
     const fs = require("fs");
     const path = require("path");
@@ -8,7 +8,7 @@ const createConfig = (body, uniqueDir, uniqueDirRemote) => {
             ? "config/units.tsv"
             : path.join(uniqueDir, "config/units.tsv"),
         general: {
-            outdir: body.remote ? uniqueDirRemote + "/" : uniqueDir + "/",
+            outdir: body.remote ? "" : uniqueDir + "/",
             benchmark: body.benchmark || 1,
             genome_preparation: {
                 threads: 12,

@@ -14,13 +14,47 @@ const RunSchema = new Schema({
         required: true,
         default: "",
     },
-    remoteOutdir: {
+    remoteDir: {
         type: String,
         required: false,
         default: "",
     },
+    machine: {
+        _id: {
+            type: String,
+            default: "",
+        },
+        hostname: {
+            type: String,
+            default: "",
+        },
+        username: {
+            type: String,
+            default: "",
+        },
+        port: {
+            type: Number,
+            default: 22,
+        },
+        privateKey: {
+            type: String,
+            default: "",
+        },
+        script: {
+            type: String,
+            default: "",
+        },
+        password: {
+            type: String,
+            default: "",
+        },
+    },
     genome: {
         type: String,
+        required: true,
+    },
+    remote: {
+        type: Boolean,
         required: true,
     },
     adapters: {

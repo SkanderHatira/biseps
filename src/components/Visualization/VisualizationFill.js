@@ -19,7 +19,11 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { Link } from "react-router-dom";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import GetAppIcon from "@material-ui/icons/GetApp";
 const handler = require("serve-handler");
+let Client = require("ssh2-sftp-client");
+
+let sftp = new Client();
 
 const electron = window.require("electron");
 const { shell } = window.require("electron");
@@ -36,6 +40,8 @@ import CommentIcon from "@material-ui/icons/Comment";
 import Container from "@material-ui/core/Container";
 const path = require("path");
 const portastic = require("portastic");
+const homedir = require("os").homedir();
+const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -65,19 +71,29 @@ export default function VisualizationFill() {
     setChecked(newChecked);
   };
 
-  const handleToggleTrack = (track, associatedGenome, id, name) => () => {
-    const currentIndex = checkedTrack.findIndex((x) => x.id === id);
-    console.log(currentIndex);
-    const newChecked = [...checkedTrack];
+  const handleToggleTrack =
+    (track, associatedGenome, id, name, cgbw, chgbw, chhbw, bedbw) => () => {
+      const currentIndex = checkedTrack.findIndex((x) => x.id === id);
+      console.log(currentIndex);
+      const newChecked = [...checkedTrack];
 
-    if (currentIndex === -1) {
-      newChecked.push({ track, associatedGenome, id, name });
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
+      if (currentIndex === -1) {
+        newChecked.push({
+          track,
+          cgbw,
+          chgbw,
+          chhbw,
+          bedbw,
+          associatedGenome,
+          id,
+          name,
+        });
+      } else {
+        newChecked.splice(currentIndex, 1);
+      }
 
-    setCheckedTrack(newChecked);
-  };
+      setCheckedTrack(newChecked);
+    };
 
   const [data, setData] = useState([]);
   const [views, setViews] = useState([]);
@@ -127,6 +143,63 @@ export default function VisualizationFill() {
     } catch (err) {
       return false;
     }
+  };
+  const downloadFiles = (row, sample, tracks) => {
+    console.log(tracks);
+    console.log(row, sample);
+    console.log("download files");
+
+    console.log(homedir);
+    console.log(row.machine);
+    console.log(sample);
+
+    if (!fs.existsSync(bisepsTemp)) {
+      fs.mkdirSync(bisepsTemp);
+    }
+    let remoteDir = row.remoteDir;
+    let remotePath = `${remoteDir}/results/${sample.samplePath}/multiqc_report.html`;
+    let localPath = sample.samplePath + "-multiqc_report.html";
+    sftp
+      .connect({
+        host: row.machine.hostname,
+        port: row.machine.port,
+        username: row.machine.username,
+        ...(!(row.machine.privateKey === "") && {
+          privateKey: require("fs").readFileSync(row.machine.privateKey),
+        }),
+        password: row.machine.password,
+      })
+      .then(async () => {
+        console.log(remotePath);
+        console.log(localPath);
+        console.log("made it all the way here?");
+        // return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
+        // tracks.map((track) => {
+        //   console.log(track);
+        for (const track in tracks) {
+          if (
+            !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
+          ) {
+            console.log(path.join(bisepsTemp, path.basename(tracks[track])));
+            try {
+              await sftp.fastGet(
+                tracks[track],
+                path.join(bisepsTemp, path.basename(tracks[track]))
+              );
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+        // });
+      })
+      .finally((data) => {
+        console.log("done done done");
+        sftp.end();
+      })
+      .catch((err) => {
+        console.log(err, "catch error");
+      });
   };
 
   const handlePopulate = () => {
@@ -257,7 +330,7 @@ export default function VisualizationFill() {
     shell.openExternal(`http:///localhost:${user.user.port[0]}`);
   };
   return (
-    <Container maxWidth="lg" className={classes.container} gutterBottom>
+    <Container maxWidth="lg" className={classes.container} gutterbottom>
       <Grid container direction="column" alignItems="center" gutterBottom>
         <Box m={3}>
           {" "}
@@ -341,8 +414,36 @@ export default function VisualizationFill() {
           return (
             <div>
               {row.samples.map((sample, idx) => {
-                console.log(sample);
-                const samplePath = `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam`;
+                const outdir = row.remote ? `${row.remoteDir}` : row.outdir;
+                console.log(row);
+                console.log(outdir);
+                const bedGraph = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.sorted.bedGraph.bw`;
+                const cgBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.cg.bw`;
+                const chgBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.chg.bw`;
+                const chhBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.chh.bw`;
+                const samplePath = `${outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam`;
+                const bedGraphLocal = path.join(
+                  bisepsTemp,
+                  path.basename(bedGraph)
+                );
+                const samplePathBai = `${outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam.bai`;
+                const cgBWLocal = path.join(bisepsTemp, path.basename(cgBW));
+                const chgBWLocal = path.join(bisepsTemp, path.basename(chgBW));
+                const chhBWLocal = path.join(bisepsTemp, path.basename(chhBW));
+                const samplePathLocal = path.join(
+                  bisepsTemp,
+                  path.basename(samplePath)
+                );
+                console.log(samplePathLocal);
+
+                const tracks = [
+                  samplePath,
+                  bedGraph,
+                  cgBW,
+                  chgBW,
+                  chhBW,
+                  samplePathBai,
+                ];
                 const associatedGenomePath = row.genome.replace(
                   /^.*[\\\/]/,
                   ""
@@ -361,7 +462,7 @@ export default function VisualizationFill() {
                     key={`${sample._id}-${idx}`}
                     button
                     disabled={
-                      fileExist(samplePath) &&
+                      fileExist(row.remote ? samplePathLocal : samplePath) &&
                       !fileExist(
                         path.join(
                           user.user.jbPath,
@@ -375,18 +476,24 @@ export default function VisualizationFill() {
                         : true
                     }
                     onClick={handleToggleTrack(
-                      samplePath,
+                      row.remote ? samplePathLocal : samplePath,
                       associatedGenome,
                       `${sample._id}`,
-                      sample.sample
+                      sample.sample,
+                      row.remote ? cgBWLocal : cgBW,
+                      row.remote ? chgBWLocal : chgBW,
+                      row.remote ? chhBWLocal : chhBW,
+                      row.remote ? bedGraphLocal : bedGraph
                     )}
                   >
                     <ListItemIcon>
                       <Checkbox
                         edge="start"
                         checked={
-                          checkedTrack.findIndex(
-                            (x) => x.track === samplePath
+                          checkedTrack.findIndex((x) =>
+                            row.remote
+                              ? x.track === samplePathLocal
+                              : x.track === samplePath
                           ) !== -1
                         }
                         tabIndex={-1}
@@ -398,7 +505,9 @@ export default function VisualizationFill() {
                     <ListItemSecondaryAction>
                       <IconButton
                         disabled={
-                          fileExist(samplePath) &&
+                          fileExist(
+                            row.remote ? samplePathLocal : samplePath
+                          ) &&
                           fileExist(
                             path.join(
                               user.user.jbPath,
@@ -412,10 +521,21 @@ export default function VisualizationFill() {
                             : true
                         }
                         edge="end"
-                        aria-label="comments"
+                        aria-label="files"
                       >
                         <CheckCircleOutlineIcon />
                       </IconButton>
+                      {row.remote ? (
+                        <IconButton
+                          edge="end"
+                          aria-label="files"
+                          onClick={() => downloadFiles(row, sample, tracks)}
+                        >
+                          <GetAppIcon />
+                        </IconButton>
+                      ) : (
+                        ""
+                      )}{" "}
                     </ListItemSecondaryAction>
                   </ListItem>
                 );

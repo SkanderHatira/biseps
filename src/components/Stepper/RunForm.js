@@ -18,6 +18,7 @@ import NewTable from "../Table/NewTable";
 import { useHistory } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -94,6 +95,7 @@ export default function RunForm() {
 
   const history = useHistory();
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClick = () => {
     setOpen(true);
@@ -133,7 +135,7 @@ export default function RunForm() {
       errors.push("You have to specify a genome");
     }
     if (runState.remote) {
-      if (runState.remoteOutdir.length === 0) {
+      if (runState.remoteDir.length === 0) {
         errors.push(
           "You have to specify a remote output directory when using a remote machine"
         );
@@ -142,11 +144,15 @@ export default function RunForm() {
     return errors;
   }
   const handleRunSubmit = () => {
+    setLoading(true);
+
+    console.log(runState);
     const errors = validate(runState);
     if (errors.length > 0) {
       console.log(errors);
       setErrors(errors);
       handleClick(true);
+      setLoading(false);
       return errors;
     }
     const blankSample = {};
@@ -215,6 +221,7 @@ export default function RunForm() {
           setResponse(jsbody);
           setRunState(initialRun);
           setUnits([]);
+          setLoading(false);
           history.push("/alignment");
         }
       });
@@ -248,59 +255,72 @@ export default function RunForm() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography component="h1" variant="h4" align="center">
-            Parameters
-          </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
-              ""
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <div className={classes.buttons}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
-                      Back
+      {loading ? (
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <CircularProgress size={80} />
+        </div>
+      ) : (
+        <main className={classes.layout}>
+          <Paper className={classes.paper}>
+            <Typography component="h1" variant="h4" align="center">
+              Parameters
+            </Typography>
+            <Stepper activeStep={activeStep} className={classes.stepper}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <React.Fragment>
+              {activeStep === steps.length ? (
+                ""
+              ) : (
+                <React.Fragment>
+                  {getStepContent(activeStep)}
+                  <div className={classes.buttons}>
+                    {activeStep !== 0 && (
+                      <Button onClick={handleBack} className={classes.button}>
+                        Back
+                      </Button>
+                    )}
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={
+                        activeStep === steps.length - 1
+                          ? handleRunSubmit
+                          : handleNext
+                      }
+                      className={classes.button}
+                    >
+                      {activeStep === steps.length - 1
+                        ? "Launch analysis"
+                        : "Next"}
                     </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={
-                      activeStep === steps.length - 1
-                        ? handleRunSubmit
-                        : handleNext
-                    }
-                    className={classes.button}
-                  >
-                    {activeStep === steps.length - 1
-                      ? "Launch analysis"
-                      : "Next"}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleReset}
-                    className={classes.button}
-                  >
-                    reset
-                  </Button>
-                </div>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </Paper>
-        <Copyright />
-      </main>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleReset}
+                      className={classes.button}
+                    >
+                      reset
+                    </Button>
+                  </div>
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          </Paper>
+          <Copyright />
+        </main>
+      )}
     </React.Fragment>
   );
 }

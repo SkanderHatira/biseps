@@ -81,8 +81,69 @@ const spawnChild = (body) => {
         return data;
     });
     body.tracks.map((track) => {
+        // import bam
         exec(
-            `npx jbrowse add-track ${track.track} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}\' --subDir ${track.associatedGenome}   --trackId ${track.id} --out ${body.jbPath}`,
+            `npx jbrowse add-track ${track.track} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_bam\' --subDir ${track.associatedGenome}   --trackId ${track.id} --out ${body.jbPath}`,
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log("bigerror");
+
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                console.log("success");
+            }
+        );
+        // import bigwig_cg
+        exec(
+            `npx jbrowse add-track ${track.cgbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_cg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log("bigerror");
+
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                console.log("success");
+            }
+        );
+        // import bigwig_chg
+        exec(
+            `npx jbrowse add-track ${track.chgbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_chg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log("bigerror");
+
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                console.log("success");
+            }
+        );
+        // import bigwig_chh
+        exec(
+            `npx jbrowse add-track ${track.chhbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_chh\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log("bigerror");
+
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                console.log("success");
+            }
+        );
+        // import bigwig_bedgraph
+        exec(
+            `npx jbrowse add-track ${track.bedbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_bedgraph\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
             (error, stdout, stderr) => {
                 if (error) {
                     console.log("bigerror");
