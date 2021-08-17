@@ -41,6 +41,8 @@ import classnames from "classnames";
 const path = require("path");
 const fs = require("fs");
 const http = require("http");
+const homedir = require("os").homedir();
+const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -336,11 +338,18 @@ export default function ComparisonForm() {
   let result = [];
   data.map((row) => {
     row.samples.map((sample) => {
-      result.push(
-        `${row.outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`
-      );
+      if (row.remote) {
+        result.push(
+          `${bisepsTemp}${sample.samplePath}.deduplicated.CX_report.txt`
+        );
+      } else {
+        result.push(
+          `${row.outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`
+        );
+      }
     });
   });
+  console.log(result);
   // const blankSample = {};
   // const helper = {};
   // const result = data.reduce(function (r, o) {

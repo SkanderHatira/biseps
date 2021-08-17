@@ -5,7 +5,7 @@ const spawnChild = async (
     uniqueDirRemote,
     homeDir
 ) => {
-    const { execFile, exec } = require("child_process");
+    const { execFile, exec, spawn } = require("child_process");
     let Client = require("ssh2-sftp-client");
     const path = require("path");
     const env = path.join(__dirname, "../resources/snakemake/bin");
@@ -50,7 +50,7 @@ const spawnChild = async (
         });
 
         if (exitCode) {
-            throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+            // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
         }
 
         const connect = require("ssh2-connect");
@@ -153,8 +153,19 @@ const spawnChild = async (
     } else {
         console.log("this is env", env);
         console.log("this is profile", profile);
-
+        console.log(options);
         console.log("this is workflow", workflow);
+        const logfile = `${uniqueDir}/biseps.txt`;
+        // const child = spawn(
+        //     process.platform === "darwin" ? "bash" : "bash",
+
+        //     [localScript, env, profile, workflow],
+        //     options
+        // );
+        // const child = exec(
+        //     `bash ${localScript} ${env} ${profile} ${workflow} > ${logfile}`,
+        //     options
+        // );
 
         const child = execFile(localScript, [env, profile, workflow], options);
         let data = "";
@@ -172,7 +183,7 @@ const spawnChild = async (
         });
 
         if (exitCode) {
-            throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+            // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
         }
         return data;
     }

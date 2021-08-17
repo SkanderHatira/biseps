@@ -20,7 +20,6 @@ const useProvideConfig = () => {
     genome: "",
     outdir: "",
     remoteDir: "",
-
     machine: {},
     minlen: 80,
     minscore: -0.6,

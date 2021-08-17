@@ -7,7 +7,12 @@ const comparisonSchema = new Schema({
     outdir: { type: String, required: true },
     remoteDir: { type: String, required: false },
     method: { type: String, required: false },
+    date: {
+        type: Date,
+        default: Date.now,
+    },
     stat: { type: String, required: false },
+    contexts: [{ type: String, required: false }],
     binSize: { type: Number, required: false },
     pseudocountN: { type: Number, required: false },
     pseudocountM: { type: Number, required: false },

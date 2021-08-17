@@ -13,7 +13,7 @@ const validateConfigurationInput = require("../../validation/comparisonConfigura
 const Comparison = require("../../models/Comparison");
 const User = require("../../models/User");
 
-// @route POST api/runs/Run
+// @route POST api/comparisons/Run
 // @desc Run
 // @access Public
 
@@ -51,6 +51,7 @@ router.post("/comparison", (req, res) => {
                 comparisons: req.body.comparisons,
                 method: req.body.method,
                 stat: req.body.stat,
+                contexts: req.body.contexts,
                 binSize: req.body.binSize,
                 pseudocountN: req.body.pseudocountN,
                 pseudocountM: req.body.pseudocountM,
@@ -105,6 +106,7 @@ router.post("/comparison", (req, res) => {
                 comparisons: req.body.comparisons,
                 method: req.body.method,
                 stat: req.body.stat,
+                contexts: req.body.contexts,
                 binSize: req.body.binSize,
                 pseudocountN: req.body.pseudocountN,
                 pseudocountM: req.body.pseudocountM,
@@ -153,5 +155,40 @@ router.get("/", function (req, res) {
         res.status(200).send(comparisons);
     }).populate("createdBy");
     console.log("GET method");
+});
+router.delete("/:id", function (req, res) {
+    const id = req.params.id;
+    const userId = req.user._id;
+    console.log(req.outdir);
+    console.log(req.user);
+    Comparison.deleteOne({ _id: id })
+        .then((result) => {
+            res.json(`Deleted ${id}`);
+        })
+        .catch((error) => console.error(error));
+    User.findByIdAndUpdate(
+        userId,
+        { $pull: { comparisons: id } },
+        { safe: true, upsert: true, new: true },
+        function (err, model) {
+            console.log(err);
+        }
+    );
+});
+
+router.post("/rerun", function (req, res) {
+    console.log(req.body);
+
+    if (!req.body.remote) {
+        const profile = path.join(req.body.outdir, "config/profiles/local");
+        spawnChild(req.body, profile);
+        console.log("Rerun Snakemake", profile);
+    } else {
+        const profile = path.join(req.body.remoteDir, "config/profiles/local");
+        const uniqueDir = req.body.outdir;
+        const uniqueDirRemote = req.body.remoteDir;
+        const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);
+        spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
+    }
 });
 module.exports = router;

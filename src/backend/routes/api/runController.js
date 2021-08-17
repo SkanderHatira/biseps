@@ -161,13 +161,13 @@ router.get("/:id", function (req, res) {
 });
 router.post("/rerun", function (req, res) {
     console.log(req.body);
+    const uniqueDir = req.body.outdir;
 
     if (!req.body.remote) {
         const profile = path.join(req.body.outdir, "config/profiles/local");
-        spawnChild(req.body, profile);
+        spawnChild(req.body, profile, uniqueDir);
         console.log("Rerun Snakemake", profile);
     } else {
-        const uniqueDir = req.body.outdir;
         const uniqueDirRemote = req.body.remoteDir;
         const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);
         spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);

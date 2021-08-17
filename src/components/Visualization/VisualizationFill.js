@@ -48,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
 export default function VisualizationFill() {
@@ -156,9 +159,7 @@ export default function VisualizationFill() {
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
-    let remoteDir = row.remoteDir;
-    let remotePath = `${remoteDir}/results/${sample.samplePath}/multiqc_report.html`;
-    let localPath = sample.samplePath + "-multiqc_report.html";
+
     sftp
       .connect({
         host: row.machine.hostname,
@@ -170,8 +171,6 @@ export default function VisualizationFill() {
         password: row.machine.password,
       })
       .then(async () => {
-        console.log(remotePath);
-        console.log(localPath);
         console.log("made it all the way here?");
         // return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
         // tracks.map((track) => {
@@ -339,6 +338,7 @@ export default function VisualizationFill() {
             aria-label="outlined primary button group"
           >
             <Button
+              className={classes.button}
               alignItems="center"
               variant="contained"
               color="default"
@@ -347,6 +347,7 @@ export default function VisualizationFill() {
               Start Jbrowse{" "}
             </Button>
             <Button
+              className={classes.button}
               onClick={handleReset}
               alignItems="center"
               variant="contained"
@@ -355,6 +356,7 @@ export default function VisualizationFill() {
               Reset Jbrowse{" "}
             </Button>
             <Button
+              className={classes.button}
               onClick={handlePopulate}
               alignItems="center"
               variant="contained"
@@ -408,7 +410,7 @@ export default function VisualizationFill() {
           );
         })}
       </List>
-      <List subheader={result.length > 0 ? "Bam Files" : ""}>
+      <List subheader={result.length > 0 ? "Alignments" : ""}>
         {data.map((row) => {
           const labelId = `checkbox-list-label-${row}`;
           return (

@@ -100,6 +100,7 @@ import ActionRowing from "material-ui/svg-icons/action/rowing";
 import uuid from "react-uuid";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+const { clipboard } = require("electron");
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -108,7 +109,6 @@ const fs = require("fs");
 const path = require("path");
 const portastic = require("portastic");
 let Client = require("ssh2-sftp-client");
-let sftp = new Client();
 const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
@@ -130,7 +130,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
 }));
-
+// let clipboardStr = clipboard.readText();
 function generate(element) {
   return [0, 1, 2].map((value) =>
     React.cloneElement(element, {
@@ -160,6 +160,8 @@ export default function InteractiveList() {
     setOpen(true);
   };
   const handleLog = (row) => {
+    let sftp = new Client();
+
     console.log(row);
     let remotePath = `${row.remoteDir}/biseps.txt`;
     let localPath = row.date + "biseps.txt";
@@ -178,9 +180,8 @@ export default function InteractiveList() {
         console.log(remotePath);
         console.log(localPath);
         console.log("made it all the way here?");
-        if (!fs.existsSync(path.join(bisepsTemp, localPath))) {
-          return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
-        }
+
+        return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
       })
       .then((data) => {
         console.log("done done done");
@@ -194,12 +195,125 @@ export default function InteractiveList() {
         sftp.end();
       });
   };
+  const getFile = () => {
+    console.log("getfile");
+  };
+  // const downloadFiles = (row, reports) => {
+  //   if (!fs.existsSync(bisepsTemp)) {
+  //     fs.mkdirSync(bisepsTemp);
+  //   }
+
+  //   sftp
+  //     .connect({
+  //       host: row.machine.hostname,
+  //       port: row.machine.port,
+  //       username: row.machine.username,
+  //       ...(!(row.machine.privateKey === "") && {
+  //         privateKey: require("fs").readFileSync(row.machine.privateKey),
+  //       }),
+  //       password: row.machine.password,
+  //     })
+  //     .then(async () => {
+  //       for (const report in reports) {
+  //         if (
+  //           !fs.existsSync(
+  //             path.join(bisepsTemp, path.basename(reports[report]))
+  //           )
+  //         ) {
+  //           console.log(report);
+  //           console.log(path.join(bisepsTemp, path.basename(reports[report])));
+  //           try {
+  //             await sftp.fastGet(
+  //               reports[report],
+  //               path.join(bisepsTemp, path.basename(reports[report]))
+  //             );
+  //           } catch (err) {
+  //             console.log(err);
+  //           }
+  //         }
+  //       }
+  //       // });
+  //     })
+  //     .finally((data) => {
+  //       console.log("done done done");
+  //       sftp.end();
+  //     })
+  //     .catch((err) => {
+  //       console.log(err, "catch error");
+  //       sftp.end();
+  //     });
+  // };
+  const downloadFiles = (row, sample, tracks) => {
+    let sftp = new Client();
+
+    console.log(tracks);
+    console.log(row, sample);
+    console.log("download files");
+
+    console.log(homedir);
+    console.log(row.machine);
+    console.log(sample);
+
+    if (!fs.existsSync(bisepsTemp)) {
+      fs.mkdirSync(bisepsTemp);
+    }
+
+    sftp
+      .connect({
+        host: row.machine.hostname,
+        port: row.machine.port,
+        username: row.machine.username,
+        ...(!(row.machine.privateKey === "") && {
+          privateKey: require("fs").readFileSync(row.machine.privateKey),
+        }),
+        password: row.machine.password,
+      })
+      .then(async () => {
+        console.log("made it all the way here?");
+        // return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
+        // tracks.map((track) => {
+        //   console.log(track);
+        for (const track in tracks) {
+          if (
+            !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
+          ) {
+            console.log(path.join(bisepsTemp, path.basename(tracks[track])));
+            try {
+              await sftp.fastGet(
+                tracks[track],
+                path.join(bisepsTemp, path.basename(tracks[track]))
+              );
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+        // });
+      })
+      .finally((data) => {
+        createBrowserWindow(
+          path.join(
+            bisepsTemp,
+            path.join(`${sample.samplePath}-multiqc_report.html`)
+          )
+        );
+        console.log("done done done");
+        sftp.end();
+      })
+      .catch((err) => {
+        console.log(err, "catch error");
+        setErrors("File isn't ready yet");
+        handleOpenAlert();
+        sftp.end();
+      });
+  };
+
   const handleRemoteFiles = (row, sample) => {
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
     let remoteDir = row.remoteDir;
-    let remotePath = `${remoteDir}/results/${sample.samplePath}/multiqc_report.html`;
+    let remotePath = `${remoteDir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
     let localPath = sample.samplePath + "-multiqc_report.html";
     sftp
       .connect({
@@ -209,9 +323,7 @@ export default function InteractiveList() {
         ...(!(row.machine.privateKey === "") && {
           privateKey: require("fs").readFileSync(row.machine.privateKey),
         }),
-        ...(row.machine.privateKey === "" && {
-          password: row.machine.password,
-        }),
+        password: row.machine.password,
       })
       .then(() => {
         console.log(remotePath);
@@ -536,100 +648,122 @@ export default function InteractiveList() {
           </DialogActions>
         </Dialog>
         {data.length > 0 ? (
-          data.map((row) => (
-            <Grid key={row._id} item xs={12} md={6}>
-              <Typography variant="h6" className={classes.title}>
-                Analysis created by {row.createdBy.name} on{" "}
-                {row.date.split("T")[0]}
-              </Typography>
+          data.map((row) => {
+            const reports = [];
+            row.samples.map((sample) => {
+              reports.push(
+                `${row.remoteDir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`
+              );
+            });
+            return (
+              <Grid key={row._id} item xs={12} md={6}>
+                <Typography variant="h6" className={classes.title}>
+                  {row.remote ? "Remote " : "Local "}Analysis created by{" "}
+                  {row.createdBy.name} on {row.date.split("T")[0]}
+                </Typography>
 
-              <div>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleClickOpen(row)}
-                  className={classes.button}
-                  startIcon={<DeleteIcon />}
-                >
-                  Delete
-                </Button>
-                {/* This Button uses a Font Icon, see the installation instructions in the Icon component docs. */}
+                <div>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleClickOpen(row)}
+                    className={classes.button}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete
+                  </Button>
+                  {/* This Button uses a Font Icon, see the installation instructions in the Icon component docs. */}
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={row.remote ? true : false}
-                  onClick={() => openInFolder(`${row.outdir}/results`)}
-                  className={classes.button}
-                  endIcon={row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>}
-                >
-                  {row.remote ? "Remote" : "Open Folder"}
-                </Button>
-                <Button
-                  variant="contained"
-                  color="default"
-                  onClick={() => handleRerun(row)}
-                  className={classes.button}
-                  startIcon={<RefreshIcon />}
-                >
-                  Rerun
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={
+                      row.remote
+                        ? () => clipboard.writeText(`${row.remoteDir}/results/`)
+                        : () => openInFolder(`${row.outdir}/results`)
+                    }
+                    className={classes.button}
+                    endIcon={
+                      row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>
+                    }
+                  >
+                    {row.remote ? "Copy Remote Path" : "Open Folder"}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="default"
+                    onClick={() => handleRerun(row)}
+                    className={classes.button}
+                    startIcon={<RefreshIcon />}
+                  >
+                    Rerun
+                  </Button>
 
-                <Button
-                  variant="contained"
-                  color="default"
-                  onClick={
-                    row.remote
-                      ? () => handleLog(row)
-                      : () =>
-                          createBrowserWindow(
-                            path.join(row.outdir, "biseps.txt")
-                          )
-                  }
-                  className={classes.button}
-                  startIcon={<RefreshIcon />}
-                >
-                  Show Log
-                </Button>
-              </div>
-              <div className={classes.demo}>
-                <List dense={dense}>
-                  {row.samples.map((sample) => (
-                    <ListItem
-                      button
-                      disabled={
-                        row.remote
-                          ? false
-                          : fileExist(
-                              `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`
+                  <Button
+                    variant="contained"
+                    color="default"
+                    onClick={
+                      row.remote
+                        ? () => handleLog(row)
+                        : () =>
+                            createBrowserWindow(
+                              path.join(row.outdir, "biseps.txt")
                             )
-                          ? false
-                          : true
-                      }
-                      key={sample._id}
-                      onClick={() => {
-                        if (row.remote) {
-                          handleRemoteFiles(row, sample);
-                        } else {
-                          console.log(sample);
-                          const path = `${row.outdir}/results/${sample.samplePath}/multiqc_report.html`;
-                          console.log(path);
-                          createBrowserWindow(path);
-                        }
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Avatar>
-                          <FolderIcon />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={`${sample.sample} MultiQC Report`}
-                        secondary={secondary ? "Secondary text" : null}
-                      />
-                    </ListItem>
-                  ))}
-                  {/* {generate(
+                    }
+                    className={classes.button}
+                    startIcon={<RefreshIcon />}
+                  >
+                    Show Log
+                  </Button>
+                </div>
+                <div className={classes.demo}>
+                  <List dense={dense}>
+                    {row.samples.map((sample) => {
+                      const outdir = row.remote
+                        ? `${row.remoteDir}`
+                        : row.outdir;
+
+                      const Multiqc = `${outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
+                      const CX = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`;
+                      const tracks = [Multiqc, CX];
+                      return (
+                        <ListItem
+                          button
+                          disabled={
+                            row.remote
+                              ? false
+                              : fileExist(
+                                  `${row.outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`
+                                )
+                              ? false
+                              : true
+                          }
+                          key={sample._id}
+                          onClick={() => {
+                            if (row.remote) {
+                              // handleRemoteFiles(row, sample);
+                              downloadFiles(row, sample, tracks);
+                            } else {
+                              console.log(sample);
+                              const path = `${row.outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
+                              console.log(path);
+                              createBrowserWindow(path);
+                            }
+                          }}
+                        >
+                          <ListItemAvatar>
+                            <Avatar>
+                              <FolderIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={`${sample.sample} MultiQC Report`}
+                            secondary={secondary ? "Secondary text" : null}
+                          />
+                        </ListItem>
+                      );
+                    })}
+                    {/* {generate(
                   <ListItem>
                     <ListItemAvatar>
                       <Avatar>
@@ -647,10 +781,11 @@ export default function InteractiveList() {
                     </ListItemSecondaryAction>
                   </ListItem>
                 )} */}
-                </List>
-              </div>
-            </Grid>
-          ))
+                  </List>
+                </div>
+              </Grid>
+            );
+          })
         ) : (
           <Grid
             key={0}
