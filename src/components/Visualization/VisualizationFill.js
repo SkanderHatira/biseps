@@ -357,8 +357,8 @@ export default function VisualizationFill() {
 
   const handleServe = () => {
     try {
-      const server = http.createServer((request, response) => {
-        return handler(request, response, {
+      const server = http.createServer(async (request, response) => {
+        await handler(request, response, {
           public: user.user.jbPath,
         });
       });
@@ -372,8 +372,8 @@ export default function VisualizationFill() {
           retrieve: 1,
         })
         .then(function (port) {
-          const server = http.createServer((request, response) => {
-            return handler(request, response, {
+          const server = http.createServer(async (request, response) => {
+            await handler(request, response, {
               public: user.user.jbPath,
             });
           });
@@ -486,12 +486,12 @@ export default function VisualizationFill() {
                 const cgBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.cg.bw`;
                 const chgBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.chg.bw`;
                 const chhBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.chh.bw`;
-                const samplePath = `${outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam`;
+                const samplePath = `${outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bw`;
                 const bedGraphLocal = path.join(
                   bisepsTemp,
                   path.basename(bedGraph)
                 );
-                const samplePathBai = `${outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam.bai`;
+                // const samplePathBai = `${outdir}/results/${sample.samplePath}/alignment_bismark/${sample.samplePath}.deduplicated.bam.bai`;
                 const cgBWLocal = path.join(bisepsTemp, path.basename(cgBW));
                 const chgBWLocal = path.join(bisepsTemp, path.basename(chgBW));
                 const chhBWLocal = path.join(bisepsTemp, path.basename(chhBW));
@@ -507,7 +507,7 @@ export default function VisualizationFill() {
                   cgBW,
                   chgBW,
                   chhBW,
-                  samplePathBai,
+                  // samplePathBai,
                 ];
                 const associatedGenomePath = row.genome.replace(
                   /^.*[\\\/]/,
@@ -518,7 +518,7 @@ export default function VisualizationFill() {
                 console.log(
                   path.join(
                     user.user.jbPath,
-                    `${associatedGenomePath}/${sample.samplePath}.deduplicated.bam`
+                    `${associatedGenomePath}/${sample.samplePath}.deduplicated.bw`
                   )
                 );
                 console.log(associatedGenomePath);
@@ -532,7 +532,7 @@ export default function VisualizationFill() {
                       !fileExist(
                         path.join(
                           user.user.jbPath,
-                          `${associatedGenome}/${sample.samplePath}.deduplicated.bam`
+                          `${associatedGenome}/${sample.samplePath}.deduplicated.bw`
                         )
                       ) &&
                       fileExist(
@@ -577,7 +577,7 @@ export default function VisualizationFill() {
                           fileExist(
                             path.join(
                               user.user.jbPath,
-                              `${associatedGenome}/${sample.samplePath}.deduplicated.bam`
+                              `${associatedGenome}/${sample.samplePath}.deduplicated.bw`
                             )
                           ) &&
                           fileExist(
