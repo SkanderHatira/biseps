@@ -19,6 +19,14 @@ const spawnChild = async (
         slient: false,
         detached: true,
     };
+    console.log("so far so good");
+    console.log("so far so good");
+
+    console.log("so far so good");
+    console.log("so far so good");
+    console.log("so far so good");
+    console.log("so far so good");
+
     if (body.remote) {
         const host = {
             host: body.machine.hostname,
@@ -50,7 +58,7 @@ const spawnChild = async (
         });
 
         if (exitCode) {
-            // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+            throw new Error(`subprocess error exit ${exitCode}, ${error}`);
         }
 
         const connect = require("ssh2-connect");
@@ -76,7 +84,11 @@ const spawnChild = async (
                 if (body.cluster) {
                     connect(host, function (err, ssh) {
                         exec(
-                            `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/  && sbatch exec_scripts/slurmScript.sh `,
+                            `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/  && sbatch exec_scripts/${
+                                contexts in body
+                                    ? "slurmComparison."
+                                    : "slurmScript.sh"
+                            }`,
                             { ssh: ssh },
                             (err, stdout, stderr) => {
                                 console.log("stdout is:", stdout);
@@ -112,7 +124,11 @@ const spawnChild = async (
                 } else {
                     connect(host, function (err, ssh) {
                         exec(
-                            `cd ${homeDir} && tar -xf workflow.tar.gz  && rm -rf .snakemake/ && source exec_scripts/script.sh &&  bash exec_scripts/localScript.sh`,
+                            `cd ${homeDir} && tar -xf workflow.tar.gz  && rm -rf .snakemake/ && source exec_scripts/script.sh &&  bash exec_scripts/${
+                                contexts in body
+                                    ? "localComparison.sh."
+                                    : "localScript.sh"
+                            } `,
                             { ssh: ssh },
                             (err, stdout, stderr) => {
                                 console.log("stdout is:", stdout);
@@ -155,7 +171,6 @@ const spawnChild = async (
         console.log("this is profile", profile);
         console.log(options);
         console.log("this is workflow", workflow);
-        const logfile = `${uniqueDir}/biseps.txt`;
         // const child = spawn(
         //     process.platform === "darwin" ? "bash" : "bash",
 

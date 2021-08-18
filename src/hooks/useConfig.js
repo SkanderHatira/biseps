@@ -54,11 +54,14 @@ const useProvideConfig = () => {
     cluster: false,
     contexts: ["CG"],
     kernelFunction: "triangular",
+    jobs: "10",
   };
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);
   const [remoteunits, setRemoteUnits] = useState([]);
   const [comparisons, setComparisons] = useState([]);
+  const [remotecomparisons, setRemoteComparisons] = useState([]);
+
   const [compState, setCompState] = useState(initialComp);
 
   return {
@@ -74,5 +77,7 @@ const useProvideConfig = () => {
     initialComp,
     remoteunits,
     setRemoteUnits,
+    remotecomparisons,
+    setRemoteComparisons,
   };
 };

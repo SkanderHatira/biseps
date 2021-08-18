@@ -4,6 +4,8 @@ const router = express.Router();
 const createUnitsComparison = require("../../helpers/createUnitsComparison");
 const createConfigComparison = require("../../helpers/createConfigComparison");
 const createProfileComparison = require("../../helpers/createProfileComparison");
+const createSymlinkComparison = require("../../helpers/createSymlinkComparison");
+const cloneBiseps = require("../../helpers/cloneBiseps");
 const spawnChild = require("../../snakemake");
 
 // Load input validation
@@ -46,9 +48,12 @@ router.post("/comparison", (req, res) => {
 
             const newComparison = new Comparison({
                 outdir: uniqueDir,
-                remoteDir: req.body.remoteDir,
+                machine: req.body.machine,
+                genome: req.body.genome,
+
                 profile: profile,
                 comparisons: req.body.comparisons,
+                remotecomparisons: req.body.remotecomparisons,
                 method: req.body.method,
                 stat: req.body.stat,
                 contexts: req.body.contexts,
@@ -82,28 +87,38 @@ router.post("/comparison", (req, res) => {
             console.log(newComparison);
             console.log("POST method");
             createProfileComparison(req.body, uniqueDir);
-            createUnitsComparison(req.body, uniqueDir);
             createConfigComparison(req.body, uniqueDir);
+            createUnitsComparison(req.body, uniqueDir);
             // createProfile(req.body, uniqueDir);
             // createConfig(req.body, uniqueDir);
             // createUnits(req.body, uniqueDir);
             spawnChild(req.body, profile);
         } else {
             const date = new Date().getTime().toString();
+            // const uniqueDir = path.join(
+            //     __dirname,
+            //     "../../../bisepsComparison/",
+            //     date
+            // );
             const uniqueDir = path.join(
-                __dirname,
-                "../../../bisepsComparison/",
-                date
+                req.body.outdir,
+                new Date().getTime().toString()
             );
             const uniqueDirRemote = path.join(req.body.remoteDir, date);
             const profile = req.body.cluster
-                ? path.join(uniqueDir, "config/profiles/slurm")
-                : path.join(uniqueDir, "config/profiles/local");
+                ? path.join(uniqueDir, "config/profiles/slurmComparison")
+                : path.join(uniqueDir, "config/profiles/localComparison");
+            const homeDir = path.join(req.body.remoteDir, date);
 
             const newComparison = new Comparison({
                 outdir: uniqueDir,
                 profile: profile,
+                remoteDir: uniqueDirRemote,
+                genome: req.body.genome,
+
+                machine: req.body.machine,
                 comparisons: req.body.comparisons,
+                remotecomparisons: req.body.remotecomparisons,
                 method: req.body.method,
                 stat: req.body.stat,
                 contexts: req.body.contexts,
@@ -136,13 +151,13 @@ router.post("/comparison", (req, res) => {
                 .catch((err) => console.log(err));
 
             console.log("POST method");
-            // cloneBiseps(req.body, uniqueDir);
-            // createSymlink(req.body, uniqueDir);
-            // createProfile(req.body, uniqueDir, uniqueDirRemote);
-            // createConfig(req.body, uniqueDir, uniqueDirRemote);
-            // createUnits(req.body, uniqueDir);
+            cloneBiseps(req.body, uniqueDir);
+            createSymlinkComparison(req.body, uniqueDir);
+            createProfileComparison(req.body, uniqueDir, uniqueDirRemote);
+            createConfigComparison(req.body, uniqueDir, uniqueDirRemote);
+            createUnitsComparison(req.body, uniqueDir);
             // // createArchive(uniqueDir);
-            // spawnChild(req.body, profile, uniqueDir, uniqueDirRemote);
+            spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
         }
     }
 });
@@ -180,11 +195,17 @@ router.post("/rerun", function (req, res) {
     console.log(req.body);
 
     if (!req.body.remote) {
-        const profile = path.join(req.body.outdir, "config/profiles/local");
+        const profile = path.join(
+            req.body.outdir,
+            "config/profiles/localComparison"
+        );
         spawnChild(req.body, profile);
         console.log("Rerun Snakemake", profile);
     } else {
-        const profile = path.join(req.body.remoteDir, "config/profiles/local");
+        const profile = path.join(
+            req.body.remoteDir,
+            "config/profiles/localComparison"
+        );
         const uniqueDir = req.body.outdir;
         const uniqueDirRemote = req.body.remoteDir;
         const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);

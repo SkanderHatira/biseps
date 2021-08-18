@@ -83,7 +83,7 @@ const spawnChild = (body) => {
     body.tracks.map((track) => {
         // import bam
         exec(
-            `npx jbrowse add-track ${track.track} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_bam\' --subDir ${track.associatedGenome}   --trackId ${track.id} --out ${body.jbPath}`,
+            `npx jbrowse add-track ${track.track} --load copy --category \'Alignments\' --assemblyNames ${track.associatedGenome} --name \'${track.name}_bam\' --subDir ${track.associatedGenome}   --trackId ${track.id} --out ${body.jbPath}`,
             (error, stdout, stderr) => {
                 if (error) {
                     console.log("bigerror");
@@ -98,7 +98,7 @@ const spawnChild = (body) => {
         );
         // import bigwig_cg
         exec(
-            `npx jbrowse add-track ${track.cgbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_cg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            `npx jbrowse add-track ${track.cgbw} --load copy --category \'Methylation Count In CG Context\' --assemblyNames ${track.associatedGenome} --name \'${track.name}_cg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
             (error, stdout, stderr) => {
                 if (error) {
                     console.log("bigerror");
@@ -113,7 +113,7 @@ const spawnChild = (body) => {
         );
         // import bigwig_chg
         exec(
-            `npx jbrowse add-track ${track.chgbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_chg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            `npx jbrowse add-track ${track.chgbw} --load copy --category \'Methylation Count In CHG Context\' --assemblyNames ${track.associatedGenome} --name \'${track.name}_chg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
             (error, stdout, stderr) => {
                 if (error) {
                     console.log("bigerror");
@@ -128,7 +128,7 @@ const spawnChild = (body) => {
         );
         // import bigwig_chh
         exec(
-            `npx jbrowse add-track ${track.chhbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_chh\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            `npx jbrowse add-track ${track.chhbw} --category \'Methylation Count In CHH Context\' --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_chh\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
             (error, stdout, stderr) => {
                 if (error) {
                     console.log("bigerror");
@@ -143,7 +143,24 @@ const spawnChild = (body) => {
         );
         // import bigwig_bedgraph
         exec(
-            `npx jbrowse add-track ${track.bedbw} --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_bedgraph\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            `npx jbrowse add-track ${track.bedbw} --category \'global methylation profile\'  --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_bedgraph\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log("bigerror");
+
+                    console.error(`exec error: ${error}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                console.log("success");
+            }
+        );
+    });
+    body.comparisons.map((comparison) => {
+        // import import_bedgz and index
+        exec(
+            `npx jbrowse add-track ${comparison.bed}   --category \'Differentially Methylated Regions\'  --load copy --assemblyNames ${comparison.associatedGenome} --name \'${comparison.id}\' --subDir ${comparison.associatedGenome}  --out ${body.jbPath}`,
             (error, stdout, stderr) => {
                 if (error) {
                     console.log("bigerror");

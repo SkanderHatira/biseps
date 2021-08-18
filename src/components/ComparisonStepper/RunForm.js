@@ -74,8 +74,15 @@ const steps = ["Global configuration", "Expermiental design"];
 export default function RunForm() {
   const {} = useConfig();
 
-  const { compState, setCompState, initialComp, comparisons, setComparisons } =
-    useConfig();
+  const {
+    compState,
+    setCompState,
+    initialComp,
+    comparisons,
+    setComparisons,
+    remotecomparisons,
+    setRemoteComparisons,
+  } = useConfig();
   const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
@@ -106,7 +113,9 @@ export default function RunForm() {
     const request = {
       ...compState,
       comparisons,
+      remotecomparisons,
       userId: user.user.id,
+      email: user.user.email,
     };
     const token = sessionStorage.jwtToken;
 
@@ -142,6 +151,7 @@ export default function RunForm() {
           setResponse(jsbody);
           setCompState(initialComp);
           setComparisons([]);
+          setRemoteComparisons([]);
           history.push("/comparison");
         }
       });

@@ -12,6 +12,7 @@ const comparisonSchema = new Schema({
         default: Date.now,
     },
     stat: { type: String, required: false },
+    genome: { type: String, required: false },
     contexts: [{ type: String, required: false }],
     binSize: { type: Number, required: false },
     pseudocountN: { type: Number, required: false },
@@ -24,7 +25,45 @@ const comparisonSchema = new Schema({
     minReadsPerCytosine: { type: Number, required: false },
     remote: { type: Boolean, required: false },
     cluster: { type: Boolean, required: false },
+    machine: {
+        _id: {
+            type: String,
+            default: "",
+        },
+        hostname: {
+            type: String,
+            default: "",
+        },
+        username: {
+            type: String,
+            default: "",
+        },
+        port: {
+            type: Number,
+            default: 22,
+        },
+        privateKey: {
+            type: String,
+            default: "",
+        },
+        script: {
+            type: String,
+            default: "",
+        },
+        password: {
+            type: String,
+            default: "",
+        },
+    },
     comparisons: [
+        {
+            id: { type: String, required: false },
+            name: { type: String, required: false },
+            control: { type: String, required: false },
+            treatment: { type: String, required: false },
+        },
+    ],
+    remotecomparisons: [
         {
             id: { type: String, required: false },
             name: { type: String, required: false },

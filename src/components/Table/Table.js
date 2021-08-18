@@ -159,12 +159,12 @@ export default function InteractiveList() {
     setSelectedRow(row);
     setOpen(true);
   };
-  const handleLog = (row) => {
+  const handleLog = (row, filePath) => {
     let sftp = new Client();
 
     console.log(row);
-    let remotePath = `${row.remoteDir}/biseps.txt`;
-    let localPath = row.date + "biseps.txt";
+    let remotePath = `${row.remoteDir}/${filePath}`;
+    let localPath = row.date + filePath;
     console.log(path.join(bisepsTemp, localPath));
     sftp
       .connect({
@@ -656,7 +656,7 @@ export default function InteractiveList() {
               );
             });
             return (
-              <Grid key={row._id} item xs={12} md={6}>
+              <Grid key={row._id} item xs={12} md={12}>
                 <Typography variant="h6" className={classes.title}>
                   {row.remote ? "Remote " : "Local "}Analysis created by{" "}
                   {row.createdBy.name} on {row.date.split("T")[0]}
@@ -704,7 +704,7 @@ export default function InteractiveList() {
                     color="default"
                     onClick={
                       row.remote
-                        ? () => handleLog(row)
+                        ? () => handleLog(row, "biseps.txt")
                         : () =>
                             createBrowserWindow(
                               path.join(row.outdir, "biseps.txt")
@@ -714,6 +714,29 @@ export default function InteractiveList() {
                     startIcon={<RefreshIcon />}
                   >
                     Show Log
+                  </Button>
+                  <Button
+                    variant="contained"
+                    disabled={
+                      row.remote
+                        ? false
+                        : fileExist(`${row.outdir}/report.html`)
+                        ? false
+                        : true
+                    }
+                    color="default"
+                    onClick={
+                      row.remote
+                        ? () => handleLog(row, "report.html")
+                        : () =>
+                            createBrowserWindow(
+                              path.join(row.outdir, "report.html")
+                            )
+                    }
+                    className={classes.button}
+                    startIcon={<RefreshIcon />}
+                  >
+                    View Report
                   </Button>
                 </div>
                 <div className={classes.demo}>

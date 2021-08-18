@@ -36,12 +36,17 @@ const path = require("path");
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
+const { clipboard } = require("electron");
+
 const fs = require("fs");
 const portastic = require("portastic");
 const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
 const http = require("http");
+const homedir = require("os").homedir();
+const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+let Client = require("ssh2-sftp-client");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -244,6 +249,8 @@ export default function InteractiveList() {
   };
   console.log(data);
   const handleLog = (row) => {
+    let sftp = new Client();
+
     console.log(row);
     let remotePath = `${row.remoteDir}/biseps.txt`;
     let localPath = row.date + "biseps.txt";
@@ -362,10 +369,10 @@ export default function InteractiveList() {
         </Dialog>
         {data.length > 0 ? (
           data.map((row) => (
-            <Grid key={row._id} item xs={12} md={6}>
+            <Grid key={row._id} item xs={12} md={12}>
               <Typography variant="h6" className={classes.title}>
-                Comparison created by {row.createdBy.name} on{" "}
-                {/* {row.date.split("T")[0]} */}
+                {row.remote ? "Remote " : "Local "}Comparison created by{" "}
+                {row.createdBy.name} on {row.date.split("T")[0]}
               </Typography>
               <div>
                 <Button
@@ -382,12 +389,15 @@ export default function InteractiveList() {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={row.remote ? true : false}
-                  onClick={() => openInFolder(`${row.outdir}/results`)}
+                  onClick={
+                    row.remote
+                      ? () => clipboard.writeText(`${row.remoteDir}/results/`)
+                      : () => openInFolder(`${row.outdir}/results`)
+                  }
                   className={classes.button}
                   endIcon={row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>}
                 >
-                  {row.remote ? "Remote" : "Open Folder"}
+                  {row.remote ? "Copy Remote Path" : "Open Folder"}
                 </Button>
                 <Button
                   variant="contained"
@@ -414,6 +424,29 @@ export default function InteractiveList() {
                   startIcon={<RefreshIcon />}
                 >
                   Show Log
+                </Button>
+                <Button
+                  variant="contained"
+                  disabled={
+                    row.remote
+                      ? false
+                      : fileExist(`${row.outdir}/report.html`)
+                      ? false
+                      : true
+                  }
+                  color="default"
+                  onClick={
+                    row.remote
+                      ? () => handleLog(row, "/report.html")
+                      : () =>
+                          createBrowserWindow(
+                            path.join(row.outdir, "report.html")
+                          )
+                  }
+                  className={classes.button}
+                  startIcon={<RefreshIcon />}
+                >
+                  View Report
                 </Button>
               </div>
               <div className={classes.demo}>

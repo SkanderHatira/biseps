@@ -11,7 +11,7 @@ const createConfigComparison = (body, uniqueDir, uniqueDirRemote) => {
             ? "config/comparison.tsv"
             : path.join(uniqueDir, "config/comparison.tsv"),
         general: {
-            outdir: body.remote ? uniqueDirRemote + "/" : uniqueDir + "/",
+            outdir: body.remote ? "" : uniqueDir + "/",
         },
         resources: {
             ref: {
@@ -19,7 +19,9 @@ const createConfigComparison = (body, uniqueDir, uniqueDirRemote) => {
                     ? path.join("resources/genome", path.basename(body.genome))
                     : body.genome,
             },
-            annot: body.annot,
+            annot: body.remote
+                ? path.join("resources/genome", path.basename(body.annot))
+                : body.annot,
         },
         params: {
             method: body.method,

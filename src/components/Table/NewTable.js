@@ -280,7 +280,20 @@ export default function NewTable() {
 
     return errors;
   }
+  console.log(remoteunits);
+
   const removeUnit = () => {
+    if (runState.remote) {
+      const updatedUnits = [...remoteunits];
+      const updatedSelected = [...selected];
+      const sorted = updatedSelected.sort((a, b) => a - b);
+      while (sorted.length) {
+        console.log(sorted);
+
+        updatedUnits.splice(sorted.pop(), 1);
+      }
+      setRemoteUnits(updatedUnits);
+    }
     const updatedUnits = [...units];
     const updatedSelected = [...selected];
     const sorted = updatedSelected.sort((a, b) => a - b);

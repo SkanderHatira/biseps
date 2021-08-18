@@ -37,6 +37,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import classnames from "classnames";
+import { remote } from "electron";
 
 const path = require("path");
 const fs = require("fs");
@@ -278,10 +279,23 @@ export default function ComparisonForm() {
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { comparisons, setComparisons } = useConfig();
+  const {
+    comparisons,
+    setComparisons,
+    remotecomparisons,
+    setRemoteComparisons,
+    compState,
+  } = useConfig();
   const [data, setData] = useState([]);
   const theme = useTheme();
   const handleLabelChange = (e) => {
+    if (compState.remote) {
+      const updatedRemoteComparisons = [...remotecomparisons];
+      console.log(e.target.dataset.idx);
+      updatedRemoteComparisons[e.target.dataset.idx][e.target.id] =
+        e.target.value;
+      setRemoteComparisons(updatedRemoteComparisons);
+    }
     const updatedUnits = [...comparisons];
     console.log(e.target.dataset.idx);
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.value;
@@ -293,6 +307,19 @@ export default function ComparisonForm() {
     setComparisons(updatedUnits);
   };
   const handleSelectChange = (e, index) => {
+    if (compState.remote) {
+      console.log(e.target.value);
+      const newFiles = [];
+      for (const file in e.target.value) {
+        newFiles.push(path.join("data/", path.basename(e.target.value[file])));
+      }
+      console.log(e.target.value);
+      console.log(newFiles);
+      const updatedRemoteComparisons = [...remotecomparisons];
+      updatedRemoteComparisons[index][e.target.name + "s"] = newFiles;
+      updatedRemoteComparisons[index][e.target.name] = newFiles.join(",");
+      setRemoteComparisons(updatedRemoteComparisons);
+    }
     const updatedUnits = [...comparisons];
     updatedUnits[index][e.target.name + "s"] = e.target.value;
     updatedUnits[index][e.target.name] = e.target.value.join();
@@ -388,10 +415,24 @@ export default function ComparisonForm() {
   };
 
   const addUnit = () => {
+    if (compState.remote) {
+      setRemoteComparisons([...remotecomparisons, { ...blankUnit }]);
+    }
     setComparisons([...comparisons, { ...blankUnit }]);
   };
-
+  console.log(remotecomparisons);
   const removeComparison = () => {
+    if (compState.remote) {
+      const updatedUnits = [...remotecomparisons];
+      const updatedSelected = [...selected];
+      const sorted = updatedSelected.sort((a, b) => a - b);
+      while (sorted.length) {
+        console.log(sorted);
+
+        updatedUnits.splice(sorted.pop(), 1);
+      }
+      setRemoteComparisons(updatedUnits);
+    }
     const updatedComparisons = [...comparisons];
     const updatedSelected = [...selected];
     const sorted = updatedSelected.sort((a, b) => a - b);

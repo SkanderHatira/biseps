@@ -23,8 +23,6 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 const handler = require("serve-handler");
 let Client = require("ssh2-sftp-client");
 
-let sftp = new Client();
-
 const electron = window.require("electron");
 const { shell } = window.require("electron");
 const remote = electron.remote;
@@ -56,6 +54,8 @@ const useStyles = makeStyles((theme) => ({
 export default function VisualizationFill() {
   const classes = useStyles();
   const [checked, setChecked] = useState([]);
+  const [checkedComp, setCheckedComp] = useState([]);
+
   const [checkedTrack, setCheckedTrack] = useState([]);
 
   const { user } = useAuth();
@@ -98,8 +98,27 @@ export default function VisualizationFill() {
       setCheckedTrack(newChecked);
     };
 
+  const handleToggleComp = (bed, bedtbi, associatedGenome, id) => () => {
+    const currentIndex = checkedComp.findIndex((x) => x.id === id);
+    console.log(currentIndex);
+    const newChecked = [...checkedComp];
+
+    if (currentIndex === -1) {
+      newChecked.push({
+        bed,
+        bedtbi,
+        associatedGenome,
+        id,
+      });
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setCheckedComp(newChecked);
+  };
+
   const [data, setData] = useState([]);
-  const [views, setViews] = useState([]);
+  const [comp, setComp] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const token = sessionStorage.jwtToken;
@@ -134,10 +153,43 @@ export default function VisualizationFill() {
         console.log("ERROR: " + e.message);
       });
     };
-
+    const fetchComparisons = async () => {
+      const token = sessionStorage.jwtToken;
+      const Sock = await sessionStorage.Sock;
+      const options = {
+        method: "GET",
+        path: "http://localhost/api/comparisons",
+        socketPath: Sock,
+        port: null,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      };
+      const req = http.get(options, function (res) {
+        console.log("STATUS: " + res.statusCode);
+        console.log("HEADERS: " + JSON.stringify(res.headers));
+        // Buffer the body entirely for processing as a whole.
+        const bodyChunks = [];
+        res
+          .on("data", function (chunk) {
+            // You can process streamed parts here...
+            bodyChunks.push(chunk);
+          })
+          .on("end", function () {
+            const body = Buffer.concat(bodyChunks);
+            const jsbody = JSON.parse(body);
+            setComp(jsbody);
+          });
+      });
+      req.on("error", function (e) {
+        console.log("ERROR: " + e.message);
+      });
+    };
     fetchData();
+    fetchComparisons();
   }, []);
-
+  console.log(comp);
   const fileExist = (path) => {
     try {
       if (fs.existsSync(path)) {
@@ -148,6 +200,8 @@ export default function VisualizationFill() {
     }
   };
   const downloadFiles = (row, sample, tracks) => {
+    let sftp = new Client();
+
     console.log(tracks);
     console.log(row, sample);
     console.log("download files");
@@ -205,6 +259,7 @@ export default function VisualizationFill() {
     const request = {
       genomes: checked,
       tracks: checkedTrack,
+      comparisons: checkedComp,
       userId: user.user.id,
       jbPath: user.user.jbPath,
     };
@@ -367,7 +422,11 @@ export default function VisualizationFill() {
           </ButtonGroup>
         </Box>
       </Grid>
-      <List subheader={result.length > 0 ? "Genomes" : ""}>
+      <List
+        subheader={
+          result.length > 0 ? <Typography type="h1">Genomes</Typography> : ""
+        }
+      >
         {result.map((genome, idx) => {
           const labelId = `checkbox-list-label-${genome}`;
           console.log(idx);
@@ -410,7 +469,11 @@ export default function VisualizationFill() {
           );
         })}
       </List>
-      <List subheader={result.length > 0 ? "Alignments" : ""}>
+      <List
+        subheader={
+          result.length > 0 ? <Typography type="h1">Alignments</Typography> : ""
+        }
+      >
         {data.map((row) => {
           const labelId = `checkbox-list-label-${row}`;
           return (
@@ -459,6 +522,7 @@ export default function VisualizationFill() {
                   )
                 );
                 console.log(associatedGenomePath);
+                console.log(checkedTrack);
                 return (
                   <ListItem
                     key={`${sample._id}-${idx}`}
@@ -544,49 +608,138 @@ export default function VisualizationFill() {
               })}
             </div>
           );
-          // console.log(row);
-          // {
-          //   row.samples.map((sample) => {
-          //     console.log(
-          //       `${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`
-          //     );
-          //     if (
-          //       !fileExist(
-          //         path.join(
-          //           user.user.jbPath,
-          //           `${sample.sampleName}.deduplicated.bam`
-          //         )
-          //       )
-          //     ) {
-          // return (
-          //   <ListItem
-          //     key={row._id}
-          //     button
-          //     onClick={handleToggle(row._id)}
-          //   >
-          //     <ListItemIcon>
-          //       <Checkbox
-          //         edge="start"
-          //         checked={checked.indexOf(row._id) !== -1}
-          //         tabIndex={-1}
-          //         disableRipple
-          //         inputProps={{ "aria-labelledby": labelId }}
-          //       />
-          //     </ListItemIcon>
-          //     <ListItemText
-          //       id={labelId}
-          //       primary={`${row.outdir}/results/${sample.samplePath}/alignment_bismark/${sample.sampleName}.deduplicated.bam`}
-          //     />
-          //     <ListItemSecondaryAction>
-          //       <IconButton edge="end" aria-label="comments">
-          //         <CommentIcon />
-          //       </IconButton>
-          //     </ListItemSecondaryAction>
-          //   </ListItem>
-          // );
-          //     }
-          //   });
-          // }
+        })}
+      </List>
+      <List
+        subheader={
+          comp.length > 0 ? <Typography type="h1">Comparisons</Typography> : ""
+        }
+      >
+        {comp.map((row) => {
+          const labelId = `checkbox-list-label-${row._id}`;
+
+          return (
+            <div>
+              {row.comparisons.map((comparison, idx) => {
+                // const bedLocal = `${outdir}/${comparison.id}/report.html`;
+
+                return (
+                  <>
+                    {row.contexts.map((context) => {
+                      console.log(context);
+                      console.log(comparison);
+                      const outdir = row.remote
+                        ? `${row.remoteDir}`
+                        : row.outdir;
+                      const associatedGenomePath = row.genome.replace(
+                        /^.*[\\\/]/,
+                        ""
+                      );
+                      const associatedGenome =
+                        path.parse(associatedGenomePath).name;
+
+                      const bed = `${outdir}/${comparison.id}/${comparison.id}-${context}.bed.gz`;
+                      const bedtbi = `${outdir}/${comparison.id}/${comparison.id}-${context}.bed.gz.tbi`;
+                      const bedtbiPathLocal = path.join(
+                        bisepsTemp,
+                        path.basename(bedtbi)
+                      );
+                      const bedPathLocal = path.join(
+                        bisepsTemp,
+                        path.basename(bed)
+                      );
+                      console.log(checkedComp);
+                      return (
+                        <ListItem
+                          key={`${comparison._id}-${idx}-${context}`}
+                          button
+                          disabled={
+                            fileExist(row.remote ? bedPathLocal : bed) &&
+                            !fileExist(
+                              path.join(
+                                user.user.jbPath,
+                                `${associatedGenome}/${comparison.id}-${context}.bed.gz`
+                              )
+                            ) &&
+                            fileExist(
+                              path.join(
+                                user.user.jbPath,
+                                `${associatedGenomePath}`
+                              )
+                            )
+                              ? false
+                              : true
+                          }
+                          onClick={handleToggleComp(
+                            row.remote ? bedPathLocal : bed,
+                            row.remote ? bedtbiPathLocal : bedtbi,
+                            associatedGenome,
+                            `${comparison.id}-${context}`
+                          )}
+                        >
+                          {" "}
+                          <ListItemIcon>
+                            <Checkbox
+                              edge="start"
+                              checked={
+                                checkedComp.findIndex((x) =>
+                                  row.remote
+                                    ? x.bed === bedPathLocal
+                                    : x.bed === bed
+                                ) !== -1
+                              }
+                              tabIndex={-1}
+                              disableRipple
+                              inputProps={{ "aria-labelledby": labelId }}
+                            />
+                          </ListItemIcon>
+                          <ListItemText
+                            id={labelId}
+                            primary={`${comparison.id}-${context}`}
+                          />
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              disabled={
+                                fileExist(row.remote ? bedPathLocal : bed) &&
+                                fileExist(
+                                  path.join(
+                                    user.user.jbPath,
+                                    `${associatedGenome}/${comparison.id}-${context}.bed.gz`
+                                  )
+                                ) &&
+                                fileExist(
+                                  path.join(user.user.jbPath, associatedGenome)
+                                )
+                                  ? false
+                                  : true
+                              }
+                              edge="end"
+                              aria-label="files"
+                            >
+                              <CheckCircleOutlineIcon />
+                            </IconButton>
+                            {row.remote ? (
+                              <IconButton
+                                edge="end"
+                                aria-label="files"
+                                onClick={() =>
+                                  downloadFiles(row, sample, tracks)
+                                }
+                              >
+                                <GetAppIcon />
+                              </IconButton>
+                            ) : (
+                              ""
+                            )}{" "}
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      );
+                    })}
+                  </>
+                );
+              })}
+            </div>
+          );
         })}
       </List>
     </Container>

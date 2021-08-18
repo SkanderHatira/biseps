@@ -7,7 +7,7 @@ const createUnitsComparison = (body, uniqueDir) => {
     console.log("creating comparison.tsv");
     if (body.remote) {
         try {
-            const csv = parse(body.remoteunits, opts);
+            const csv = parse(body.remotecomparisons, opts);
             fs.writeFileSync(
                 path.join(uniqueDir, "config/comparison.tsv"),
                 csv
