@@ -1,5 +1,5 @@
 const spawnServer = async (sock) => {
-    const { spawn, fork } = require("child_process");
+    const { spawn } = require("child_process");
     const path = require("path");
     const options = {
         slient: false,

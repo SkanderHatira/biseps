@@ -18,6 +18,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import SettingsIcon from "@material-ui/icons/Settings";
+import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -168,7 +169,29 @@ const DashLayout = ({ Filling }) => {
                 <ExitToAppIcon />
               </IconButton>
               <IconButton component={Link} to="/profile" color="inherit">
+                <Typography
+                  component="h1"
+                  variant="h6"
+                  color="inherit"
+                  noWrap
+                  className={classes.title}
+                >
+                  Add Remote Machine
+                </Typography>{" "}
                 <SettingsIcon />
+              </IconButton>
+              <IconButton component={Link} to="/profile" color="inherit">
+                <Typography
+                  component="h1"
+                  variant="h6"
+                  color="inherit"
+                  noWrap
+                  className={classes.title}
+                >
+                  Docs
+                </Typography>
+
+                <LibraryBooksIcon />
               </IconButton>
             </>
           ) : (

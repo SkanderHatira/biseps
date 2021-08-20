@@ -248,12 +248,15 @@ export default function InteractiveList() {
     shell.showItemInFolder(path);
   };
   console.log(data);
-  const handleLog = (row) => {
+  const handleLog = (row, filePath) => {
+    if (!fs.existsSync(bisepsTemp)) {
+      fs.mkdirSync(bisepsTemp);
+    }
     let sftp = new Client();
 
-    console.log(row);
-    let remotePath = `${row.remoteDir}/biseps.txt`;
-    let localPath = row.date + "biseps.txt";
+    console.log(`${row.remoteDir}/${filePath}`);
+    let remotePath = `${row.remoteDir}/${filePath}`;
+    let localPath = row.date + filePath;
     console.log(path.join(bisepsTemp, localPath));
     sftp
       .connect({
@@ -266,7 +269,7 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(() => {
-        console.log(remotePath);
+        console.log(path.join(bisepsTemp, localPath));
         console.log(localPath);
         console.log("made it all the way here?");
         if (!fs.existsSync(path.join(bisepsTemp, localPath))) {
@@ -414,7 +417,7 @@ export default function InteractiveList() {
                   color="default"
                   onClick={
                     row.remote
-                      ? () => handleLog(row)
+                      ? () => handleLog(row, "biseps.txt")
                       : () =>
                           createBrowserWindow(
                             path.join(row.outdir, "biseps.txt")

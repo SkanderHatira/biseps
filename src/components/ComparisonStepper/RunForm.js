@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
@@ -11,11 +11,11 @@ import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import GlobalConfig from "./GlobalConfig";
-import axios from "axios";
 import { useConfig } from "../../hooks/useConfig";
 import { useAuth } from "../../hooks/useAuth";
 import ComparisonForm from "../Comparisons/ComparisonForm";
 import { useHistory } from "react-router-dom";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const http = require("http");
 
@@ -88,6 +88,7 @@ export default function RunForm() {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -110,6 +111,8 @@ export default function RunForm() {
   console.log(comparisons);
 
   const handleComparisonSubmit = () => {
+    setLoading(true);
+
     const request = {
       ...compState,
       comparisons,
@@ -152,6 +155,7 @@ export default function RunForm() {
           setCompState(initialComp);
           setComparisons([]);
           setRemoteComparisons([]);
+          setLoading(false);
           history.push("/comparison");
         }
       });
@@ -173,59 +177,72 @@ export default function RunForm() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography component="h1" variant="h4" align="center">
-            Parameters
-          </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
-              ""
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <div className={classes.buttons}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
-                      Back
+      {loading ? (
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <CircularProgress size={80} />
+        </div>
+      ) : (
+        <main className={classes.layout}>
+          <Paper className={classes.paper}>
+            <Typography component="h1" variant="h4" align="center">
+              Parameters
+            </Typography>
+            <Stepper activeStep={activeStep} className={classes.stepper}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <React.Fragment>
+              {activeStep === steps.length ? (
+                ""
+              ) : (
+                <React.Fragment>
+                  {getStepContent(activeStep)}
+                  <div className={classes.buttons}>
+                    {activeStep !== 0 && (
+                      <Button onClick={handleBack} className={classes.button}>
+                        Back
+                      </Button>
+                    )}
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={
+                        activeStep === steps.length - 1
+                          ? handleComparisonSubmit
+                          : handleNext
+                      }
+                      className={classes.button}
+                    >
+                      {activeStep === steps.length - 1
+                        ? "Launch comparison"
+                        : "Next"}
                     </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={
-                      activeStep === steps.length - 1
-                        ? handleComparisonSubmit
-                        : handleNext
-                    }
-                    className={classes.button}
-                  >
-                    {activeStep === steps.length - 1
-                      ? "Launch comparison"
-                      : "Next"}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleReset}
-                    className={classes.button}
-                  >
-                    reset
-                  </Button>
-                </div>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </Paper>
-        <Copyright />
-      </main>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleReset}
+                      className={classes.button}
+                    >
+                      reset
+                    </Button>
+                  </div>
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          </Paper>
+          <Copyright />
+        </main>
+      )}
     </React.Fragment>
   );
 }

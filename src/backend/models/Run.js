@@ -57,6 +57,11 @@ const RunSchema = new Schema({
         type: Boolean,
         required: true,
     },
+    cluster: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
     adapters: {
         type: String,
     },

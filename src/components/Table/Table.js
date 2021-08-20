@@ -159,9 +159,12 @@ export default function InteractiveList() {
     setSelectedRow(row);
     setOpen(true);
   };
+
   const handleLog = (row, filePath) => {
     let sftp = new Client();
-
+    if (!fs.existsSync(bisepsTemp)) {
+      fs.mkdirSync(bisepsTemp);
+    }
     console.log(row);
     let remotePath = `${row.remoteDir}/${filePath}`;
     let localPath = row.date + filePath;

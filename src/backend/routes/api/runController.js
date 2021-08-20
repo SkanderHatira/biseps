@@ -41,6 +41,8 @@ router.post("/run", (req, res) => {
                 profile: profile,
                 genome: req.body.genome,
                 remote: req.body.remote,
+                cluster: req.body.cluster,
+
                 adapters: req.body.adapters,
                 steps: {
                     subsample: req.body.subsample,
@@ -82,6 +84,8 @@ router.post("/run", (req, res) => {
             const newRun = new Run({
                 outdir: uniqueDir,
                 remoteDir: uniqueDirRemote,
+                cluster: req.body.cluster,
+
                 profile: profile,
                 remote: req.body.remote,
                 machine: req.body.machine,
@@ -168,9 +172,14 @@ router.post("/rerun", function (req, res) {
         spawnChild(req.body, profile, uniqueDir);
         console.log("Rerun Snakemake", profile);
     } else {
+        const profile = path.join(
+            req.body.remoteDir,
+            req.body.cluster ? "config/profiles/slurm" : "config/profiles/local"
+        );
         const uniqueDirRemote = req.body.remoteDir;
         const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);
         spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
     }
 });
+
 module.exports = router;

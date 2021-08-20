@@ -193,6 +193,7 @@ router.delete("/:id", function (req, res) {
 
 router.post("/rerun", function (req, res) {
     console.log(req.body);
+    const uniqueDir = req.body.outdir;
 
     if (!req.body.remote) {
         const profile = path.join(
@@ -204,7 +205,9 @@ router.post("/rerun", function (req, res) {
     } else {
         const profile = path.join(
             req.body.remoteDir,
-            "config/profiles/localComparison"
+            req.body.cluster
+                ? "config/profiles/slurmComparison"
+                : "config/profiles/localComparison"
         );
         const uniqueDir = req.body.outdir;
         const uniqueDirRemote = req.body.remoteDir;

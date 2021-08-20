@@ -1,10 +1,4 @@
-const spawnChild = async (
-    body,
-    profile,
-    uniqueDir,
-    uniqueDirRemote,
-    homeDir
-) => {
+const spawnChild = async (body, profile, uniqueDir, homeDir) => {
     const { execFile, exec, spawn } = require("child_process");
     let Client = require("ssh2-sftp-client");
     const path = require("path");
@@ -58,7 +52,7 @@ const spawnChild = async (
         });
 
         if (exitCode) {
-            throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+            // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
         }
 
         const connect = require("ssh2-connect");
@@ -68,16 +62,16 @@ const spawnChild = async (
                 console.log(stdout);
             });
         });
-        console.log(uniqueDir);
-        console.log("homedir:", homeDir);
         let sftp = new Client();
         sftp.connect(host)
             .then(() => {
-                sftp.mkdir(homeDir);
-                return sftp.fastPut(
-                    path.join(uniqueDir, "workflow.tar.gz"),
-                    path.join(homeDir, "workflow.tar.gz")
-                );
+                if (!sftp.exists(path.join(homeDir, "workflow.tar.gz"))) {
+                    sftp.mkdir(homeDir);
+                    return sftp.fastPut(
+                        path.join(uniqueDir, "workflow.tar.gz"),
+                        path.join(homeDir, "workflow.tar.gz")
+                    );
+                }
             })
             .then((data) => {
                 console.log("Snakemake in remote");
@@ -85,8 +79,8 @@ const spawnChild = async (
                     connect(host, function (err, ssh) {
                         exec(
                             `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/  && sbatch exec_scripts/${
-                                contexts in body
-                                    ? "slurmComparison."
+                                "contexts" in body
+                                    ? "slurmComparison.sh"
                                     : "slurmScript.sh"
                             }`,
                             { ssh: ssh },
@@ -125,8 +119,8 @@ const spawnChild = async (
                     connect(host, function (err, ssh) {
                         exec(
                             `cd ${homeDir} && tar -xf workflow.tar.gz  && rm -rf .snakemake/ && source exec_scripts/script.sh &&  bash exec_scripts/${
-                                contexts in body
-                                    ? "localComparison.sh."
+                                "contexts" in body
+                                    ? "localComparison.sh"
                                     : "localScript.sh"
                             } `,
                             { ssh: ssh },
