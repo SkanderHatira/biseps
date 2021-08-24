@@ -1,66 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { DataGrid } from "@material-ui/data-grid";
-// import axios from "axios";
-// import Container from "@material-ui/core/Container";
-// const electron = window.require("electron");
-// const remote = electron.remote;
-// const { BrowserWindow, dialog, Menu } = remote;
-// console.log(remote.getGlobal("sharedObj").prop1);
-
-// console.log(
-//   dialog.showOpenDialog({ properties: ["openFile", "multiSelections"] })
-// );
-
-// const columns = [
-//   { field: "_id", headerName: "ID", width: 70 },
-//   { field: "genome", headerName: "Genome", width: 130 },
-//   { field: "outdir", headerName: "Output Directory", width: 130 },
-//   {
-//     field: "adapters",
-//     headerName: "Adapters",
-//     width: 90,
-//   },
-// ];
-// // works like a charm
-// const createBrowserWindow = () => {
-//   const win = new BrowserWindow({
-//     height: 600,
-//     width: 800,
-//   });
-//   console.log("here");
-//   win.loadURL(`file:/${test}`);
-// };
-
-// export default function Table({ Copyright, classes, fixedHeightPaper }) {
-//   const [data, setData] = useState([]);
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       const result = await axios("http://localhost:5000/api/runs");
-
-//       setData(result.data);
-//     };
-
-//     fetchData();
-//   }, []);
-//   console.log(data);
-
-//   return (
-//     <Container maxWidth="lg" className={classes.container}>
-//       {/* <button onClick={createBrowserWindow}></button> */}
-//       {data && (
-//         <div style={{ height: 400, width: "100%" }}>
-//           <DataGrid
-//             rows={data}
-//             getRowId={(row) => row._id}
-//             columns={columns}
-//             pageSize={5}
-//             checkboxSelection
-//           />
-//         </div>
-//       )}
-//     </Container>
-//   );
-// }
 import React, { useState, useEffect } from "react";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
@@ -84,8 +21,11 @@ import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Link } from "react-router-dom";
 import AlarmIcon from "@material-ui/icons/Alarm";
+import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import RefreshIcon from "@material-ui/icons/Refresh";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import ErrorIcon from "@material-ui/icons/Error";
 import KeyboardVoiceIcon from "@material-ui/icons/KeyboardVoice";
 import Icon from "@material-ui/core/Icon";
 import SaveIcon from "@material-ui/icons/Save";
@@ -96,10 +36,11 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import ActionRowing from "material-ui/svg-icons/action/rowing";
-import uuid from "react-uuid";
+
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import { isReturnStatement } from "typescript";
+
 const { clipboard } = require("electron");
 
 function Alert(props) {
@@ -150,6 +91,8 @@ export default function InteractiveList() {
   const [openAlert, setOpenAlert] = useState(false);
   const [deleted, setDeleted] = useState("");
   const [selectedRow, setSelectedRow] = useState({});
+  const [refresh, setRefresh] = useState(0);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     setDeleted(e.target.value);
@@ -187,6 +130,7 @@ export default function InteractiveList() {
         return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
       })
       .then((data) => {
+        console.log(data);
         console.log("done done done");
         createBrowserWindow(path.join(bisepsTemp, localPath));
         sftp.end();
@@ -291,9 +235,10 @@ export default function InteractiveList() {
             }
           }
         }
+
         // });
       })
-      .finally((data) => {
+      .finally(() => {
         createBrowserWindow(
           path.join(
             bisepsTemp,
@@ -386,6 +331,7 @@ export default function InteractiveList() {
   };
   const handleRerun = (row) => {
     const request = {
+      rerun: true,
       ...row,
     };
     const token = sessionStorage.jwtToken;
@@ -422,11 +368,15 @@ export default function InteractiveList() {
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
-    window.location.reload(false);
+    setRefresh(refresh + 1);
+    setErrors("");
+    setSuccessMessage("Rerun Launched Successfully");
+    handleOpenAlert();
   };
-  const handleDelete = (id, user, outdir, deleted) => {
-    console.log(id);
-
+  const handleDelete = (user, row, deleted) => {
+    console.log(row);
+    console.log(row);
+    console.log(deleted);
     if (deleted === "DELETE") {
       const request = {
         user: user.user,
@@ -434,7 +384,7 @@ export default function InteractiveList() {
       const token = sessionStorage.jwtToken;
       const options = {
         method: "DELETE",
-        path: `http://localhost/api/runs/${id}`,
+        path: `http://localhost/api/runs/${row._id}`,
         socketPath: sessionStorage.Sock,
         hostname: "unix",
         port: null,
@@ -466,10 +416,34 @@ export default function InteractiveList() {
       req.on("error", (err) => console.log(err));
       console.log(request);
       req.end();
-      fs.rmdirSync(outdir, { recursive: true });
+      if (row.remote) {
+        let client = new Client();
 
+        client
+          .connect({
+            host: row.machine.hostname,
+            port: row.machine.port,
+            username: row.machine.username,
+            ...(!(row.machine.privateKey === "") && {
+              privateKey: require("fs").readFileSync(row.machine.privateKey),
+            }),
+            password: row.machine.password,
+          })
+          .then(() => {
+            return client.rmdir(row.remoteDir, true);
+          })
+          .then(() => {
+            return client.end();
+          })
+          .catch((err) => {
+            console.error(err.message);
+          });
+      } else {
+        fs.rmdirSync(row.outdir, { recursive: true });
+      }
       handleClose();
-      window.location.reload(false);
+      setRefresh(refresh + 1);
+      // window.location.reload(false);
     } else {
       console.log("write DELETE to confirm");
       setErrors("write DELETE to confirm or Cancel");
@@ -512,7 +486,7 @@ export default function InteractiveList() {
     };
 
     fetchData();
-  }, []);
+  }, [refresh]);
   const fileExist = (path) => {
     try {
       if (fs.existsSync(path)) {
@@ -542,6 +516,7 @@ export default function InteractiveList() {
   return (
     <Container maxWidth="lg" className={classes.container}>
       <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={openAlert}
         autoHideDuration={10000}
         onClose={handleCloseAlert}
@@ -550,9 +525,7 @@ export default function InteractiveList() {
           onClose={handleCloseAlert}
           severity={errors && errors.length > 0 ? "error" : "success"}
         >
-          {errors && errors.length > 0
-            ? `Error : ${errors}`
-            : "Remote file copied locally successfully"}
+          {errors && errors.length > 0 ? `Error : ${errors}` : successMessage}
         </Alert>
       </Snackbar>
       <Grid container direction="column" alignItems="center">
@@ -637,12 +610,7 @@ export default function InteractiveList() {
             </Button>
             <Button
               onClick={() => {
-                handleDelete(
-                  selectedRow._id,
-                  user,
-                  selectedRow.outdir,
-                  deleted
-                );
+                handleDelete(user, selectedRow, deleted);
               }}
               color="primary"
             >
@@ -682,7 +650,15 @@ export default function InteractiveList() {
                     color="primary"
                     onClick={
                       row.remote
-                        ? () => clipboard.writeText(`${row.remoteDir}/results/`)
+                        ? () => {
+                            openInFolder(`${row.outdir}/results`);
+                            setSuccessMessage(
+                              "Remote path copied To clipboard!"
+                            );
+                            setErrors("");
+                            handleOpenAlert();
+                            clipboard.writeText(`${row.remoteDir}/results/`);
+                          }
                         : () => openInFolder(`${row.outdir}/results`)
                     }
                     className={classes.button}
@@ -690,7 +666,7 @@ export default function InteractiveList() {
                       row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>
                     }
                   >
-                    {row.remote ? "Copy Remote Path" : "Open Folder"}
+                    {row.remote ? "Open Local Folder" : "Open Folder"}
                   </Button>
                   <Button
                     variant="contained"
@@ -714,7 +690,26 @@ export default function InteractiveList() {
                             )
                     }
                     className={classes.button}
-                    startIcon={<RefreshIcon />}
+                    startIcon={
+                      fileExist(
+                        path.join(
+                          row.outdir,
+                          row.remote ? "archive.lock" : "alignment.lock"
+                        )
+                      ) ? (
+                        <CheckCircleIcon
+                          style={{
+                            color: "green",
+                          }}
+                        />
+                      ) : (
+                        <ErrorIcon
+                          style={{
+                            color: "red",
+                          }}
+                        />
+                      )
+                    }
                   >
                     Show Log
                   </Button>
@@ -737,7 +732,7 @@ export default function InteractiveList() {
                             )
                     }
                     className={classes.button}
-                    startIcon={<RefreshIcon />}
+                    startIcon={<LibraryBooksIcon />}
                   >
                     View Report
                   </Button>

@@ -37,12 +37,29 @@ router.post("/run", (req, res) => {
             const profile = path.join(uniqueDir, "config/profiles/local");
 
             const newRun = new Run({
+                params: {
+                    trimmomatic: {
+                        trimmerOptions: `2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:${req.body.minlen}`,
+                    },
+                    bismark: {
+                        aligner: req.body.aligner,
+                        alignerOptions: req.body.alignerOptions,
+                        instances: req.body.instances,
+                        scoreMin: req.body.scoreMin,
+                        n: req.body.n,
+                        l: req.body.l,
+                        boolFlags: {
+                            nucleotideCoverage: req.body.nucleotideCoverage,
+                            noDovetail: req.body.noDovetail,
+                            nonDirectional: req.body.nonDirectional,
+                        },
+                    },
+                },
                 outdir: uniqueDir,
                 profile: profile,
                 genome: req.body.genome,
                 remote: req.body.remote,
                 cluster: req.body.cluster,
-
                 adapters: req.body.adapters,
                 steps: {
                     subsample: req.body.subsample,
@@ -85,7 +102,24 @@ router.post("/run", (req, res) => {
                 outdir: uniqueDir,
                 remoteDir: uniqueDirRemote,
                 cluster: req.body.cluster,
-
+                params: {
+                    trimmomatic: {
+                        trimmerOptions: `2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:${req.body.minlen}`,
+                    },
+                    bismark: {
+                        aligner: req.body.aligner,
+                        alignerOptions: req.body.alignerOptions,
+                        instances: req.body.instances,
+                        scoreMin: req.body.scoreMin,
+                        n: req.body.n,
+                        l: req.body.l,
+                        boolFlags: {
+                            nucleotideCoverage: req.body.nucleotideCoverage,
+                            noDovetail: req.body.noDovetail,
+                            nonDirectional: req.body.nonDirectional,
+                        },
+                    },
+                },
                 profile: profile,
                 remote: req.body.remote,
                 machine: req.body.machine,

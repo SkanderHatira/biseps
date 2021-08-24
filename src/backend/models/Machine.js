@@ -10,6 +10,7 @@ const machineSchema = new Schema({
     privateKey: { type: String, required: false },
     script: { type: String, required: false },
     password: { type: String, required: false },
+    homepath: { type: String, required: true },
 });
 // eslint-disable-next-line no-undef
 module.exports = Machines = mongoose.model("machines", machineSchema);

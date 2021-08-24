@@ -7,5 +7,6 @@ which conda
 which python
 source  $sourceEnv/activate
 cd $workflow
-$sourceEnv/snakemake --profile $profile --unlock
+# $sourceEnv/snakemake --profile $profile --unlock
 $sourceEnv/snakemake --profile $profile --archive workflow.tar.gz
+touch archive.lock

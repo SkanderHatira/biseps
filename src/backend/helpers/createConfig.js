@@ -45,8 +45,7 @@ const createConfig = (body, uniqueDir) => {
         params: {
             "trimmomatic-pe": {
                 trimmer: "ILLUMINACLIP",
-                "trimmer-options":
-                    "2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:100",
+                "trimmer-options": `2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:${body.minlen}`,
                 threads: 4,
                 extra: "",
             },

@@ -7,10 +7,8 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import Badge from "@material-ui/core/Badge";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { mainListItems, secondaryListItems } from "./listItems";
 import { useAuth } from "../../hooks/useAuth";
@@ -19,6 +17,8 @@ import clsx from "clsx";
 import { Link } from "react-router-dom";
 import SettingsIcon from "@material-ui/icons/Settings";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import { useConfig } from "../../hooks/useConfig";
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -116,12 +116,13 @@ const DashLayout = ({ Filling }) => {
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const auth = useAuth();
-  const [open, setOpen] = React.useState(true);
+  const { openDrawer, setOpenDrawer } = useConfig();
+
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setOpenDrawer(true);
   };
   const handleDrawerClose = () => {
-    setOpen(false);
+    setOpenDrawer(false);
   };
 
   return (
@@ -129,7 +130,7 @@ const DashLayout = ({ Filling }) => {
       <CssBaseline />
       <AppBar
         position="fixed"
-        className={clsx(classes.appBar, open && classes.appBarShift)}
+        className={clsx(classes.appBar, openDrawer && classes.appBarShift)}
       >
         <Toolbar className={classes.toolbar}>
           <IconButton
@@ -139,7 +140,7 @@ const DashLayout = ({ Filling }) => {
             onClick={handleDrawerOpen}
             className={clsx(
               classes.menuButton,
-              open && classes.menuButtonHidden
+              openDrawer && classes.menuButtonHidden
             )}
           >
             <MenuIcon />
@@ -156,18 +157,6 @@ const DashLayout = ({ Filling }) => {
 
           {auth.user.isAuthenticated ? (
             <>
-              <IconButton onClick={auth.signout} color="inherit">
-                <Typography
-                  component="h1"
-                  variant="h6"
-                  color="inherit"
-                  noWrap
-                  className={classes.title}
-                >
-                  Logout
-                </Typography>
-                <ExitToAppIcon />
-              </IconButton>
               <IconButton component={Link} to="/profile" color="inherit">
                 <Typography
                   component="h1"
@@ -176,7 +165,7 @@ const DashLayout = ({ Filling }) => {
                   noWrap
                   className={classes.title}
                 >
-                  Add Remote Machine
+                  Manage Remote Machines
                 </Typography>{" "}
                 <SettingsIcon />
               </IconButton>
@@ -193,6 +182,18 @@ const DashLayout = ({ Filling }) => {
 
                 <LibraryBooksIcon />
               </IconButton>
+              <IconButton onClick={auth.signout} color="inherit">
+                <Typography
+                  component="h1"
+                  variant="h6"
+                  color="inherit"
+                  noWrap
+                  className={classes.title}
+                >
+                  Logout
+                </Typography>
+                <ExitToAppIcon />
+              </IconButton>
             </>
           ) : (
             ""
@@ -202,9 +203,12 @@ const DashLayout = ({ Filling }) => {
       <Drawer
         variant="permanent"
         classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+          paper: clsx(
+            classes.drawerPaper,
+            !openDrawer && classes.drawerPaperClose
+          ),
         }}
-        open={open}
+        open={openDrawer}
       >
         <div className={classes.toolbarIcon}>
           <IconButton onClick={handleDrawerClose}>

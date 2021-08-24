@@ -70,12 +70,12 @@ const blankMachine = {
 const ProfileForm = () => {
   const { user, handleEditProfile, signin } = useAuth();
   const [data, setData] = useState([]);
-  const [machines, setMachines] = useState([]);
   const [machine, setMachine] = useState(blankMachine);
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
   const [open, setOpen] = useState(false);
+  const [refresh, setRefresh] = useState(0);
 
   const handleClick = () => {
     setOpen(true);
@@ -130,7 +130,9 @@ const ProfileForm = () => {
         } else {
           console.log("successful post request");
           handleClick(true);
-          window.location.reload(false);
+          setRefresh(refresh + 1);
+          setMachine(blankMachine);
+          // window.location.reload(false);
         }
       });
     });
@@ -173,8 +175,9 @@ const ProfileForm = () => {
     });
     req.on("error", (err) => console.log(err));
     req.end();
+    setRefresh(refresh + 1);
 
-    window.location.reload(false);
+    // window.location.reload(false);
   };
 
   useEffect(() => {
@@ -213,7 +216,7 @@ const ProfileForm = () => {
     };
 
     fetchData();
-  }, []);
+  }, [refresh]);
   console.log(data);
   const addMachine = () => {
     setMachine([...machine, { ...blankMachine }]);

@@ -16,9 +16,11 @@ import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
 import { useConfig } from "../../hooks/useConfig";
 import Link from "@material-ui/core/Link";
-import clsx from "clsx";
 import ListItemText from "@material-ui/core/ListItemText";
-import Chip from "@material-ui/core/Chip";
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
+const filter = createFilterOptions();
 const http = require("http");
 
 const electron = window.require("electron");
@@ -761,16 +763,70 @@ export default function GlobalConfig() {
 
             <Grid item xs={4}>
               <FormControl className={classes.formControl}>
-                <TextField
-                  autoFocus
+                <Autocomplete
                   value={compState.remoteDir}
-                  onChange={handleCompState}
-                  margin="dense"
-                  id="remoteDir"
-                  name="remoteDir"
-                  label="Remote Output Directory"
-                  type="text"
-                  fullWidth
+                  onChange={(event, newValue) => {
+                    if (typeof newValue === "string") {
+                      console.log(newValue);
+                      setCompState({
+                        ...compState,
+                        remoteDir: newValue,
+                      });
+                    } else if (newValue && newValue.inputValue) {
+                      // Create a new value from the user input
+                      setCompState({
+                        ...compState,
+                        remoteDir: newValue.inputValue,
+                      });
+                    } else {
+                      setCompState({
+                        ...compState,
+                        remoteDir: newValue.homepath,
+                      });
+                    }
+                  }}
+                  filterOptions={(options, params) => {
+                    const filtered = filter(options, params);
+
+                    // Suggest the creation of a new value
+                    if (params.inputValue !== "") {
+                      filtered.push({
+                        inputValue: params.inputValue,
+                        homepath: `Add "${params.inputValue}"`,
+                      });
+                    }
+                    console.log(filtered);
+
+                    return filtered;
+                  }}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  id="free-solo-with-text-demo"
+                  options={data.map((machine) => machine)}
+                  getOptionLabel={(option) => {
+                    console.log(compState);
+                    // Value selected with enter, right from the input
+                    if (typeof option === "string") {
+                      return option;
+                    }
+                    // Add "xxx" option created dynamically
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    // Regular option
+                    return option.homepath;
+                  }}
+                  renderOption={(option) => option.homepath}
+                  style={{ width: 300 }}
+                  freeSolo
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Remote Output Directory"
+                      variant="outlined"
+                    />
+                  )}
                 />
                 <FormHelperText>Specify Remote Output directory</FormHelperText>
               </FormControl>

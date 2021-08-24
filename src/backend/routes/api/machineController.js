@@ -1,10 +1,8 @@
 const express = require("express");
-const path = require("path");
 const router = express.Router();
 const ping = require("ping");
-const fs = require("fs");
-const { readFileSync } = require("fs");
-const { Client } = require("ssh2");
+connect = require("ssh2-connect");
+exec = require("ssh2-exec");
 // Load input validation
 const validateConfigurationInput = require("../../validation/machineConfiguration");
 // Load Run model
@@ -23,11 +21,62 @@ router.post("/machine", (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     } else {
-        const newMachine = new Machine({
-            ...req.body,
-        });
         const host = req.body.hostname;
+        const localhost = {
+            host: req.body.hostname,
+            port: req.body.port,
+            username: req.body.username,
+            ...(!(req.body.privateKey === "") && {
+                privateKey: require("fs").readFileSync(req.body.privateKey),
+            }),
+            password: req.body.password,
+        };
+        connect(localhost, function (err, ssh) {
+            child = exec(
+                { command: "pwd", ssh: ssh },
+                function (err, stdout, stderr) {
+                    console.log(stdout);
+                    const newMachine = new Machine({
+                        ...req.body,
+                        homepath: stdout.trim(),
+                    });
+                    ping.sys.probe(host, function (isAlive) {
+                        const msg = isAlive
+                            ? "host " + host + " is alive"
+                            : "host " + host + " is dead";
+                        console.log(msg);
+                        if (isAlive) {
+                            newMachine
+                                .save()
+                                .then((machine) => {
+                                    res.json(machine);
+                                    User.findByIdAndUpdate(
+                                        machine.createdBy,
+                                        { $push: { machines: machine._id } },
+                                        { safe: true, upsert: true, new: true },
+                                        function (err, model) {
+                                            console.log(err);
+                                        }
+                                    );
+                                })
+                                .catch((err) => console.log(err));
 
+                            console.log("POST method");
+                        } else {
+                            return res.status(400).json({
+                                error: "Cannot connect to remote machine, make sure your logging credentials are correct",
+                            });
+                        }
+                    });
+                }
+            );
+            child.stdout.on("data", function (data) {
+                console.log(data);
+            });
+            child.on("exit", function (code) {
+                console.log("Exit", code);
+            });
+        });
         // const conn = new Client();
         // conn.on("ready", () => {
         //     console.log("Client :: ready");
@@ -87,34 +136,6 @@ router.post("/machine", (req, res) => {
         //         password: req.body.password,
         //     }),
         // });
-        ping.sys.probe(host, function (isAlive) {
-            const msg = isAlive
-                ? "host " + host + " is alive"
-                : "host " + host + " is dead";
-            console.log(msg);
-            if (isAlive) {
-                newMachine
-                    .save()
-                    .then((machine) => {
-                        res.json(machine);
-                        User.findByIdAndUpdate(
-                            machine.createdBy,
-                            { $push: { machines: machine._id } },
-                            { safe: true, upsert: true, new: true },
-                            function (err, model) {
-                                console.log(err);
-                            }
-                        );
-                    })
-                    .catch((err) => console.log(err));
-
-                console.log("POST method");
-            } else {
-                return res.status(400).json({
-                    error: "Cannot connect to remote machine, make sure your logging credentials are correct",
-                });
-            }
-        });
     }
 });
 router.delete("/:id", function (req, res) {

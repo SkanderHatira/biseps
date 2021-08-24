@@ -12,5 +12,5 @@ which python
 source $conda
 source  $sourceEnv/activate
 cd $workflow
-time $sourceEnv/snakemake --profile $profile --unlock
+# time $sourceEnv/snakemake --profile $profile --unlock
 time $sourceEnv/snakemake --profile $profile --rerun-incomplete

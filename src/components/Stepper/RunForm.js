@@ -179,6 +179,7 @@ export default function RunForm() {
     console.log(user.user.email);
 
     const request = {
+      rerun: false,
       ...runState,
       outdir: path.dirname(runState.genome),
       samples: result,
@@ -232,6 +233,7 @@ export default function RunForm() {
   };
   const handleReset = () => {
     setRunState(initialRun);
+    console.log(runState);
     setUnits([]);
   };
   return (

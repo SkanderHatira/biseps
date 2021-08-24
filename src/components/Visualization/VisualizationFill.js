@@ -57,6 +57,7 @@ export default function VisualizationFill() {
   const [checkedComp, setCheckedComp] = useState([]);
 
   const [checkedTrack, setCheckedTrack] = useState([]);
+  const [refresh, setRefresh] = useState(0);
 
   const { user } = useAuth();
 
@@ -188,7 +189,7 @@ export default function VisualizationFill() {
     };
     fetchData();
     fetchComparisons();
-  }, []);
+  }, [refresh]);
   console.log(comp);
   const fileExist = (path) => {
     try {
@@ -297,6 +298,8 @@ export default function VisualizationFill() {
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
+    setRefresh(refresh + 1);
+
     window.location.reload(false);
   };
   const handleReset = () => {
@@ -337,6 +340,8 @@ export default function VisualizationFill() {
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
+    setRefresh(refresh + 1);
+
     window.location.reload(false);
   };
   const blankSample = {};
@@ -462,7 +467,15 @@ export default function VisualizationFill() {
                   edge="end"
                   aria-label="comments"
                 >
-                  <CheckCircleOutlineIcon />
+                  <CheckCircleOutlineIcon
+                    style={{
+                      color: fileExist(
+                        path.join(user.user.jbPath, genome.genome)
+                      )
+                        ? "green"
+                        : "gray",
+                    }}
+                  />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>

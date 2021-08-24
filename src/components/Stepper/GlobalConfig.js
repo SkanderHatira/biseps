@@ -16,6 +16,11 @@ import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
 import { useConfig } from "../../hooks/useConfig";
 import Link from "@material-ui/core/Link";
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
+const filter = createFilterOptions();
+
 const http = require("http");
 
 const path = require("path");
@@ -39,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
 export default function GlobalConfig() {
   const { runState, setRunState } = useConfig();
   const [data, setData] = useState([]);
+  const [value, setValue] = useState(null);
 
   const classes = useStyles();
   const handleGenome = (e) => {
@@ -111,6 +117,9 @@ export default function GlobalConfig() {
       outdir: runState.cluster ? "remote" : path.dirname(runState.genome),
     });
   };
+  console.log(runState.remoteDir);
+  console.log(value);
+
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -121,7 +130,7 @@ export default function GlobalConfig() {
           <FormControl className={classes.formControl}>
             <InputLabel>Aligner</InputLabel>
             <Select
-              defaultValue="bowtie2"
+              value={runState.aligner}
               labelId="aligner"
               id="aligner"
               name="aligner"
@@ -312,11 +321,12 @@ export default function GlobalConfig() {
               <FormControl className={classes.formControl}>
                 <InputLabel>Machine</InputLabel>
                 <Select
-                  defaultValue={runState.machine}
+                  value={runState.machine}
                   labelId="machine"
                   id="machine"
                   name="machine"
                   onChange={handleRunState}
+                  renderValue={(machine) => machine.hostname}
                 >
                   {data &&
                     data.map((machine, idx) => {
@@ -330,24 +340,78 @@ export default function GlobalConfig() {
                 <FormHelperText>Specify Remote machine</FormHelperText>
               </FormControl>
             </Grid>
-
             <Grid item xs={4}>
               <FormControl className={classes.formControl}>
-                <TextField
-                  autoFocus
+                <Autocomplete
+                  disabled={runState.machine.hostname === "" ? true : false}
                   value={runState.remoteDir}
-                  onChange={handleRunState}
-                  margin="dense"
-                  id="remoteDir"
-                  name="remoteDir"
-                  label="Remote Output Directory"
-                  type="text"
-                  fullWidth
+                  onChange={(event, newValue) => {
+                    if (typeof newValue === "string") {
+                      console.log(newValue);
+                      setRunState({
+                        ...runState,
+                        remoteDir: newValue,
+                      });
+                    } else if (newValue && newValue.inputValue) {
+                      // Create a new value from the user input
+                      setRunState({
+                        ...runState,
+                        remoteDir: newValue.inputValue,
+                      });
+                    } else {
+                      setRunState({
+                        ...runState,
+                        remoteDir: newValue.homepath,
+                      });
+                    }
+                  }}
+                  filterOptions={(options, params) => {
+                    const filtered = filter(options, params);
+
+                    // Suggest the creation of a new value
+                    if (params.inputValue !== "") {
+                      filtered.push({
+                        inputValue: params.inputValue,
+                        homepath: `Add "${params.inputValue}"`,
+                      });
+                    }
+                    console.log(filtered);
+
+                    return filtered;
+                  }}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  id="free-solo-with-text-demo"
+                  options={[{ homepath: runState.machine.homepath }]}
+                  getOptionLabel={(option) => {
+                    console.log(runState);
+                    // Value selected with enter, right from the input
+                    if (typeof option === "string") {
+                      return option;
+                    }
+                    // Add "xxx" option created dynamically
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    // Regular option
+                    return option.homepath;
+                  }}
+                  renderOption={(option) => option.homepath}
+                  style={{ width: 300 }}
+                  freeSolo
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Remote Output Directory"
+                      variant="outlined"
+                    />
+                  )}
                 />
+
                 <FormHelperText>Specify Remote Output directory</FormHelperText>
               </FormControl>
             </Grid>
-
             <Grid item xs={4}>
               <FormControlLabel
                 className={classes.formControl}

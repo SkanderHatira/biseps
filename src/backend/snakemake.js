@@ -13,14 +13,6 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
         slient: false,
         detached: true,
     };
-    console.log("so far so good");
-    console.log("so far so good");
-
-    console.log("so far so good");
-    console.log("so far so good");
-    console.log("so far so good");
-    console.log("so far so good");
-
     if (body.remote) {
         const host = {
             host: body.machine.hostname,
@@ -65,7 +57,10 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
         let sftp = new Client();
         sftp.connect(host)
             .then(() => {
-                if (!sftp.exists(path.join(homeDir, "workflow.tar.gz"))) {
+                return sftp.exists(path.join(homeDir, "workflow.tar.gz"));
+            })
+            .then((data) => {
+                if (!data) {
                     sftp.mkdir(homeDir);
                     return sftp.fastPut(
                         path.join(uniqueDir, "workflow.tar.gz"),
@@ -78,7 +73,11 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
                 if (body.cluster) {
                     connect(host, function (err, ssh) {
                         exec(
-                            `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/  && sbatch exec_scripts/${
+                            `${
+                                body.rerun
+                                    ? `cd ${homeDir}`
+                                    : `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
+                            }  && sbatch exec_scripts/${
                                 "contexts" in body
                                     ? "slurmComparison.sh"
                                     : "slurmScript.sh"
@@ -118,7 +117,11 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
                 } else {
                     connect(host, function (err, ssh) {
                         exec(
-                            `cd ${homeDir} && tar -xf workflow.tar.gz  && rm -rf .snakemake/ && source exec_scripts/script.sh &&  bash exec_scripts/${
+                            `${
+                                body.rerun
+                                    ? `cd ${homeDir}`
+                                    : `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
+                            }    &&  bash exec_scripts/${
                                 "contexts" in body
                                     ? "localComparison.sh"
                                     : "localScript.sh"

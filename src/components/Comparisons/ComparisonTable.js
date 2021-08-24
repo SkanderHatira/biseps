@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import ErrorIcon from "@material-ui/icons/Error";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -39,7 +41,6 @@ function Alert(props) {
 const { clipboard } = require("electron");
 
 const fs = require("fs");
-const portastic = require("portastic");
 const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
@@ -72,13 +73,15 @@ export default function InteractiveList() {
   const [openAlert, setOpenAlert] = useState(false);
   const { user } = useAuth();
   const [errors, setErrors] = useState("");
+  const [refresh, setRefresh] = useState(0);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [selectedRow, setSelectedRow] = useState({});
   const handleChange = (e) => {
     setDeleted(e.target.value);
   };
-  const handleDelete = (id, user, outdir, deleted) => {
-    console.log(id);
+  const handleDelete = (user, row, deleted) => {
+    console.log(row);
 
     if (deleted === "DELETE") {
       const request = {
@@ -87,7 +90,7 @@ export default function InteractiveList() {
       const token = sessionStorage.jwtToken;
       const options = {
         method: "DELETE",
-        path: `http://localhost/api/comparisons/${id}`,
+        path: `http://localhost/api/comparisons/${row._id}`,
         socketPath: sessionStorage.Sock,
         hostname: "unix",
         port: null,
@@ -119,10 +122,36 @@ export default function InteractiveList() {
       req.on("error", (err) => console.log(err));
       console.log(request);
       req.end();
-      fs.rmdirSync(outdir, { recursive: true });
+      if (remote) {
+        let client = new Client();
+
+        client
+          .connect({
+            host: row.machine.hostname,
+            port: row.machine.port,
+            username: row.machine.username,
+            ...(!(row.machine.privateKey === "") && {
+              privateKey: require("fs").readFileSync(row.machine.privateKey),
+            }),
+            password: row.machine.password,
+          })
+          .then(() => {
+            return client.rmdir(row.remoteDir, true);
+          })
+          .then(() => {
+            return client.end();
+          })
+          .catch((err) => {
+            console.error(err.message);
+          });
+      } else {
+        fs.rmdirSync(row.outdir, { recursive: true });
+      }
 
       handleClose();
-      window.location.reload(false);
+      setRefresh(refresh + 1);
+
+      // window.location.reload(false);
     } else {
       console.log("write DELETE to confirm");
       setErrors("write DELETE to confirm or Cancel");
@@ -173,7 +202,10 @@ export default function InteractiveList() {
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
-    window.location.reload(false);
+    setRefresh(refresh + 1);
+    setErrors("");
+    setSuccessMessage("Rerun Launched Successfully");
+    handleOpenAlert();
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -211,7 +243,7 @@ export default function InteractiveList() {
     };
 
     fetchData();
-  }, []);
+  }, [refresh]);
   console.log(data);
   const fileExist = (path) => {
     try {
@@ -232,18 +264,7 @@ export default function InteractiveList() {
 
     win.loadURL(`file://${path}`);
   };
-  console.log(data);
-  const handleClick = () => {
-    portastic
-      .find({
-        min: 30000,
-        max: 35000,
-        retrieve: 1,
-      })
-      .then(function (port) {
-        console.log(port);
-      });
-  };
+
   const openInFolder = (path) => {
     shell.showItemInFolder(path);
   };
@@ -272,9 +293,7 @@ export default function InteractiveList() {
         console.log(path.join(bisepsTemp, localPath));
         console.log(localPath);
         console.log("made it all the way here?");
-        if (!fs.existsSync(path.join(bisepsTemp, localPath))) {
-          return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
-        }
+        return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
       })
       .then((data) => {
         console.log("done done done");
@@ -306,9 +325,7 @@ export default function InteractiveList() {
           onClose={handleCloseAlert}
           severity={errors && errors.length > 0 ? "error" : "success"}
         >
-          {errors && errors.length > 0
-            ? `Error : ${errors}`
-            : "Remote file copied locally successfully"}
+          {errors && errors.length > 0 ? `Error : ${errors}` : successMessage}
         </Alert>
       </Snackbar>
       <Grid container direction="column" alignItems="center">
@@ -357,12 +374,7 @@ export default function InteractiveList() {
             </Button>
             <Button
               onClick={() => {
-                handleDelete(
-                  selectedRow._id,
-                  user,
-                  selectedRow.outdir,
-                  deleted
-                );
+                handleDelete(user, selectedRow, deleted);
               }}
               color="primary"
             >
@@ -394,13 +406,19 @@ export default function InteractiveList() {
                   color="primary"
                   onClick={
                     row.remote
-                      ? () => clipboard.writeText(`${row.remoteDir}/results/`)
+                      ? () => {
+                          openInFolder(`${row.outdir}/results`);
+                          setSuccessMessage("Remote path copied To clipboard!");
+                          setErrors("");
+                          handleOpenAlert();
+                          clipboard.writeText(`${row.remoteDir}/results/`);
+                        }
                       : () => openInFolder(`${row.outdir}/results`)
                   }
                   className={classes.button}
                   endIcon={row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>}
                 >
-                  {row.remote ? "Copy Remote Path" : "Open Folder"}
+                  {row.remote ? "Open Local Folder" : "Open Folder"}
                 </Button>
                 <Button
                   variant="contained"
@@ -424,7 +442,26 @@ export default function InteractiveList() {
                           )
                   }
                   className={classes.button}
-                  startIcon={<RefreshIcon />}
+                  startIcon={
+                    fileExist(
+                      path.join(
+                        row.outdir,
+                        row.remote ? "archive.lock" : "comparison.lock"
+                      )
+                    ) ? (
+                      <CheckCircleIcon
+                        style={{
+                          color: "green",
+                        }}
+                      />
+                    ) : (
+                      <ErrorIcon
+                        style={{
+                          color: "red",
+                        }}
+                      />
+                    )
+                  }
                 >
                   Show Log
                 </Button>

@@ -50,7 +50,7 @@ router.post("/comparison", (req, res) => {
                 outdir: uniqueDir,
                 machine: req.body.machine,
                 genome: req.body.genome,
-
+                remoteDir: req.body.remoteDir,
                 profile: profile,
                 comparisons: req.body.comparisons,
                 remotecomparisons: req.body.remotecomparisons,

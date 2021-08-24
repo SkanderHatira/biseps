@@ -20,7 +20,15 @@ const useProvideConfig = () => {
     genome: "",
     outdir: "",
     remoteDir: "",
-    machine: {},
+    machine: {
+      hostname: "",
+      username: "",
+      port: 22,
+      privateKey: "",
+      script: "",
+      password: "",
+      homepath: "",
+    },
     minlen: 80,
     minscore: -0.6,
     l: 20,
@@ -28,13 +36,21 @@ const useProvideConfig = () => {
     subsample: false,
     cluster: false,
     remote: false,
-    machine: {},
     cpu: "1",
     memMb: "10G",
     jobs: "10",
     minTime: "2880",
   };
   const initialComp = {
+    machine: {
+      hostname: "",
+      username: "",
+      port: 22,
+      privateKey: "",
+      script: "",
+      password: "",
+      homepath: "",
+    },
     method: "bins",
     stat: "score",
     annot: "",
@@ -61,6 +77,7 @@ const useProvideConfig = () => {
   const [remoteunits, setRemoteUnits] = useState([]);
   const [comparisons, setComparisons] = useState([]);
   const [remotecomparisons, setRemoteComparisons] = useState([]);
+  const [openDrawer, setOpenDrawer] = useState(true);
 
   const [compState, setCompState] = useState(initialComp);
 
@@ -79,5 +96,7 @@ const useProvideConfig = () => {
     setRemoteUnits,
     remotecomparisons,
     setRemoteComparisons,
+    openDrawer,
+    setOpenDrawer,
   };
 };
