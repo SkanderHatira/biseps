@@ -48,7 +48,6 @@ function Alert(props) {
 }
 const fs = require("fs");
 const path = require("path");
-const portastic = require("portastic");
 let Client = require("ssh2-sftp-client");
 const electron = window.require("electron");
 const remote = electron.remote;
