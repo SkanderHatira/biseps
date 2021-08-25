@@ -85,8 +85,15 @@ const useStyles = makeStyles((theme) => ({
 const steps = ["Global configuration", "Expermiental design"];
 
 export default function RunForm() {
-  const { runState, setRunState, units, setUnits, initialRun, remoteunits } =
-    useConfig();
+  const {
+    runState,
+    setRunState,
+    units,
+    setUnits,
+    initialRun,
+    remoteunits,
+    setRemoteUnits,
+  } = useConfig();
   const { user } = useAuth();
   const [response, setResponse] = useState({});
   const classes = useStyles();
@@ -220,8 +227,7 @@ export default function RunForm() {
           console.log("successful post request");
 
           setResponse(jsbody);
-          setRunState(initialRun);
-          setUnits([]);
+          handleReset();
           setLoading(false);
           history.push("/alignment");
         }
@@ -234,6 +240,7 @@ export default function RunForm() {
   const handleReset = () => {
     setRunState(initialRun);
     console.log(runState);
+    setRemoteUnits([]);
     setUnits([]);
   };
   return (

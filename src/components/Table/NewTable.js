@@ -263,9 +263,8 @@ export default function NewTable() {
     fq2: "",
   };
   const addUnit = () => {
-    if (runState.remote) {
-      setRemoteUnits([...remoteunits, { ...blankUnit }]);
-    }
+    setRemoteUnits([...remoteunits, { ...blankUnit }]);
+
     setUnits([...units, { ...blankUnit }]);
   };
   const [errors, setErrors] = useState();
@@ -283,17 +282,16 @@ export default function NewTable() {
   console.log(remoteunits);
 
   const removeUnit = () => {
-    if (runState.remote) {
-      const updatedUnits = [...remoteunits];
-      const updatedSelected = [...selected];
-      const sorted = updatedSelected.sort((a, b) => a - b);
-      while (sorted.length) {
-        console.log(sorted);
+    const remoteUpdatedUnits = [...remoteunits];
+    const remoteUpdatedSelected = [...selected];
+    const remoteSorted = remoteUpdatedSelected.sort((a, b) => a - b);
+    while (remoteSorted.length) {
+      console.log(remoteSorted);
 
-        updatedUnits.splice(sorted.pop(), 1);
-      }
-      setRemoteUnits(updatedUnits);
+      remoteUpdatedUnits.splice(remoteSorted.pop(), 1);
     }
+    setRemoteUnits(remoteUpdatedUnits);
+
     const updatedUnits = [...units];
     const updatedSelected = [...selected];
     const sorted = updatedSelected.sort((a, b) => a - b);
@@ -308,12 +306,10 @@ export default function NewTable() {
   console.log(selected);
   console.log(units);
   const handleUnitChange = (e) => {
-    if (runState.remote) {
-      const updatedRemoteUnits = [...remoteunits];
-      console.log(e.target.dataset.idx);
-      updatedRemoteUnits[e.target.dataset.idx][e.target.id] = e.target.value;
-      setRemoteUnits(updatedRemoteUnits);
-    }
+    const updatedRemoteUnits = [...remoteunits];
+    console.log(e.target.dataset.idx);
+    updatedRemoteUnits[e.target.dataset.idx][e.target.id] = e.target.value;
+    setRemoteUnits(updatedRemoteUnits);
 
     const updatedUnits = [...units];
     console.log(e.target.dataset.idx);
@@ -323,14 +319,14 @@ export default function NewTable() {
   const handleUnitFiles = (e) => {
     const updatedUnits = [...units];
     console.log(e.target.dataset.idx);
-    if (runState.remote) {
-      const updatedRemoteUnits = [...remoteunits];
-      updatedRemoteUnits[e.target.dataset.idx][e.target.id] = path.join(
-        "data",
-        path.basename(e.target.files[0].path)
-      );
-      setRemoteUnits(updatedRemoteUnits);
-    }
+
+    const updatedRemoteUnits = [...remoteunits];
+    updatedRemoteUnits[e.target.dataset.idx][e.target.id] = path.join(
+      "data",
+      path.basename(e.target.files[0].path)
+    );
+    setRemoteUnits(updatedRemoteUnits);
+
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.files[0].path;
     setUnits(updatedUnits);
   };

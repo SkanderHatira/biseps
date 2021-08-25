@@ -21,23 +21,13 @@ import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import AddIcon from "@material-ui/icons/Add";
-import Button from "@material-ui/core/Button";
-import InputBase from "@material-ui/core/InputBase";
-import uuid from "react-uuid";
 import { useConfig } from "../../hooks/useConfig";
-import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import CommentIcon from "@material-ui/icons/Comment";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import Chip from "@material-ui/core/Chip";
-import classnames from "classnames";
-import { remote } from "electron";
 import { useAuth } from "../../hooks/useAuth";
 
 const path = require("path");
@@ -304,18 +294,13 @@ export default function ComparisonForm() {
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.value;
     setComparisons(updatedUnits);
   };
-  const handleUnitChange = (e, index) => {
-    const updatedUnits = [...comparisons];
-    updatedUnits[index][e.target.name] = e.target.value;
-    setComparisons(updatedUnits);
-  };
+
   const handleSelectChange = (e, index) => {
-    if (compState.remote) {
-      console.log(e.target.value);
-      const newFiles = [];
-      for (const file in e.target.value) {
-        newFiles.push(path.join("data/", path.basename(e.target.value[file])));
-      }
+    console.log(e.target.value);
+    const newFiles = [];
+    for (const file in e.target.value) {
+      newFiles.push(path.join("data/", path.basename(e.target.value[file])));
+
       console.log(e.target.value);
       console.log(newFiles);
       const updatedRemoteComparisons = [...remotecomparisons];
@@ -380,22 +365,7 @@ export default function ComparisonForm() {
       }
     });
   });
-  console.log(result);
-  // const blankSample = {};
-  // const helper = {};
-  // const result = data.reduce(function (r, o) {
-  //   console.log(r);
-  //   const key = o.genome;
-  //   const genome = path.basename(o.genome);
-  //   const genomePath = o.genome;
-  //   if (!helper[key]) {
-  //     helper[key] = Object.assign({ genome, genomePath }, blankSample); // create a copy of o
-  //     r.push(helper[key]);
-  //   }
-  //   return r;
-  // }, []);
 
-  // console.log(result);
   const blankUnit = {
     id: "",
     controls: [],
@@ -419,24 +389,22 @@ export default function ComparisonForm() {
   };
 
   const addUnit = () => {
-    if (compState.remote) {
-      setRemoteComparisons([...remotecomparisons, { ...blankUnit }]);
-    }
+    setRemoteComparisons([...remotecomparisons, { ...blankUnit }]);
+
     setComparisons([...comparisons, { ...blankUnit }]);
   };
   console.log(remotecomparisons);
   const removeComparison = () => {
-    if (compState.remote) {
-      const updatedUnits = [...remotecomparisons];
-      const updatedSelected = [...selected];
-      const sorted = updatedSelected.sort((a, b) => a - b);
-      while (sorted.length) {
-        console.log(sorted);
+    const remoteUpdated = [...remotecomparisons];
+    const RemoteUpdatedSelected = [...selected];
+    const remoteSorted = RemoteUpdatedSelected.sort((a, b) => a - b);
+    while (remoteSorted.length) {
+      console.log(remoteSorted);
 
-        updatedUnits.splice(sorted.pop(), 1);
-      }
-      setRemoteComparisons(updatedUnits);
+      remoteUpdated.splice(remoteSorted.pop(), 1);
     }
+    setRemoteComparisons(remoteUpdated);
+
     const updatedComparisons = [...comparisons];
     const updatedSelected = [...selected];
     const sorted = updatedSelected.sort((a, b) => a - b);
@@ -449,12 +417,6 @@ export default function ComparisonForm() {
     setSelected([]);
   };
 
-  const handleUnitFiles = (e) => {
-    const updatedUnits = [...comparisons];
-    console.log(e.target.dataset.idx);
-    updatedUnits[e.target.dataset.idx][e.target.id] = e.target.files[0].path;
-    setComparisons(updatedUnits);
-  };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -621,37 +583,6 @@ export default function ComparisonForm() {
                             ))}
                           </Select>
                         </FormControl>
-                        {/* <TextField
-                          classes={{ root: classes.root }}
-                          select
-                          name="userRoles"
-                          id="userRoles"
-                          variant="outlined"
-                          label="Control Biological Replicate(s)"
-                          SelectProps={{
-                            multiple: true,
-                            value: result,
-                          }}
-                        >
-                          {result.map((res) => {
-                            return (
-                              <MenuItem value={`${res}`}>
-                                {path.parse(res).name}
-                              </MenuItem>
-                            );
-                          })}
-                        </TextField> */}
-                        {/* <InputBase
-                          inputProps={{ "data-idx": index }}
-                          label={`control ${index}`}
-                          type="text"
-                          placeholder="Choose Control"
-                          value={comparison.controls}
-                          required
-                          onChange={handleUnitChange}
-                          id="control"
-                          type="text"
-                        ></InputBase> */}
                       </TableCell>
                       <TableCell>
                         <FormControl className={classes.formControl}>
@@ -693,16 +624,6 @@ export default function ComparisonForm() {
                             ))}
                           </Select>
                         </FormControl>
-                        {/* <InputBase
-                          placeholder="Choose Treatment"
-                          required
-                          name="treatment"
-                          value={comparison.treatment}
-                          onChange={handleUnitChange}
-                          inputProps={{ "data-idx": index, min: "1" }}
-                          id="treatment"
-                          type="text"
-                        ></InputBase> */}
                       </TableCell>
                     </TableRow>
                   );
