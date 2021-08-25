@@ -9,5 +9,5 @@ cd $workflow
 pwd
 # $sourceEnv/snakemake --profile $profile --unlock &> $profile/../../../biseps.txt
 $sourceEnv/snakemake --profile $profile --rerun-incomplete  &> $profile/../../../biseps.txt
-$sourceEnv/snakemake --profile $profile --report  $profile/../../../report.html
+$sourceEnv/snakemake --profile $profile --report  $profile/../../../report.html  &>> $profile/../../../biseps.txt
 

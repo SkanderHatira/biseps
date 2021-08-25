@@ -37,8 +37,7 @@ const createConfig = (body, uniqueDir) => {
                 : path.join(
                       __dirname,
                       "../../../resources/adapters",
-                      body.adapters,
-                      ".fa"
+                      body.adapters + ".fa"
                   ) || "",
         },
 
