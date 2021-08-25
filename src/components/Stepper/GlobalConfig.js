@@ -110,13 +110,7 @@ export default function GlobalConfig() {
       [e.target.id]: newValue,
     });
   };
-  const handleCluster = (e) => {
-    setRunState({
-      ...runState,
-      [e.target.name]: String(e.target.checked),
-      outdir: runState.cluster ? "remote" : path.dirname(runState.genome),
-    });
-  };
+
   console.log(runState.remoteDir);
   console.log(value);
 

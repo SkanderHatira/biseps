@@ -17,6 +17,8 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 
+const kill = require("kill-port");
+const running = require("is-running");
 const handler = require("serve-handler");
 const electron = window.require("electron");
 const { shell } = window.require("electron");
@@ -351,32 +353,37 @@ export default function VisualizationFill() {
   console.log(result);
 
   const handleServe = () => {
-    try {
-      const server = http.createServer(async (request, response) => {
-        await handler(request, response, {
-          public: user.user.jbPath,
-        });
+    const server = http.createServer(async (request, response) => {
+      handler(request, response, {
+        public: user.user.jbPath,
       });
-      console.log(user.user.jbPath);
-      server.listen(user.user.port[0], () => {});
-    } catch (err) {
-      portastic
-        .find({
-          min: 30000,
-          max: 35000,
-          retrieve: 1,
-        })
-        .then(function (port) {
-          const server = http.createServer(async (request, response) => {
-            await handler(request, response, {
-              public: user.user.jbPath,
-            });
-          });
-          server.listen(user.user.port[0], () => {});
-          shell.openExternal(`http:///localhost:${port}`);
-        });
-    }
-    shell.openExternal(`http:///localhost:${user.user.port[0]}`);
+    });
+
+    server.listen(user.user.port[0], () => {
+      console.log(server.listening);
+
+      shell.openExternal(`http:///localhost:${user.user.port[0]}`);
+    });
+    server.on("error", (err) => {
+      console.log(err);
+    });
+
+    //   portastic
+    //     .find({
+    //       min: 30000,
+    //       max: 35000,
+    //       retrieve: 1,
+    //     })
+    //     .then(function (port) {
+    //       const server = http.createServer(async (request, response) => {
+    //         await handler(request, response, {
+    //           public: user.user.jbPath,
+    //         });
+    //       });
+    //       server.listen(user.user.port[0], () => {});
+    //       shell.openExternal(`http:///localhost:${port}`);
+    //     });
+    // }
   };
   return (
     <Container maxWidth="lg" className={classes.container} gutterbottom>
