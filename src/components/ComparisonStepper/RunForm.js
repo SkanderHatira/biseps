@@ -152,9 +152,7 @@ export default function RunForm() {
           console.log("successful post request");
 
           setResponse(jsbody);
-          setCompState(initialComp);
-          setComparisons([]);
-          setRemoteComparisons([]);
+          handleReset();
           setLoading(false);
           history.push("/comparison");
         }
@@ -165,6 +163,8 @@ export default function RunForm() {
     req.end();
   };
   const handleReset = () => {
+    setComparisons([]);
+    setRemoteComparisons([]);
     setCompState(initialComp);
   };
   return (
