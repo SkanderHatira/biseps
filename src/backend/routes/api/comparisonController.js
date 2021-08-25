@@ -115,7 +115,6 @@ router.post("/comparison", (req, res) => {
                 profile: profile,
                 remoteDir: uniqueDirRemote,
                 genome: req.body.genome,
-
                 machine: req.body.machine,
                 comparisons: req.body.comparisons,
                 remotecomparisons: req.body.remotecomparisons,
@@ -161,14 +160,17 @@ router.post("/comparison", (req, res) => {
         }
     }
 });
-router.get("/", function (req, res) {
-    Comparison.find({}, function (err, comparisons) {
-        if (err)
-            return res
-                .status(500)
-                .send("There was a problem finding the comparisons.");
-        res.status(200).send(comparisons);
-    }).populate("createdBy");
+router.get("/:userId", function (req, res) {
+    Comparison.find(
+        { $or: [{ createdBy: [req.params.userId] }, { public: true }] },
+        function (err, comparisons) {
+            if (err)
+                return res
+                    .status(500)
+                    .send("There was a problem finding the comparisons.");
+            res.status(200).send(comparisons);
+        }
+    ).populate("createdBy");
     console.log("GET method");
 });
 router.delete("/:id", function (req, res) {
@@ -214,5 +216,28 @@ router.post("/rerun", function (req, res) {
         const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);
         spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
     }
+});
+
+router.put("/:id", (req, res, next) => {
+    console.log(req.body);
+    console.log(req.params);
+
+    const updatedComparison = new Comparison({
+        _id: req.params.id,
+        ...req.body,
+        public: req.body.public,
+    });
+    Comparison.updateOne({ _id: req.params.id }, updatedComparison)
+        .then(() => {
+            res.status(201).json({
+                message: "Thing updated successfully!",
+            });
+        })
+        .catch((error) => {
+            console.log("something went wrong");
+            res.status(400).json({
+                error: error,
+            });
+        });
 });
 module.exports = router;

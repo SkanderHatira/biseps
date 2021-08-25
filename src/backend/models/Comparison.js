@@ -11,6 +11,11 @@ const comparisonSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    public: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
     stat: { type: String, required: false },
     genome: { type: String, required: false },
     contexts: [{ type: String, required: false }],

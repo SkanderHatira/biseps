@@ -38,6 +38,7 @@ import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import classnames from "classnames";
 import { remote } from "electron";
+import { useAuth } from "../../hooks/useAuth";
 
 const path = require("path");
 const fs = require("fs");
@@ -286,6 +287,8 @@ export default function ComparisonForm() {
     setRemoteComparisons,
     compState,
   } = useConfig();
+  const { user } = useAuth();
+
   const [data, setData] = useState([]);
   const theme = useTheme();
   const handleLabelChange = (e) => {
@@ -326,12 +329,13 @@ export default function ComparisonForm() {
     setComparisons(updatedUnits);
   };
   useEffect(() => {
+    console.log(user.user.id);
     const fetchData = async () => {
       const token = sessionStorage.jwtToken;
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/runs",
+        path: `http://localhost/api/runs/${user.user.id}`,
         socketPath: Sock,
         port: null,
         headers: {

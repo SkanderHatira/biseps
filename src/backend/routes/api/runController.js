@@ -177,14 +177,17 @@ router.delete("/:id", function (req, res) {
         }
     );
 });
-router.get("/", function (req, res) {
-    Run.find({}, function (err, runs) {
-        if (err)
-            return res
-                .status(500)
-                .send("There was a problem finding the runs.");
-        res.status(200).send(runs);
-    }).populate("createdBy");
+router.get("/:userId", function (req, res) {
+    Run.find(
+        { $or: [{ createdBy: [req.params.userId] }, { public: true }] },
+        function (err, runs) {
+            if (err)
+                return res
+                    .status(500)
+                    .send("There was a problem finding the runs.");
+            res.status(200).send(runs);
+        }
+    ).populate("createdBy");
     console.log("GET method");
 });
 
@@ -215,5 +218,26 @@ router.post("/rerun", function (req, res) {
         spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
     }
 });
+router.put("/:id", (req, res, next) => {
+    console.log(req.body);
+    console.log(req.params);
 
+    const updatedRun = new Run({
+        _id: req.params.id,
+        ...req.body,
+        public: req.body.public,
+    });
+    Run.updateOne({ _id: req.params.id }, updatedRun)
+        .then(() => {
+            res.status(201).json({
+                message: "Thing updated successfully!",
+            });
+        })
+        .catch((error) => {
+            console.log("something went wrong");
+            res.status(400).json({
+                error: error,
+            });
+        });
+});
 module.exports = router;

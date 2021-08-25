@@ -156,47 +156,7 @@ const useProvideAuth = () => {
     req.write(JSON.stringify(userData));
     req.end();
   };
-  // const handleEditProfile = (userData) => {
-  //   const request = {
-  //     name: userData.name,
-  //     email: userData.email,
-  //   };
-  //   console.log(request);
-  //   const token = sessionStorage.jwtToken;
-  //   const options = {
-  //     method: "PUT",
-  //     path: `http://localhost/api/users/${user.user.id}`,
-  //     socketPath: sessionStorage.Sock,
-  //     hostname: "unix",
-  //     port: null,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: token,
-  //     },
-  //   };
-  //   const req = http.request(options, function (res) {
-  //     const chunks = [];
-  //     console.log("STATUS: " + res.statusCode);
-  //     console.log("HEADERS: " + JSON.stringify(res.headers));
-  //     res.on("data", function (chunk) {
-  //       chunks.push(chunk);
-  //     });
-  //     res.on("error", (err) => console.log(err));
-  //     res.on("end", function () {
-  //       const body = Buffer.concat(chunks).toString();
 
-  //       const jsbody = JSON.parse(body);
-  //       if (res.statusCode !== 201) {
-  //         console.log("failed post request");
-  //       } else {
-  //         console.log("successful post request");
-  //       }
-  //     });
-  //   });
-  //   req.on("error", (err) => console.log(err));
-  //   req.write(JSON.stringify(request));
-  //   req.end();
-  // };
   const checkauth = async (history, path) => {
     if (await sessionStorage.jwtToken) {
       // Set auth token header auth

@@ -9,37 +9,27 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { useAuth } from "../../hooks/useAuth";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { Link } from "react-router-dom";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import GetAppIcon from "@material-ui/icons/GetApp";
-const handler = require("serve-handler");
-let Client = require("ssh2-sftp-client");
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Container from "@material-ui/core/Container";
 
+const handler = require("serve-handler");
 const electron = window.require("electron");
 const { shell } = window.require("electron");
 const remote = electron.remote;
-const { BrowserWindow } = remote;
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import FolderIcon from "@material-ui/icons/Folder";
 const fs = require("fs");
-
 const http = require("http");
-import IconButton from "@material-ui/core/IconButton";
-import CommentIcon from "@material-ui/icons/Comment";
-import Container from "@material-ui/core/Container";
 const path = require("path");
 const portastic = require("portastic");
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+
+let Client = require("ssh2-sftp-client");
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -126,7 +116,7 @@ export default function VisualizationFill() {
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/runs",
+        path: `http://localhost/api/runs/${user.user.id}`,
         socketPath: Sock,
         port: null,
         headers: {
@@ -159,7 +149,7 @@ export default function VisualizationFill() {
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/comparisons",
+        path: `http://localhost/api/comparisons/${user.user.id}`,
         socketPath: Sock,
         port: null,
         headers: {

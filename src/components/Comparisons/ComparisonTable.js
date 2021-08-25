@@ -6,23 +6,15 @@ import ErrorIcon from "@material-ui/icons/Error";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Link } from "react-router-dom";
-import Iframe from "react-iframe";
 import Icon from "@material-ui/core/Icon";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import Dialog from "@material-ui/core/Dialog";
@@ -34,20 +26,23 @@ import TextField from "@material-ui/core/TextField";
 import { useAuth } from "../../hooks/useAuth";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-const path = require("path");
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-const { clipboard } = require("electron");
+import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 
+const path = require("path");
 const fs = require("fs");
+const { clipboard } = require("electron");
 const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
 const http = require("http");
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+
 let Client = require("ssh2-sftp-client");
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,8 +70,8 @@ export default function InteractiveList() {
   const [errors, setErrors] = useState("");
   const [refresh, setRefresh] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
-
   const [selectedRow, setSelectedRow] = useState({});
+
   const handleChange = (e) => {
     setDeleted(e.target.value);
   };
@@ -207,13 +202,56 @@ export default function InteractiveList() {
     setSuccessMessage("Rerun Launched Successfully");
     handleOpenAlert();
   };
+  const makePublic = (selectedRow) => {
+    console.log(selectedRow);
+    const request = {
+      ...selectedRow,
+      public: !selectedRow.public,
+    };
+    console.log(request);
+    const token = sessionStorage.jwtToken;
+    const options = {
+      method: "PUT",
+      path: `http://localhost/api/comparisons/${selectedRow._id}`,
+      socketPath: sessionStorage.Sock,
+      hostname: "unix",
+      port: null,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+    const req = http.request(options, function (res) {
+      const chunks = [];
+      console.log("STATUS: " + res.statusCode);
+      console.log("HEADERS: " + JSON.stringify(res.headers));
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+      res.on("error", (err) => console.log(err));
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
+
+        const jsbody = JSON.parse(body);
+        if (res.statusCode !== 201) {
+          console.log("failed post request");
+        } else {
+          console.log("successful post request");
+        }
+      });
+    });
+    req.on("error", (err) => console.log(err));
+    req.write(JSON.stringify(request));
+    req.end();
+    setRefresh(refresh + 1);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = sessionStorage.jwtToken;
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/comparisons",
+        path: `http://localhost/api/comparisons/${user.user.id}`,
         socketPath: Sock,
         port: null,
         headers: {
@@ -331,7 +369,6 @@ export default function InteractiveList() {
       <Grid container direction="column" alignItems="center">
         <Box m={3}>
           <Button
-            alignItems="center"
             variant="contained"
             variant="outlined"
             color="primary"
@@ -484,10 +521,21 @@ export default function InteractiveList() {
                           )
                   }
                   className={classes.button}
-                  startIcon={<RefreshIcon />}
+                  startIcon={<LibraryBooksIcon />}
                 >
                   View Report
                 </Button>
+                {row.createdBy._id === user.user.id ? (
+                  <Button
+                    variant="contained"
+                    color={row.public ? "primary" : "Secondary"}
+                    onClick={() => makePublic(row)}
+                  >
+                    {row.public ? "Make Private" : "Make Public"}
+                  </Button>
+                ) : (
+                  ""
+                )}
               </div>
               <div className={classes.demo}>
                 <List dense={dense}>
@@ -518,24 +566,6 @@ export default function InteractiveList() {
                       </ListItem>
                     ))
                   )}
-                  {/* {generate(
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <FolderIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Single-line item"
-                      secondary={secondary ? "Secondary text" : null}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                )} */}
                 </List>
               </div>
             </Grid>
@@ -544,8 +574,8 @@ export default function InteractiveList() {
           <Grid
             container
             spacing={0}
-            direction="column"
             alignItems="center"
+            direction="column"
             justify="center"
             style={{ minHeight: "70vh" }}
           >

@@ -4,31 +4,20 @@ import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Link } from "react-router-dom";
-import AlarmIcon from "@material-ui/icons/Alarm";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
-import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
-import KeyboardVoiceIcon from "@material-ui/icons/KeyboardVoice";
 import Icon from "@material-ui/core/Icon";
-import SaveIcon from "@material-ui/icons/Save";
 import { useAuth } from "../../hooks/useAuth";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -39,22 +28,22 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { isReturnStatement } from "typescript";
 
 const { clipboard } = require("electron");
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 const fs = require("fs");
 const path = require("path");
-let Client = require("ssh2-sftp-client");
 const electron = window.require("electron");
 const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
 const http = require("http");
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+let Client = require("ssh2-sftp-client");
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -70,14 +59,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
 }));
-// let clipboardStr = clipboard.readText();
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    })
-  );
-}
 
 export default function InteractiveList() {
   const classes = useStyles();
@@ -144,51 +125,7 @@ export default function InteractiveList() {
   const getFile = () => {
     console.log("getfile");
   };
-  // const downloadFiles = (row, reports) => {
-  //   if (!fs.existsSync(bisepsTemp)) {
-  //     fs.mkdirSync(bisepsTemp);
-  //   }
 
-  //   sftp
-  //     .connect({
-  //       host: row.machine.hostname,
-  //       port: row.machine.port,
-  //       username: row.machine.username,
-  //       ...(!(row.machine.privateKey === "") && {
-  //         privateKey: require("fs").readFileSync(row.machine.privateKey),
-  //       }),
-  //       password: row.machine.password,
-  //     })
-  //     .then(async () => {
-  //       for (const report in reports) {
-  //         if (
-  //           !fs.existsSync(
-  //             path.join(bisepsTemp, path.basename(reports[report]))
-  //           )
-  //         ) {
-  //           console.log(report);
-  //           console.log(path.join(bisepsTemp, path.basename(reports[report])));
-  //           try {
-  //             await sftp.fastGet(
-  //               reports[report],
-  //               path.join(bisepsTemp, path.basename(reports[report]))
-  //             );
-  //           } catch (err) {
-  //             console.log(err);
-  //           }
-  //         }
-  //       }
-  //       // });
-  //     })
-  //     .finally((data) => {
-  //       console.log("done done done");
-  //       sftp.end();
-  //     })
-  //     .catch((err) => {
-  //       console.log(err, "catch error");
-  //       sftp.end();
-  //     });
-  // };
   const downloadFiles = (row, sample, tracks) => {
     let sftp = new Client();
 
@@ -291,33 +228,6 @@ export default function InteractiveList() {
         handleOpenAlert();
         sftp.end();
       });
-    // var conn = new Client();
-    // conn
-    //   .on("ready", function () {
-    //     console.log("Client :: ready");
-    //     conn.exec("uptime", function (err, stream) {
-    //       if (err) throw err;
-    //       stream
-    //         .on("close", function (code, signal) {
-    //           console.log(
-    //             "Stream :: close :: code: " + code + ", signal: " + signal
-    //           );
-    //           conn.end();
-    //         })
-    //         .on("data", function (data) {
-    //           console.log("STDOUT: " + data);
-    //         })
-    //         .stderr.on("data", function (data) {
-    //           console.log("STDERR: " + data);
-    //         });
-    //     });
-    //   })
-    //   .connect({
-    //     host: "genossh.genouest.org",
-    //     port: 22,
-    //     username: "shatira",
-    //     privateKey: require("fs").readFileSync("/home/shatira/.ssh/id_rsa_gen"),
-    //   });
   };
   const handleClose = () => {
     setOpen(false);
@@ -449,13 +359,56 @@ export default function InteractiveList() {
       handleOpenAlert();
     }
   };
+  const makePublic = (selectedRow) => {
+    console.log(selectedRow);
+    const request = {
+      ...selectedRow,
+      public: !selectedRow.public,
+    };
+    console.log(request);
+    const token = sessionStorage.jwtToken;
+    const options = {
+      method: "PUT",
+      path: `http://localhost/api/runs/${selectedRow._id}`,
+      socketPath: sessionStorage.Sock,
+      hostname: "unix",
+      port: null,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+    const req = http.request(options, function (res) {
+      const chunks = [];
+      console.log("STATUS: " + res.statusCode);
+      console.log("HEADERS: " + JSON.stringify(res.headers));
+      res.on("data", function (chunk) {
+        chunks.push(chunk);
+      });
+      res.on("error", (err) => console.log(err));
+      res.on("end", function () {
+        const body = Buffer.concat(chunks).toString();
+
+        const jsbody = JSON.parse(body);
+        if (res.statusCode !== 201) {
+          console.log("failed post request");
+        } else {
+          console.log("successful post request");
+        }
+      });
+    });
+    req.on("error", (err) => console.log(err));
+    req.write(JSON.stringify(request));
+    req.end();
+    setRefresh(refresh + 1);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = sessionStorage.jwtToken;
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/runs",
+        path: `http://localhost/api/runs/${user.user.id}`,
         socketPath: Sock,
         port: null,
         headers: {
@@ -538,46 +491,9 @@ export default function InteractiveList() {
           >
             New Alignment
           </Button>
-          {/* <Button
-            alignItems="center"
-            variant="contained"
-            variant="outlined"
-            color="primary"
-            onClick={handleRemoteFiles}
-          >
-            New Button
-          </Button> */}
         </Box>
       </Grid>
 
-      {/* important */}
-      {/* 
-      <iframe
-        src="http://127.0.0.1:8080/"
-        style={{ border: "none", display: "true" }}
-        width="100%"
-        height="1000"
-      ></iframe> */}
-      {/* <FormGroup row>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={dense}
-              onChange={(event) => setDense(event.target.checked)}
-            />
-          }
-          label="Enable dense"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={secondary}
-              onChange={(event) => setSecondary(event.target.checked)}
-            />
-          }
-          label="Enable secondary text"
-        />
-      </FormGroup> */}
       <Grid container spacing={2}>
         <Dialog
           key={selectedRow._id}
@@ -617,6 +533,7 @@ export default function InteractiveList() {
             </Button>
           </DialogActions>
         </Dialog>
+
         {data.length > 0 ? (
           data.map((row) => {
             const reports = [];
@@ -735,6 +652,17 @@ export default function InteractiveList() {
                   >
                     View Report
                   </Button>
+                  {row.createdBy._id === user.user.id ? (
+                    <Button
+                      variant="contained"
+                      color={row.public ? "primary" : "secondary"}
+                      onClick={() => makePublic(row)}
+                    >
+                      {row.public ? "Make Private" : "Make Public"}
+                    </Button>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div className={classes.demo}>
                   <List dense={dense}>
@@ -783,24 +711,6 @@ export default function InteractiveList() {
                         </ListItem>
                       );
                     })}
-                    {/* {generate(
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <FolderIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Single-line item"
-                      secondary={secondary ? "Secondary text" : null}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                )} */}
                   </List>
                 </div>
               </Grid>

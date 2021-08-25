@@ -14,6 +14,11 @@ const RunSchema = new Schema({
         required: true,
         default: "",
     },
+    public: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
     remoteDir: {
         type: String,
         required: false,
