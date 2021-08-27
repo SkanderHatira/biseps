@@ -9,11 +9,13 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
     );
     const localScript = path.join(__dirname, "../resources/snakemake.sh");
     const workflow = path.join(__dirname, "../resources/biseps/");
-    const options = {
-        slient: false,
-        detached: true,
-    };
+    const shell = process.env.SHELL;
+
     if (body.remote) {
+        const options = {
+            slient: false,
+            detached: true,
+        };
         const host = {
             host: body.machine.hostname,
             port: body.machine.port,
@@ -26,7 +28,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
 
         const child = execFile(
             remoteScript,
-            [env, profile, uniqueDir],
+            [env, profile, uniqueDir, shell],
             options
         );
         let data = "";
@@ -164,6 +166,14 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
                 console.log(err, "catch error");
             });
     } else {
+        console.log(process.env);
+        const options = {
+            slient: false,
+            detached: true,
+            shell: true,
+        };
+        console.log(process.env.SHELL);
+
         console.log("this is env", env);
         console.log("this is profile", profile);
         console.log(options);
@@ -178,8 +188,15 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
         //     `bash ${localScript} ${env} ${profile} ${workflow} > ${logfile}`,
         //     options
         // );
-
-        const child = execFile(localScript, [env, profile, workflow], options);
+        exec("echo $PATH &> /home/shatira/output.txt", options);
+        exec("echo $HOME &>> /home/shatira/output.txt", options);
+        exec("which conda &>> /home/shatira/output.txt", options);
+        exec("which python &>> /home/shatira/output.txt", options);
+        const child = execFile(
+            localScript,
+            [env, profile, workflow, shell],
+            options
+        );
         let data = "";
         for await (const chunk of child.stdout) {
             console.log("stdout chunk: " + chunk);

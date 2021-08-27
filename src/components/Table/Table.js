@@ -347,6 +347,7 @@ export default function InteractiveList() {
           .catch((err) => {
             console.error(err.message);
           });
+        fs.rmdirSync(row.outdir, { recursive: true });
       } else {
         fs.rmdirSync(row.outdir, { recursive: true });
       }
@@ -550,15 +551,20 @@ export default function InteractiveList() {
                 </Typography>
 
                 <div>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleClickOpen(row)}
-                    className={classes.button}
-                    startIcon={<DeleteIcon />}
-                  >
-                    Delete
-                  </Button>
+                  {row.createdBy._id === user.user.id ? (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleClickOpen(row)}
+                      className={classes.button}
+                      startIcon={<DeleteIcon />}
+                    >
+                      Delete
+                    </Button>
+                  ) : (
+                    ""
+                  )}
+
                   {/* This Button uses a Font Icon, see the installation instructions in the Icon component docs. */}
 
                   <Button
@@ -584,15 +590,19 @@ export default function InteractiveList() {
                   >
                     {row.remote ? "Open Local Folder" : "Open Folder"}
                   </Button>
-                  <Button
-                    variant="contained"
-                    color="default"
-                    onClick={() => handleRerun(row)}
-                    className={classes.button}
-                    startIcon={<RefreshIcon />}
-                  >
-                    Rerun
-                  </Button>
+                  {row.createdBy._id === user.user.id ? (
+                    <Button
+                      variant="contained"
+                      color="default"
+                      onClick={() => handleRerun(row)}
+                      className={classes.button}
+                      startIcon={<RefreshIcon />}
+                    >
+                      Rerun
+                    </Button>
+                  ) : (
+                    ""
+                  )}
 
                   <Button
                     variant="contained"

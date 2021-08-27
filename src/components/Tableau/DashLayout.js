@@ -152,7 +152,7 @@ const DashLayout = ({ Filling }) => {
             noWrap
             className={classes.title}
           >
-            Dashboard
+            {auth.user.user.name} Dashboard
           </Typography>
 
           {auth.user.isAuthenticated ? (

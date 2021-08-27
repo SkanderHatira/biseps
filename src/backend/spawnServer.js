@@ -4,7 +4,6 @@ const spawnServer = async (sock) => {
     const options = {
         slient: false,
         detached: false,
-        shell: true,
     };
     const child = spawn(
         "node",

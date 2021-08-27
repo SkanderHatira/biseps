@@ -17,12 +17,9 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 
-const kill = require("kill-port");
-const running = require("is-running");
 const handler = require("serve-handler");
 const electron = window.require("electron");
 const { shell } = window.require("electron");
-const remote = electron.remote;
 const fs = require("fs");
 const http = require("http");
 const path = require("path");

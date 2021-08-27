@@ -6,8 +6,9 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
-const os = require("os");
 
+const os = require("os");
+const kill = require("tree-kill");
 const path = require("path");
 const fs = require("fs");
 const running = require("is-running");
@@ -20,7 +21,7 @@ const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
 );
-
+console.log(process.env.SHELL);
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 console.log(bisepsTemp);
@@ -72,9 +73,9 @@ exec(
     console.log(`stdout: ${stdout}`);
   }
 );
-setTimeout(function () {
-  server(sock);
-}, 4000);
+// setTimeout(function () {
+server(sock);
+// }, 4000);
 // const sock = "/tmp/bissprop.sock";
 
 global.sharedObj = { prop1: sock };

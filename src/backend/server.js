@@ -25,10 +25,31 @@ app.use(
 );
 app.use(bodyParser.json());
 console.log("where am i");
-mongoose
-    .connect(process.env.DATABASE, { useNewUrlParser: true })
-    .then(() => console.log("MongoDB successfully connected"))
-    .catch((err) => console.log(err));
+const connectWithRetry = () => {
+    return mongoose.connect(
+        process.env.DATABASE,
+        { useNewUrlParser: true },
+        function (err) {
+            if (err) {
+                console.error(
+                    "Failed to connect to mongo on startup - retrying in 0,5 sec",
+                    err
+                );
+                setTimeout(connectWithRetry, 500);
+            } else {
+                console.log("MongoDB successfully connected");
+            }
+        }
+    );
+};
+connectWithRetry();
+// mongoose
+//     .connect(process.env.DATABASE, { useNewUrlParser: true })
+//     .then(() => console.log("MongoDB successfully connected"))
+//     .catch((err) => console.log(err));
+// mongoose.connection.on("error", (err) => {
+//     console.log(err);
+// });
 // Passport middleware
 app.use(passport.initialize());
 // Passport config
