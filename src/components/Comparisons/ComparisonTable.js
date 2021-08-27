@@ -27,6 +27,10 @@ import { useAuth } from "../../hooks/useAuth";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
+import LockIcon from "@material-ui/icons/Lock";
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import TimelapseOutlinedIcon from "@material-ui/icons/TimelapseOutlined";
 
 const path = require("path");
 const fs = require("fs");
@@ -71,7 +75,13 @@ export default function InteractiveList() {
   const [refresh, setRefresh] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedRow, setSelectedRow] = useState({});
+  const [selected, setSelected] = useState([]);
+  const handleUnlock = (e, idx) => {
+    let newSelected = [...selected];
+    newSelected[idx] = !selected[idx];
 
+    setSelected(newSelected);
+  };
   const handleChange = (e) => {
     setDeleted(e.target.value);
   };
@@ -159,8 +169,10 @@ export default function InteractiveList() {
   const handleOpenAlert = () => {
     setOpenAlert(true);
   };
-  const handleRerun = (row) => {
+  const handleRerun = (row, selected) => {
     const request = {
+      rerun: true,
+      unlock: selected,
       ...row,
     };
     const token = sessionStorage.jwtToken;
@@ -199,7 +211,9 @@ export default function InteractiveList() {
     req.end();
     setRefresh(refresh + 1);
     setErrors("");
-    setSuccessMessage("Rerun Launched Successfully");
+    setSuccessMessage(
+      `${selected ? "Unlock and " : ""}Rerun Launched Successfully`
+    );
     handleOpenAlert();
   };
   const makePublic = (selectedRow) => {
@@ -420,7 +434,7 @@ export default function InteractiveList() {
           </DialogActions>
         </Dialog>
         {data.length > 0 ? (
-          data.map((row) => (
+          data.map((row, idx) => (
             <Grid key={row._id} item xs={12} md={12}>
               <Typography variant="h6" className={classes.title}>
                 {row.remote ? "Remote " : "Local "}Comparison created by{" "}
@@ -457,15 +471,6 @@ export default function InteractiveList() {
                 >
                   {row.remote ? "Open Local Folder" : "Open Folder"}
                 </Button>
-                <Button
-                  variant="contained"
-                  color="default"
-                  onClick={() => handleRerun(row)}
-                  className={classes.button}
-                  startIcon={<RefreshIcon />}
-                >
-                  Rerun
-                </Button>
 
                 <Button
                   variant="contained"
@@ -480,21 +485,27 @@ export default function InteractiveList() {
                   }
                   className={classes.button}
                   startIcon={
-                    fileExist(
-                      path.join(
-                        row.outdir,
-                        row.remote ? "archive.lock" : "comparison.lock"
-                      )
-                    ) ? (
+                    fileExist(path.join(row.outdir, "failed.lock")) ? (
+                      <ErrorIcon
+                        style={{
+                          color: "red",
+                        }}
+                      />
+                    ) : fileExist(
+                        path.join(
+                          row.outdir,
+                          row.remote ? "archive.lock" : "comparison.lock"
+                        )
+                      ) ? (
                       <CheckCircleIcon
                         style={{
                           color: "green",
                         }}
                       />
                     ) : (
-                      <ErrorIcon
+                      <TimelapseOutlinedIcon
                         style={{
-                          color: "red",
+                          color: "blue",
                         }}
                       />
                     )
@@ -514,7 +525,7 @@ export default function InteractiveList() {
                   color="default"
                   onClick={
                     row.remote
-                      ? () => handleLog(row, "/report.html")
+                      ? () => handleLog(row, "report.html")
                       : () =>
                           createBrowserWindow(
                             path.join(row.outdir, "report.html")
@@ -536,6 +547,34 @@ export default function InteractiveList() {
                 ) : (
                   ""
                 )}
+
+                {row.createdBy._id === user.user.id &&
+                (fileExist(path.join(row.outdir, "failed.lock")) ||
+                  fileExist(path.join(row.outdir, "archive.lock")) ||
+                  fileExist(path.join(row.outdir, "comparison.lock"))) ? (
+                  <>
+                    <Button
+                      variant="contained"
+                      className={classes.button}
+                      startIcon={<RefreshIcon />}
+                      onClick={() => handleRerun(row, selected[idx])}
+                    >
+                      RERUN{" "}
+                    </Button>
+                    <ToggleButton
+                      variant="contained"
+                      className={classes.button}
+                      selected={selected[idx]}
+                      onChange={(e) => {
+                        handleUnlock(e, idx);
+                      }}
+                    >
+                      {selected[idx] ? <LockOpenIcon /> : <LockIcon />}
+                    </ToggleButton>
+                  </>
+                ) : (
+                  ""
+                )}
               </div>
               <div className={classes.demo}>
                 <List dense={dense}>
@@ -545,16 +584,25 @@ export default function InteractiveList() {
                         key={context}
                         button
                         disabled={
-                          fileExist(
-                            `${row.outdir}/${comparison.id}/${comparison.id}-CG.bed`
-                          )
+                          row.remote
+                            ? false
+                            : fileExist(
+                                `${row.outdir}/${comparison.id}/${comparison.id}-CG.bed`
+                              )
                             ? false
                             : true
                         }
                         onClick={() => {
-                          const path = `${row.outdir}/${comparison.id}/${comparison.id}-${context}.bed`;
-                          console.log(path);
-                          createBrowserWindow(path);
+                          if (row.remote) {
+                            // handleRemoteFiles(row, sample);
+                            handleLog(
+                              row,
+                              `${comparison.id}/${comparison.id}-${context}.bed`
+                            );
+                          } else {
+                            const path = `${row.outdir}/${comparison.id}/${comparison.id}-${context}.bed`;
+                            createBrowserWindow(path);
+                          }
                         }}
                       >
                         <ListItemAvatar>

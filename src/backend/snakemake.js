@@ -1,4 +1,4 @@
-const spawnChild = async (body, profile, uniqueDir, homeDir) => {
+const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const { execFile, exec, spawn } = require("child_process");
     let Client = require("ssh2-sftp-client");
     const path = require("path");
@@ -172,12 +172,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
             detached: true,
             shell: true,
         };
-        console.log(process.env.SHELL);
 
-        console.log("this is env", env);
-        console.log("this is profile", profile);
-        console.log(options);
-        console.log("this is workflow", workflow);
         // const child = spawn(
         //     process.platform === "darwin" ? "bash" : "bash",
 
@@ -188,13 +183,10 @@ const spawnChild = async (body, profile, uniqueDir, homeDir) => {
         //     `bash ${localScript} ${env} ${profile} ${workflow} > ${logfile}`,
         //     options
         // );
-        exec("echo $PATH &> /home/shatira/output.txt", options);
-        exec("echo $HOME &>> /home/shatira/output.txt", options);
-        exec("which conda &>> /home/shatira/output.txt", options);
-        exec("which python &>> /home/shatira/output.txt", options);
+
         const child = execFile(
             localScript,
-            [env, profile, workflow, shell],
+            [env, profile, workflow, shell, unlock],
             options
         );
         let data = "";

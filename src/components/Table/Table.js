@@ -25,10 +25,13 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+import ToggleButton from "@material-ui/lab/ToggleButton";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-
+import TimelapseOutlinedIcon from "@material-ui/icons/TimelapseOutlined";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
+import LockIcon from "@material-ui/icons/Lock";
 const { clipboard } = require("electron");
 const fs = require("fs");
 const path = require("path");
@@ -48,6 +51,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     maxWidth: 752,
+  },
+  rootButton: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    "& > *": {
+      margin: theme.spacing(1),
+    },
   },
   demo: {
     // backgroundColor: theme.palette.background.paper,
@@ -74,6 +85,8 @@ export default function InteractiveList() {
   const [refresh, setRefresh] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const [selected, setSelected] = useState([]);
+
   const handleChange = (e) => {
     setDeleted(e.target.value);
   };
@@ -83,6 +96,13 @@ export default function InteractiveList() {
     setOpen(true);
   };
 
+  const handleUnlock = (e, idx) => {
+    let newSelected = [...selected];
+    newSelected[idx] = !selected[idx];
+
+    setSelected(newSelected);
+  };
+  console.log(selected);
   const handleLog = (row, filePath) => {
     let sftp = new Client();
     if (!fs.existsSync(bisepsTemp)) {
@@ -121,9 +141,6 @@ export default function InteractiveList() {
         handleOpenAlert();
         sftp.end();
       });
-  };
-  const getFile = () => {
-    console.log("getfile");
   };
 
   const downloadFiles = (row, sample, tracks) => {
@@ -192,43 +209,6 @@ export default function InteractiveList() {
       });
   };
 
-  const handleRemoteFiles = (row, sample) => {
-    if (!fs.existsSync(bisepsTemp)) {
-      fs.mkdirSync(bisepsTemp);
-    }
-    let remoteDir = row.remoteDir;
-    let remotePath = `${remoteDir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
-    let localPath = sample.samplePath + "-multiqc_report.html";
-    sftp
-      .connect({
-        host: row.machine.hostname,
-        port: row.machine.port,
-        username: row.machine.username,
-        ...(!(row.machine.privateKey === "") && {
-          privateKey: require("fs").readFileSync(row.machine.privateKey),
-        }),
-        password: row.machine.password,
-      })
-      .then(() => {
-        console.log(remotePath);
-        console.log(localPath);
-        console.log("made it all the way here?");
-        if (!fs.existsSync(path.join(bisepsTemp, localPath))) {
-          return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
-        }
-      })
-      .then((data) => {
-        console.log("done done done");
-        createBrowserWindow(path.join(bisepsTemp, localPath));
-        sftp.end();
-      })
-      .catch((err) => {
-        console.log(err, "catch error");
-        setErrors("File isn't ready yet");
-        handleOpenAlert();
-        sftp.end();
-      });
-  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -238,11 +218,13 @@ export default function InteractiveList() {
   const handleOpenAlert = () => {
     setOpenAlert(true);
   };
-  const handleRerun = (row) => {
+  const handleRerun = (row, selected) => {
     const request = {
       rerun: true,
+      unlock: selected || false,
       ...row,
     };
+    console.log(request);
     const token = sessionStorage.jwtToken;
     const options = {
       method: "POST",
@@ -279,7 +261,9 @@ export default function InteractiveList() {
     req.end();
     setRefresh(refresh + 1);
     setErrors("");
-    setSuccessMessage("Rerun Launched Successfully");
+    setSuccessMessage(
+      `${selected ? "Unlock and " : ""}Rerun Launched Successfully`
+    );
     handleOpenAlert();
   };
   const handleDelete = (user, row, deleted) => {
@@ -536,7 +520,7 @@ export default function InteractiveList() {
         </Dialog>
 
         {data.length > 0 ? (
-          data.map((row) => {
+          data.map((row, idx) => {
             const reports = [];
             row.samples.map((sample) => {
               reports.push(
@@ -590,19 +574,6 @@ export default function InteractiveList() {
                   >
                     {row.remote ? "Open Local Folder" : "Open Folder"}
                   </Button>
-                  {row.createdBy._id === user.user.id ? (
-                    <Button
-                      variant="contained"
-                      color="default"
-                      onClick={() => handleRerun(row)}
-                      className={classes.button}
-                      startIcon={<RefreshIcon />}
-                    >
-                      Rerun
-                    </Button>
-                  ) : (
-                    ""
-                  )}
 
                   <Button
                     variant="contained"
@@ -617,21 +588,27 @@ export default function InteractiveList() {
                     }
                     className={classes.button}
                     startIcon={
-                      fileExist(
-                        path.join(
-                          row.outdir,
-                          row.remote ? "archive.lock" : "alignment.lock"
-                        )
-                      ) ? (
+                      fileExist(path.join(row.outdir, "failed.lock")) ? (
+                        <ErrorIcon
+                          style={{
+                            color: "red",
+                          }}
+                        />
+                      ) : fileExist(
+                          path.join(
+                            row.outdir,
+                            row.remote ? "archive.lock" : "alignment.lock"
+                          )
+                        ) ? (
                         <CheckCircleIcon
                           style={{
                             color: "green",
                           }}
                         />
                       ) : (
-                        <ErrorIcon
+                        <TimelapseOutlinedIcon
                           style={{
-                            color: "red",
+                            color: "blue",
                           }}
                         />
                       )
@@ -670,6 +647,33 @@ export default function InteractiveList() {
                     >
                       {row.public ? "Make Private" : "Make Public"}
                     </Button>
+                  ) : (
+                    ""
+                  )}
+                  {row.createdBy._id === user.user.id &&
+                  (fileExist(path.join(row.outdir, "failed.lock")) ||
+                    fileExist(path.join(row.outdir, "archive.lock")) ||
+                    fileExist(path.join(row.outdir, "alignment.lock"))) ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<RefreshIcon />}
+                        onClick={() => handleRerun(row, selected[idx], idx)}
+                      >
+                        RERUN{" "}
+                      </Button>
+                      <ToggleButton
+                        variant="contained"
+                        className={classes.button}
+                        selected={selected[idx]}
+                        onChange={(e) => {
+                          handleUnlock(e, idx);
+                        }}
+                      >
+                        {selected[idx] ? <LockOpenIcon /> : <LockIcon />}
+                      </ToggleButton>
+                    </>
                   ) : (
                     ""
                   )}

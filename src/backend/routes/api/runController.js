@@ -87,7 +87,7 @@ router.post("/run", (req, res) => {
             createProfile(req.body, uniqueDir);
             createConfig(req.body, uniqueDir);
             createUnits(req.body, uniqueDir);
-            spawnChild(req.body, profile);
+            spawnChild(req.body, profile, "", "", false);
         } else {
             const date = new Date().getTime().toString();
             const uniqueDir = path.join(req.body.outdir, date);
@@ -154,7 +154,7 @@ router.post("/run", (req, res) => {
             createConfig(req.body, uniqueDir, uniqueDirRemote);
             createUnits(req.body, uniqueDir);
             // createArchive(uniqueDir);
-            spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
+            spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, false);
         }
     }
 });
@@ -206,7 +206,7 @@ router.post("/rerun", function (req, res) {
 
     if (!req.body.remote) {
         const profile = path.join(req.body.outdir, "config/profiles/local");
-        spawnChild(req.body, profile, uniqueDir);
+        spawnChild(req.body, profile, uniqueDir, "", req.body.unlock);
         console.log("Rerun Snakemake", profile);
     } else {
         const profile = path.join(
@@ -215,7 +215,13 @@ router.post("/rerun", function (req, res) {
         );
         const uniqueDirRemote = req.body.remoteDir;
         const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);
-        spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
+        spawnChild(
+            req.body,
+            profile,
+            uniqueDir,
+            uniqueDirRemote,
+            req.body.unlock
+        );
     }
 });
 router.put("/:id", (req, res, next) => {

@@ -8,7 +8,6 @@ const {
 } = require("electron");
 
 const os = require("os");
-const kill = require("tree-kill");
 const path = require("path");
 const fs = require("fs");
 const running = require("is-running");

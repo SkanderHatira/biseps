@@ -92,7 +92,7 @@ router.post("/comparison", (req, res) => {
             // createProfile(req.body, uniqueDir);
             // createConfig(req.body, uniqueDir);
             // createUnits(req.body, uniqueDir);
-            spawnChild(req.body, profile);
+            spawnChild(req.body, profile, "", "", false);
         } else {
             const date = new Date().getTime().toString();
             // const uniqueDir = path.join(
@@ -156,7 +156,7 @@ router.post("/comparison", (req, res) => {
             createConfigComparison(req.body, uniqueDir, uniqueDirRemote);
             createUnitsComparison(req.body, uniqueDir);
             // // createArchive(uniqueDir);
-            spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
+            spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, false);
         }
     }
 });
@@ -202,7 +202,7 @@ router.post("/rerun", function (req, res) {
             req.body.outdir,
             "config/profiles/localComparison"
         );
-        spawnChild(req.body, profile);
+        spawnChild(req.body, profile, uniqueDir, "", req.body.unlock);
         console.log("Rerun Snakemake", profile);
     } else {
         const profile = path.join(
@@ -213,8 +213,13 @@ router.post("/rerun", function (req, res) {
         );
         const uniqueDir = req.body.outdir;
         const uniqueDirRemote = req.body.remoteDir;
-        const homeDir = path.join(req.body.remoteDir, uniqueDirRemote);
-        spawnChild(req.body, profile, uniqueDir, uniqueDirRemote, homeDir);
+        spawnChild(
+            req.body,
+            profile,
+            uniqueDir,
+            uniqueDirRemote,
+            req.body.unlock
+        );
     }
 });
 
