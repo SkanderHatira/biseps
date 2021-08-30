@@ -597,10 +597,10 @@ export default function InteractiveList() {
                             // handleRemoteFiles(row, sample);
                             handleLog(
                               row,
-                              `${comparison.id}/${comparison.id}-${context}.bed`
+                              `results/${comparison.id}/${comparison.id}-${context}.bed`
                             );
                           } else {
-                            const path = `${row.outdir}/${comparison.id}/${comparison.id}-${context}.bed`;
+                            const path = `${row.outdir}/results/${comparison.id}/${comparison.id}-${context}.bed`;
                             createBrowserWindow(path);
                           }
                         }}

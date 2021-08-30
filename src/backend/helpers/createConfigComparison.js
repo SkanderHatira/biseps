@@ -20,7 +20,7 @@ const createConfigComparison = (body, uniqueDir, uniqueDirRemote) => {
                     : body.genome,
             },
             annot: body.remote
-                ? path.join("resources/genome", path.basename(body.annot))
+                ? path.join("resources/annotation", path.basename(body.annot))
                 : body.annot,
         },
         params: {
