@@ -1,16 +1,20 @@
 const spawnServer = async (sock) => {
-    const { spawn } = require("child_process");
+    const { spawn, fork } = require("child_process");
     const path = require("path");
     const options = {
         slient: false,
         detached: false,
     };
-    const child = spawn(
-        "node",
-        [path.join(__dirname, "backend/server.js"), sock],
+    // const child = spawn(
+    //     "node",
+    //     [path.join(__dirname, "backend/server.js"), sock],
+    //     options
+    // );
+    const child = fork(
+        path.join(__dirname, "backend/server.js"),
+        [sock],
         options
     );
-
     let data = "";
     for await (const chunk of child.stdout) {
         console.log("stdout chunk: " + chunk);

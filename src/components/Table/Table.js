@@ -25,7 +25,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -208,7 +207,71 @@ export default function InteractiveList() {
         sftp.end();
       });
   };
+  const downloadFiles = (row, sample, tracks) => {
+    let sftp = new Client();
 
+    console.log(tracks);
+    console.log(row, sample);
+    console.log("download files");
+
+    console.log(homedir);
+    console.log(row.machine);
+    console.log(sample);
+
+    if (!fs.existsSync(bisepsTemp)) {
+      fs.mkdirSync(bisepsTemp);
+    }
+
+    sftp
+      .connect({
+        host: row.machine.hostname,
+        port: row.machine.port,
+        username: row.machine.username,
+        ...(!(row.machine.privateKey === "") && {
+          privateKey: require("fs").readFileSync(row.machine.privateKey),
+        }),
+        password: row.machine.password,
+      })
+      .then(async () => {
+        console.log("made it all the way here?");
+        // return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
+        // tracks.map((track) => {
+        //   console.log(track);
+        for (const track in tracks) {
+          if (
+            !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
+          ) {
+            console.log(path.join(bisepsTemp, path.basename(tracks[track])));
+            try {
+              await sftp.fastGet(
+                tracks[track],
+                path.join(bisepsTemp, path.basename(tracks[track]))
+              );
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+
+        // });
+      })
+      .finally(() => {
+        createBrowserWindow(
+          path.join(
+            bisepsTemp,
+            path.join(`${sample.samplePath}-multiqc_report.html`)
+          )
+        );
+        console.log("done done done");
+        sftp.end();
+      })
+      .catch((err) => {
+        console.log(err, "catch error");
+        setErrors("File isn't ready yet");
+        handleOpenAlert();
+        sftp.end();
+      });
+  };
   const handleClose = () => {
     setOpen(false);
   };

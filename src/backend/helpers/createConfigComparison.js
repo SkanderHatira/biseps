@@ -34,10 +34,10 @@ const createConfigComparison = (body, uniqueDir, uniqueDirRemote) => {
             pValueThreshold: body.pValueThreshold,
             minCytosinesCount: body.minCytosinesCount,
             minProportionDifference: body.minProportionDifference,
-            minGap: body.minGap,
-            minSize: body.minSize,
+            minGap: parseInt(body.minGap),
+            minSize: parseInt(body.minSize),
             minReadsPerCytosine: body.minReadsPerCytosine,
-            cores: body.remote ? "10" : cpuCount,
+            cores: body.remote ? 10 : cpuCount,
         },
     };
     const yamlStr = yaml.dump(config);

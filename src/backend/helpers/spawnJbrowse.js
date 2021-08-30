@@ -23,7 +23,7 @@ const spawnChild = (body) => {
         console.log(path.extname(genome));
         console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
 
-        const child = spawn(
+        const child = fork(
             path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
             ["add-assembly", genome, "--load", "copy", "--out", body.jbPath],
             options
