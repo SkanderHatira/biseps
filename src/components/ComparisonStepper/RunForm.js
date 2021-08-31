@@ -16,9 +16,12 @@ import { useAuth } from "../../hooks/useAuth";
 import ComparisonForm from "../Comparisons/ComparisonForm";
 import { useHistory } from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 const http = require("http");
-
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -89,7 +92,18 @@ export default function RunForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const history = useHistory();
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState();
+  const [open, setOpen] = useState(false);
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
 
+    setOpen(false);
+  };
+  const handleClick = () => {
+    setOpen(true);
+  };
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -97,7 +111,34 @@ export default function RunForm() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+  function validate(compState, comparisons) {
+    // we are going to store errors for all fields
+    // in a signle array
+    const errors = [];
 
+    if (compState.genome.length === 0) {
+      errors.push("You have to specify a genome");
+    }
+    if (comparisons.length === 0) {
+      errors.push(
+        "You have to specify at least one comparison to be performed"
+      );
+    }
+    const isFullyDesigned = comparisons.every(
+      (comp) => comp.id && comp.control && comp.treatment
+    );
+    if (!isFullyDesigned) {
+      errors.push("You have to correctly fill fields for each comparison");
+    }
+    if (compState.remote) {
+      if (compState.remoteDir.length === 0) {
+        errors.push(
+          "You have to specify a remote output directory when using a remote machine"
+        );
+      }
+    }
+    return errors;
+  }
   function getStepContent(step) {
     switch (step) {
       case 0:
@@ -112,7 +153,14 @@ export default function RunForm() {
 
   const handleComparisonSubmit = () => {
     setLoading(true);
-
+    const errors = validate(compState, comparisons);
+    if (errors.length > 0) {
+      console.log(errors);
+      setErrors(errors);
+      handleClick(true);
+      setLoading(false);
+      return errors;
+    }
     const request = {
       ...compState,
       comparisons,
@@ -169,6 +217,16 @@ export default function RunForm() {
   };
   return (
     <React.Fragment>
+      <Snackbar open={open} autoHideDuration={10000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity={errors && errors.length > 0 ? "error" : "success"}
+        >
+          {errors && errors.length > 0
+            ? `You can't submit because : ${errors}`
+            : "Your Run has been submitted"}
+        </Alert>
+      </Snackbar>
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar>

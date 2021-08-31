@@ -520,7 +520,6 @@ export default function VisualizationFill() {
                   /^.*[\\\/]/,
                   ""
                 );
-                console.log(sample);
                 const associatedGenome = path.parse(associatedGenomePath).name;
                 console.log(
                   path.join(
@@ -528,25 +527,25 @@ export default function VisualizationFill() {
                     `${associatedGenomePath}/${sample.samplePath}.deduplicated.bw`
                   )
                 );
-                console.log(associatedGenomePath);
-                console.log(checkedTrack);
+
+                const sampleExist = fileExist(
+                  row.remote ? samplePathLocal : samplePath
+                );
+                const genomEist = fileExist(
+                  path.join(user.user.jbPath, `${associatedGenomePath}`)
+                );
+                const dedupExist = fileExist(
+                  path.join(
+                    user.user.jbPath,
+                    `${associatedGenome}/${sample.samplePath}.deduplicated.bw`
+                  )
+                );
                 return (
                   <ListItem
                     key={`${sample._id}-${idx}`}
                     button
                     disabled={
-                      fileExist(row.remote ? samplePathLocal : samplePath) &&
-                      !fileExist(
-                        path.join(
-                          user.user.jbPath,
-                          `${associatedGenome}/${sample.samplePath}.deduplicated.bw`
-                        )
-                      ) &&
-                      fileExist(
-                        path.join(user.user.jbPath, `${associatedGenomePath}`)
-                      )
-                        ? false
-                        : true
+                      sampleExist && !dedupExist && genomEist ? false : true
                     }
                     onClick={handleToggleTrack(
                       row.remote ? samplePathLocal : samplePath,
@@ -578,33 +577,29 @@ export default function VisualizationFill() {
                     <ListItemSecondaryAction>
                       <IconButton
                         disabled={
-                          fileExist(
-                            row.remote ? samplePathLocal : samplePath
-                          ) &&
-                          fileExist(
-                            path.join(
-                              user.user.jbPath,
-                              `${associatedGenome}/${sample.samplePath}.deduplicated.bw`
-                            )
-                          ) &&
-                          fileExist(
-                            path.join(user.user.jbPath, associatedGenome)
-                          )
-                            ? false
-                            : true
+                          sampleExist && dedupExist && genomEist ? false : true
                         }
                         edge="end"
                         aria-label="files"
                       >
-                        <CheckCircleOutlineIcon />
+                        <CheckCircleOutlineIcon
+                          style={{
+                            color: dedupExist ? "green" : "gray",
+                          }}
+                        />
                       </IconButton>
                       {row.remote ? (
                         <IconButton
                           edge="end"
+                          disabled={sampleExist}
                           aria-label="files"
                           onClick={() => downloadFiles(row, sample, tracks)}
                         >
-                          <GetAppIcon />
+                          <GetAppIcon
+                            style={{
+                              color: sampleExist ? "green" : "gray",
+                            }}
+                          />
                         </IconButton>
                       ) : (
                         ""
@@ -624,7 +619,10 @@ export default function VisualizationFill() {
       >
         {comp.map((row) => {
           const labelId = `checkbox-list-label-${row._id}`;
-
+          const associatedGenomePath = row.genome.replace(/^.*[\\\/]/, "");
+          const genomExist = fileExist(
+            path.join(user.user.jbPath, `${associatedGenomePath}`)
+          );
           return (
             <div>
               {row.comparisons.map((comparison, idx) => {
@@ -645,8 +643,8 @@ export default function VisualizationFill() {
                       const associatedGenome =
                         path.parse(associatedGenomePath).name;
 
-                      const bed = `${outdir}/${comparison.id}/${comparison.id}-${context}.bed.gz`;
-                      const bedtbi = `${outdir}/${comparison.id}/${comparison.id}-${context}.bed.gz.tbi`;
+                      const bed = `${outdir}/results/${comparison.id}/${comparison.id}-${context}.bed.gz`;
+                      const bedtbi = `${outdir}/results/${comparison.id}/${comparison.id}-${context}.bed.gz.tbi`;
                       const bedtbiPathLocal = path.join(
                         bisepsTemp,
                         path.basename(bedtbi)
@@ -668,12 +666,7 @@ export default function VisualizationFill() {
                                 `${associatedGenome}/${comparison.id}-${context}.bed.gz`
                               )
                             ) &&
-                            fileExist(
-                              path.join(
-                                user.user.jbPath,
-                                `${associatedGenomePath}`
-                              )
-                            )
+                            genomExist
                               ? false
                               : true
                           }
@@ -714,16 +707,22 @@ export default function VisualizationFill() {
                                     `${associatedGenome}/${comparison.id}-${context}.bed.gz`
                                   )
                                 ) &&
-                                fileExist(
-                                  path.join(user.user.jbPath, associatedGenome)
-                                )
+                                genomExist
                                   ? false
                                   : true
                               }
                               edge="end"
                               aria-label="files"
                             >
-                              <CheckCircleOutlineIcon />
+                              <CheckCircleOutlineIcon
+                                style={{
+                                  color: fileExist(
+                                    row.remote ? bedPathLocal : bed
+                                  )
+                                    ? "green"
+                                    : "gray",
+                                }}
+                              />
                             </IconButton>
                             {row.remote ? (
                               <IconButton

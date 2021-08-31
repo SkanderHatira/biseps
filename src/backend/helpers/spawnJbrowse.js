@@ -19,11 +19,11 @@ const spawnChild = (body) => {
     //     [uniqueDir, `${body.genomes}`, bams, workflow, body.port],
     //     options
     // );
-    body.genomes.map(async (genome) => {
+    body.genomes.map((genome) => {
         console.log(path.extname(genome));
         console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
 
-        const child = fork(
+        fork(
             path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
             ["add-assembly", genome, "--load", "copy", "--out", body.jbPath],
             options
@@ -37,7 +37,10 @@ const spawnChild = (body) => {
         //     body.jbPath,
         // ]);
         // exec(
-        //     `jbrowse add-assembly ${genome} --load copy --out ${body.jbPath}`,
+        //     `${path.join(
+        //         __dirname,
+        //         "../node_modules/@jbrowse/cli/bin/run"
+        //     )} add-assembly ${genome} --load copy --out ${body.jbPath}`,
         //     (error, stdout, stderr) => {
         //         if (error) {
         //             console.log("bigerror");
@@ -60,119 +63,300 @@ const spawnChild = (body) => {
         // console.log(assemblies);
         // --assemblyNames \'${assemblies}\' in exec command
         // no need for npx , node modules available in exec commands directly
-        let data = "";
-        for await (const chunk of child.stdout) {
-            console.log("stdout chunk: " + chunk);
-            data += chunk;
-        }
+        // let data = "";
+        // for await (const chunk of child.stdout) {
+        //     console.log("stdout chunk: " + chunk);
+        //     data += chunk;
+        // }
 
-        let error = "";
-        for await (const chunk of child.stderr) {
-            console.error("stderr chunk: " + chunk);
-            error += chunk;
-        }
-        const exitCode = await new Promise((resolve, reject) => {
-            child.on("close", resolve);
-        });
+        // let error = "";
+        // for await (const chunk of child.stderr) {
+        //     console.error("stderr chunk: " + chunk);
+        //     error += chunk;
+        // }
+        // const exitCode = await new Promise((resolve, reject) => {
+        //     child.on("close", resolve);
+        // });
 
-        if (exitCode) {
-            // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
-        }
-        return data;
+        // if (exitCode) {
+        //     // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+        // }
+        // return data;
     });
     body.tracks.map((track) => {
         // import bam
-        exec(
-            `npx jbrowse add-track ${track.track} --load copy --category \'Alignments\' --assemblyNames ${track.associatedGenome} --name \'${track.name}_bam\' --subDir ${track.associatedGenome}   --trackId ${track.id} --out ${body.jbPath}`,
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.log("bigerror");
-
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-                console.log("success");
-            }
+        console.log(
+            `${body.jbPath}/${track.associatedGenome}/${track.id}_bam.lock`
         );
+
+        fork(
+            path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+            [
+                "add-track",
+                track.track,
+                "--load",
+                "copy",
+                "--assemblyNames",
+                track.associatedGenome,
+                "--out",
+                body.jbPath,
+                "--category",
+                "Alignments",
+                "--name",
+                `${track.name}_bam`,
+                "--subDir",
+                track.associatedGenome,
+            ],
+            options
+        );
+        // exec(
+        //     `${path.join(
+        //         __dirname,
+        //         "../node_modules/@jbrowse/cli/bin/run"
+        //     )} add-track ${
+        //         track.track
+        //     } --load copy --category \'Alignments\' --assemblyNames ${
+        //         track.associatedGenome
+        //     } --name \'${track.name}_bam\' --subDir ${
+        //         track.associatedGenome
+        //     }   --out ${body.jbPath} && touch ${body.jbPath}/${
+        //         track.associatedGenome
+        //     }/${track.id}_bam.lock`,
+        //     (error, stdout, stderr) => {
+        //         if (error) {
+        //             console.log("bigerror");
+
+        //             console.error(`exec error: ${error}`);
+        //             return;
+        //         }
+        //         console.log(`stdout: ${stdout}`);
+        //         console.error(`stderr: ${stderr}`);
+        //         console.log("success");
+        //     }
+        // );
         // import bigwig_cg
-        exec(
-            `npx jbrowse add-track ${track.cgbw} --load copy --category \'Methylation Count In CG Context\' --assemblyNames ${track.associatedGenome} --name \'${track.name}_cg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.log("bigerror");
 
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-                console.log("success");
-            }
+        fork(
+            path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+            [
+                "add-track",
+                track.cgbw,
+                "--load",
+                "copy",
+                "--assemblyNames",
+                track.associatedGenome,
+                "--out",
+                body.jbPath,
+                "--category",
+                "Methylation Count In CG Context",
+                "--name",
+                `${track.name}_cg`,
+                "--subDir",
+                track.associatedGenome,
+            ],
+            options
         );
+        // exec(
+        //     `${path.join(
+        //         __dirname,
+        //         "../node_modules/@jbrowse/cli/bin/run"
+        //     )} add-track ${
+        //         track.cgbw
+        //     } --load copy --category \'Methylation Count In CG Context\' --assemblyNames ${
+        //         track.associatedGenome
+        //     } --name \'${track.name}_cg\' --subDir ${
+        //         track.associatedGenome
+        //     }  --out ${body.jbPath}`,
+        //     (error, stdout, stderr) => {
+        //         if (error) {
+        //             console.log("bigerror");
+        //             console.error(`exec error: ${error}`);
+        //             return;
+        //         }
+        //         console.log(`stdout: ${stdout}`);
+        //         console.error(`stderr: ${stderr}`);
+        //         console.log("success");
+        //     }
+        // );
         // import bigwig_chg
-        exec(
-            `npx jbrowse add-track ${track.chgbw} --load copy --category \'Methylation Count In CHG Context\' --assemblyNames ${track.associatedGenome} --name \'${track.name}_chg\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.log("bigerror");
-
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-                console.log("success");
-            }
+        fork(
+            path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+            [
+                "add-track",
+                track.chgbw,
+                "--load",
+                "copy",
+                "--assemblyNames",
+                track.associatedGenome,
+                "--out",
+                body.jbPath,
+                "--category",
+                "Methylation Count In CHG Context",
+                "--name",
+                `${track.name}_chg`,
+                "--subDir",
+                track.associatedGenome,
+            ],
+            options
         );
+        // exec(
+        //     `${path.join(
+        //         __dirname,
+        //         "../node_modules/@jbrowse/cli/bin/run"
+        //     )} add-track ${
+        //         track.chgbw
+        //     } --load copy --category \'Methylation Count In CHG Context\' --assemblyNames ${
+        //         track.associatedGenome
+        //     } --name \'${track.name}_chg\' --subDir ${
+        //         track.associatedGenome
+        //     }  --out ${body.jbPath}`,
+        //     (error, stdout, stderr) => {
+        //         if (error) {
+        //             console.log("bigerror");
+
+        //             console.error(`exec error: ${error}`);
+        //             return;
+        //         }
+        //         console.log(`stdout: ${stdout}`);
+        //         console.error(`stderr: ${stderr}`);
+        //         console.log("success");
+        //     }
+        // );
         // import bigwig_chh
-        exec(
-            `npx jbrowse add-track ${track.chhbw} --category \'Methylation Count In CHH Context\' --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_chh\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.log("bigerror");
 
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-                console.log("success");
-            }
+        fork(
+            path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+            [
+                "add-track",
+                track.chhbw,
+                "--load",
+                "copy",
+                "--assemblyNames",
+                track.associatedGenome,
+                "--out",
+                body.jbPath,
+                "--category",
+                "Methylation Count In CHH Context",
+                "--name",
+                `${track.name}_chh`,
+                "--subDir",
+                track.associatedGenome,
+            ],
+            options
         );
+        // exec(
+        //     `${path.join(
+        //         __dirname,
+        //         "../node_modules/@jbrowse/cli/bin/run"
+        //     )} add-track ${
+        //         track.chhbw
+        //     } --category \'Methylation Count In CHH Context\' --load copy --assemblyNames ${
+        //         track.associatedGenome
+        //     } --name \'${track.name}_chh\' --subDir ${
+        //         track.associatedGenome
+        //     }  --out ${body.jbPath}`,
+        //     (error, stdout, stderr) => {
+        //         if (error) {
+        //             console.log("bigerror");
+
+        //             console.error(`exec error: ${error}`);
+        //             return;
+        //         }
+        //         console.log(`stdout: ${stdout}`);
+        //         console.error(`stderr: ${stderr}`);
+        //         console.log("success");
+        //     }
+        // );
         // import bigwig_bedgraph
-        exec(
-            `npx jbrowse add-track ${track.bedbw} --category \'global methylation profile\'  --load copy --assemblyNames ${track.associatedGenome} --name \'${track.name}_bedgraph\' --subDir ${track.associatedGenome}  --out ${body.jbPath}`,
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.log("bigerror");
-
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-                console.log("success");
-            }
+        fork(
+            path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+            [
+                "add-track",
+                track.bedbw,
+                "--load",
+                "copy",
+                "--assemblyNames",
+                track.associatedGenome,
+                "--out",
+                body.jbPath,
+                "--category",
+                "Global Methylation Profile",
+                "--name",
+                `${track.name}_bedgraph`,
+                "--subDir",
+                track.associatedGenome,
+            ],
+            options
         );
+        // exec(
+        //     `${path.join(
+        //         __dirname,
+        //         "../node_modules/@jbrowse/cli/bin/run"
+        //     )} add-track ${
+        //         track.bedbw
+        //     } --category \'global methylation profile\'  --load copy --assemblyNames ${
+        //         track.associatedGenome
+        //     } --name \'${track.name}_bedgraph\' --subDir ${
+        //         track.associatedGenome
+        //     }  --out ${body.jbPath}`,
+        //     (error, stdout, stderr) => {
+        //         if (error) {
+        //             console.log("bigerror");
+
+        //             console.error(`exec error: ${error}`);
+        //             return;
+        //         }
+        //         console.log(`stdout: ${stdout}`);
+        //         console.error(`stderr: ${stderr}`);
+        //         console.log("success");
+        //     }
+        // );
     });
     body.comparisons.map((comparison) => {
         // import import_bedgz and index
-        exec(
-            `npx jbrowse add-track ${comparison.bed}   --category \'Differentially Methylated Regions\'  --load copy --assemblyNames ${comparison.associatedGenome} --name \'${comparison.id}\' --subDir ${comparison.associatedGenome}  --out ${body.jbPath}`,
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.log("bigerror");
-
-                    console.error(`exec error: ${error}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-                console.error(`stderr: ${stderr}`);
-                console.log("success");
-            }
+        fork(
+            path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+            [
+                "add-track",
+                comparison.bed,
+                "--load",
+                "copy",
+                "--assemblyNames",
+                comparison.associatedGenome,
+                "--out",
+                body.jbPath,
+                "--category",
+                "Differentially Methylated Regions",
+                "--name",
+                `${comparison.id}`,
+                "--subDir",
+                comparison.associatedGenome,
+            ],
+            options
         );
+        // exec(
+        //     `${path.join(
+        //         __dirname,
+        //         "../node_modules/@jbrowse/cli/bin/run"
+        //     )} add-track ${
+        //         comparison.bed
+        //     }   --category \'Differentially Methylated Regions\'  --load copy --assemblyNames ${
+        //         comparison.associatedGenome
+        //     } --name \'${comparison.id}\' --subDir ${
+        //         comparison.associatedGenome
+        //     }  --out ${body.jbPath}`,
+        //     (error, stdout, stderr) => {
+        //         if (error) {
+        //             console.log("bigerror");
+
+        //             console.error(`exec error: ${error}`);
+        //             return;
+        //         }
+        //         console.log(`stdout: ${stdout}`);
+        //         console.error(`stderr: ${stderr}`);
+        //         console.log("success");
+        //     }
+        // );
     });
 
     // const child = spawn("npx", ["jbrowse", "-h"], options);

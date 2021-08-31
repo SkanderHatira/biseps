@@ -27,9 +27,15 @@ const createSymlinkComparison = (body, uniqueDir) => {
         body.genome,
         path.join(uniqueDir, "resources/genome", path.basename(body.genome))
     );
-    createSymlinkSync(
-        body.annot,
-        path.join(uniqueDir, "resources/annotation", path.basename(body.annot))
-    );
+    body.annot != ""
+        ? createSymlinkSync(
+              body.annot,
+              path.join(
+                  uniqueDir,
+                  "resources/annotation",
+                  path.basename(body.annot)
+              )
+          )
+        : "";
 };
 module.exports = createSymlinkComparison;

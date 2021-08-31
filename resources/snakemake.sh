@@ -4,7 +4,7 @@ profile=$2
 workflow=$3
 shell=$4
 unlock=$5
-source .$(basename $shell)rc
+source ~/bash_profile || source .$(basename $shell)rc 
 source  $sourceEnv/activate
 cd $workflow
 pwd

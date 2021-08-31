@@ -536,7 +536,7 @@ export default function ComparisonForm() {
                           <Input
                             onChange={handleLabelChange}
                             value={comparison.id}
-                            error={comparison.id.length === 0}
+                            // error={comparison.id.length === 0}
                             placeholder="Label"
                             required
                             inputProps={{ "data-idx": index }}
@@ -555,7 +555,7 @@ export default function ComparisonForm() {
                             labelId="demo-mutiple-checkbox-label"
                             name="control"
                             multiple
-                            error={comparison.controls.length === 0}
+                            // error={comparison.controls.length === 0}
                             value={comparison.controls}
                             onChange={(event) =>
                               handleSelectChange(event, index)
@@ -592,7 +592,7 @@ export default function ComparisonForm() {
                           <Select
                             inputProps={{ "data-idx": index }}
                             labelId="demo-mutiple-checkbox-label"
-                            error={comparison.treatments.length === 0}
+                            // error={comparison.treatments.length === 0}
                             name="treatment"
                             multiple
                             value={comparison.treatments}

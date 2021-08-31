@@ -327,9 +327,11 @@ export default function InteractiveList() {
     }
     let sftp = new Client();
 
-    console.log(`${row.remoteDir}/${filePath}`);
     let remotePath = `${row.remoteDir}/${filePath}`;
-    let localPath = row.date + filePath;
+    let localPath = row.date + path.basename(filePath);
+    console.log(remotePath);
+    console.log(localPath);
+
     console.log(path.join(bisepsTemp, localPath));
     sftp
       .connect({
@@ -587,7 +589,7 @@ export default function InteractiveList() {
                           row.remote
                             ? false
                             : fileExist(
-                                `${row.outdir}/${comparison.id}/${comparison.id}-CG.bed`
+                                `${row.outdir}/results/${comparison.id}/${comparison.id}-${context}.bed`
                               )
                             ? false
                             : true

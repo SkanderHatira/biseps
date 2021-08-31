@@ -803,7 +803,7 @@ export default function GlobalConfig() {
                   clearOnBlur
                   handleHomeEndKeys
                   id="free-solo-with-text-demo"
-                  options={data.map((machine) => machine)}
+                  options={[{ homepath: compState.machine.homepath }]}
                   getOptionLabel={(option) => {
                     console.log(compState);
                     // Value selected with enter, right from the input

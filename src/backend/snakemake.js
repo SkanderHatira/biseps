@@ -166,7 +166,6 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                 console.log(err, "catch error");
             });
     } else {
-        console.log(process.env);
         const options = {
             slient: false,
             detached: true,

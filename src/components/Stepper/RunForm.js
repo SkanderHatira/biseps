@@ -141,6 +141,21 @@ export default function RunForm() {
     if (runState.genome.length === 0) {
       errors.push("You have to specify a genome");
     }
+    if (units.length === 0) {
+      errors.push("You have to specify at least one alignment to be performed");
+    }
+    const isFullyDesigned = units.every(
+      (unit) =>
+        unit.sample &&
+        unit.lane &&
+        unit.techrep &&
+        unit.biorep &&
+        unit.fq1 &&
+        unit.fq2
+    );
+    if (!isFullyDesigned) {
+      errors.push("You have to correctly fill fields for each comparison");
+    }
     if (runState.remote) {
       if (runState.remoteDir.length === 0) {
         errors.push(
