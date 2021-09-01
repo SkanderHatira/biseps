@@ -27,10 +27,12 @@ module.exports = {
   postPackage: async (forgeConfig, options) => {
     const resources = path.join(
       options.outputPaths[0],
-      "resources/app/.webpack/main/resources"
+      process.platform == "darwin" ? "biseps.app/Contents/Resources/app/.webpack/main/resources" : "resources/app/.webpack/main/resources"
     );
     const jbrowse = path.join(
       options.outputPaths[0],
+      process.platform == "darwin" ? 
+      "biseps.app/Contents/Resources/app/.webpack/main/backend/node_modules/" :
       "resources/app/.webpack/main/backend/node_modules/"
     );
 
