@@ -87,7 +87,7 @@ router.post("/run", (req, res) => {
             createProfile(req.body, uniqueDir);
             createConfig(req.body, uniqueDir);
             createUnits(req.body, uniqueDir);
-            spawnChild(req.body, profile, "", "", false);
+            spawnChild(req.body, profile, uniqueDir, "", false);
         } else {
             const date = new Date().getTime().toString();
             const uniqueDir = path.join(req.body.outdir, date);

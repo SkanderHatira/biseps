@@ -6,7 +6,7 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
-
+const mongod = require("./backend/spawnMongod.js");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
@@ -20,40 +20,103 @@ const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
 );
+console.log(path.join(__dirname, "resources/database/data/db/mongod.lock"));
 console.log(process.env.SHELL);
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 console.log(bisepsTemp);
-
-const mongod = require("./backend/spawnMongod.js");
-try {
-  if (fs.existsSync(mongodLock)) {
-    fs.stat(mongodLock, function (err, stats) {
-      if (stats.size === 0) {
-        mongod();
-      } else {
-        fs.readFile(mongodLock, "utf8", function (err, data) {
-          if (err) {
-            return console.log(err);
-          }
-          if (running(data)) {
-            console.log(
-              "database already running on /tmp/bisspropmongodb.sock pid : " +
-                data
-            );
-          } else {
-            fs.unlinkSync(mongodLock);
-            mongod();
-          }
-        });
-      }
-    });
-  } else {
-    mongod();
+exec(
+  `conda env create -f ${__dirname}/resources/${
+    process.platform == "darwin"
+      ? "mongodbMac.yaml"
+      : process.platform == "win32"
+      ? "mongodbWin.yaml"
+      : "mongodbLinux.yaml"
+  } -n bisepsMongo || true`,
+  (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.log(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
   }
-} catch (err) {
-  console.log(err);
+);
+exec(
+  `conda env create -f ${__dirname}/resources/${
+    process.platform == "darwin"
+      ? "snakemakeMac.yaml"
+      : process.platform == "win32"
+      ? "snakemakeWin.yaml"
+      : "snakemakeLinux.yaml"
+  } -n bisepsSnakemake || true`,
+  (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.log(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  }
+);
+if (fs.existsSync(mongodLock)) {
+  fs.stat(mongodLock, function (err, stats) {
+    if (stats.size === 0) {
+      mongod();
+    } else {
+      fs.readFile(mongodLock, "utf8", function (err, data) {
+        if (err) {
+          return console.log(err);
+        }
+        if (running(data)) {
+          console.log(
+            "database already running on /tmp/bisspropmongodb.sock pid : " +
+              data
+          );
+        } else {
+          fs.unlinkSync(mongodLock);
+          mongod();
+        }
+      });
+    }
+  });
+} else {
+  mongod();
 }
+// try {
+//   if (fs.existsSync(mongodLock)) {
+//     fs.stat(mongodLock, function (err, stats) {
+//       if (stats.size === 0) {
+//         mongod();
+//       } else {
+//         fs.readFile(mongodLock, "utf8", function (err, data) {
+//           if (err) {
+//             return console.log(err);
+//           }
+//           if (running(data)) {
+//             console.log(
+//               "database already running on /tmp/bisspropmongodb.sock pid : " +
+//                 data
+//             );
+//           } else {
+//             fs.unlinkSync(mongodLock);
+//             mongod();
+//           }
+//         });
+//       }
+//     });
+//   } else {
+//     mongod();
+//   }
+// } catch (err) {
+//   console.log(err);
+// }
 
 const server = require("../src/backend/spawnServer.js");
 const uid = uuidv4();
@@ -67,6 +130,11 @@ exec(
     }
     if (stderr) {
       console.log(`stderr: ${stderr}`);
+      console.log("CONDA EXISTS");
+      console.log("CONDA EXISTS");
+      console.log("CONDA EXISTS");
+      console.log("CONDA EXISTS");
+
       return;
     }
     console.log(`stdout: ${stdout}`);

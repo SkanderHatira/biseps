@@ -1,21 +1,32 @@
 const spawnChild = async () => {
     const { spawn } = require("child_process");
     const path = require("path");
-    const command = "bash";
+    const command = "conda";
     const options = {
         slient: false,
         detached: true,
     };
 
-    const script = path.join(__dirname, "resources/database/mongod.sh");
-    const env = path.join(__dirname, "resources/database/mongo/bin/");
     const port = 27017;
     const dbpath = path.join(__dirname, "resources/database/data/db");
     const unixSocket = "/tmp/bisspropmongodb.sock";
 
     const child = spawn(
         command,
-        [script, env, port, dbpath, unixSocket],
+        [
+            "run",
+            "-n",
+            "bisepsMongo",
+            "mongod",
+            "--port",
+            port,
+            "--dbpath",
+            dbpath,
+            "--bind_ip",
+            unixSocket,
+            "--filePermissions",
+            "0777",
+        ],
         options
     );
 
