@@ -2,15 +2,12 @@
 
 const path = require("path");
 const { exec } = require("child_process");
+const fs = require("fs");
 
 module.exports = {
   generateAssets: async (forgeConfig, options) => {
-    console.log("hahahahahahahahahaha");
-    console.log("hahahahahahahahahaha");
-    console.log("hahahahahahahahahaha");
-    console.log("hahahahahahahahahaha");
     exec(
-      `jbrowse create ${__dirname}/.webpack/main/resources/jbrowse2 -f || true`,
+      `jbrowse create ${__dirname}/resources/jbrowse2 -f || true`,
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);

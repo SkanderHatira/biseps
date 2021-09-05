@@ -6,6 +6,8 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
+const uid = uuidv4();
+const sock = `/tmp/bissprop${uid}.sock`;
 const mongod = require("./backend/spawnMongod.js");
 const os = require("os");
 const path = require("path");
@@ -20,11 +22,54 @@ const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
 );
+console.log("HAHAHAHAHA");
+console.log("HAHAHAHAHA");
+console.log("HAHAHAHAHA");
+fs.writeFileSync(
+  "/home/shatira/main.txt",
+  process.env.PATH + process.env.SHELL,
+  function (err) {
+    if (err) throw err;
+    console.log("Saved!");
+  }
+);
+console.log(process.env.PATH);
+console.log("HAHAHAHAHA");
+console.log("HAHAHAHAHA");
+console.log("HAHAHAHAHA");
 console.log(path.join(__dirname, "resources/database/data/db/mongod.lock"));
 console.log(process.env.SHELL);
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 console.log(bisepsTemp);
+process.platform == "darwin" || process.platform == "linux"
+  ? exec(
+      "bash  " + path.join(__dirname, "resources/checkConda.sh"),
+      (error, stdout, stderr) => {
+        fs.writeFileSync(
+          "/home/shatira/condaout.txt",
+          stdout + error + stderr,
+          function (err) {
+            if (err) throw err;
+            console.log("Saved!");
+          }
+        );
+        if (error) {
+          console.log(`error: ${error.message}`);
+          return (global.sharedObj = { conda: false, prop1: sock });
+        }
+        if (stderr) {
+          console.log(`stderr: ${stderr}`);
+
+          return (global.sharedObj = { conda: false, prop1: sock });
+        }
+
+        console.log(`stdout: ${stdout}`);
+        return (global.sharedObj = { conda: true, prop1: sock });
+      }
+    )
+  : "";
+
 exec(
   `conda env create -f ${__dirname}/resources/${
     process.platform == "darwin"
@@ -119,33 +164,11 @@ if (fs.existsSync(mongodLock)) {
 // }
 
 const server = require("../src/backend/spawnServer.js");
-const uid = uuidv4();
-const sock = `/tmp/bissprop${uid}.sock`;
-exec(
-  "bash " + path.join(__dirname, "resources/checkConda.sh") + " " + __dirname,
-  (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.log(`stderr: ${stderr}`);
-      console.log("CONDA EXISTS");
-      console.log("CONDA EXISTS");
-      console.log("CONDA EXISTS");
-      console.log("CONDA EXISTS");
 
-      return;
-    }
-    console.log(`stdout: ${stdout}`);
-  }
-);
 // setTimeout(function () {
 server(sock);
 // }, 4000);
 // const sock = "/tmp/bissprop.sock";
-
-global.sharedObj = { prop1: sock };
 
 try {
   require("electron-reloader")(module);

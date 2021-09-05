@@ -23,7 +23,14 @@ function App() {
         <Router>
           <div className="App">
             <Switch>
-              <Route exact path="/" component={Landing} />
+              {sessionStorage.Conda == "true" ? (
+                <Route exact path="/" component={Landing} />
+              ) : (
+                <h1>
+                  It seems like you're missing conda , this software is a vital
+                  dependancy for BiSePS
+                </h1>
+              )}
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/newrun" component={RunBoard} />

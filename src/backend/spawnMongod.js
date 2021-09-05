@@ -1,10 +1,47 @@
 const spawnChild = async () => {
     const { spawn } = require("child_process");
     const path = require("path");
-    const command = "conda";
+    const fs = require("fs");
+
+    // process.platform == "darwin" || process.platform == "linux"
+    //     ? exec(
+    //           "bash " + path.join(__dirname, "resources/checkConda.sh"),
+    //           (error, stdout, stderr) => {
+    //               fs.writeFileSync(
+    //                   "/home/shatira/mongodConda.txt",
+    //                   stdout + error + stderr,
+    //                   function (err) {
+    //                       if (err) throw err;
+    //                       console.log("Saved!");
+    //                   }
+    //               );
+    //               if (error) {
+    //                   console.log(`error: ${error.message}`);
+    //                   return;
+    //               }
+    //               if (stderr) {
+    //                   console.log(`stderr: ${stderr}`);
+
+    //                   return;
+    //               }
+    //               console.log(`stdout: ${stdout}`);
+    //           }
+    //       )
+    //     : "";
+    console.log(process.env.SHELL);
+    const logfile = "/home/shatira/mongoWindow.txt";
+    const output = fs.openSync(logfile, "a");
+    const command =
+        process.platform == "win32" ? "conda" : `$HOME/miniconda3/bin/conda`;
+
     const options = {
         slient: false,
         detached: true,
+        shell:
+            process.platform == "win32"
+                ? process.env.ComSpec
+                : `${process.env.SHELL}`,
+        stdio: ["ignore", output, output],
     };
 
     const port = 27017;
@@ -13,6 +50,7 @@ const spawnChild = async () => {
 
     const child = spawn(
         command,
+
         [
             "run",
             "-n",
