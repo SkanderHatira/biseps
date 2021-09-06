@@ -60,7 +60,7 @@ exec(
     process.platform == "darwin"
       ? "mongodbMac.yaml"
       : process.platform == "win32"
-      ? "mongodbWin.yaml"
+      ? "mongodbWindows.yaml"
       : "mongodbLinux.yaml"
   } -n bisepsMongo || true`,
   (error, stdout, stderr) => {
@@ -80,7 +80,7 @@ exec(
     process.platform == "darwin"
       ? "snakemakeMac.yaml"
       : process.platform == "win32"
-      ? "snakemakeWin.yaml"
+      ? "snakemakeWindows.yaml"
       : "snakemakeLinux.yaml"
   } -n bisepsSnakemake || true`,
   (error, stdout, stderr) => {
