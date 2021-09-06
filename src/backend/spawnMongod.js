@@ -29,8 +29,8 @@ const spawnChild = async () => {
     //       )
     //     : "";
     console.log(process.env.SHELL);
-    const logfile = "/home/shatira/mongoWindow.txt";
-    const output = fs.openSync(logfile, "a");
+    // const logfile = "/home/shatira/mongoWindow.txt";
+    // const output = fs.openSync(logfile, "a");
     const command =
         process.platform == "win32" ? "conda" : `$HOME/miniconda3/bin/conda`;
 
@@ -41,7 +41,7 @@ const spawnChild = async () => {
             process.platform == "win32"
                 ? process.env.ComSpec
                 : `${process.env.SHELL}`,
-        stdio: ["ignore", output, output],
+        // stdio: ["ignore", output, output],
     };
 
     const port = 27017;
