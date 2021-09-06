@@ -1,5 +1,5 @@
 const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
-    const { exec, spawn } = require("child_process");
+    const { exec } = require("child_process");
     let Client = require("ssh2-sftp-client");
     const fs = require("fs");
     const path = require("path");
@@ -107,11 +107,15 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         }
 
         const connect = require("ssh2-connect");
-        const exec = require("ssh2-exec");
+        const execs = require("ssh2-exec");
         connect(host, function (err, ssh) {
-            exec("ls > testing.ls.txt", { ssh: ssh }, (err, stdout, stderr) => {
-                console.log(stdout);
-            });
+            execs(
+                "ls > testing.ls.txt",
+                { ssh: ssh },
+                (err, stdout, stderr) => {
+                    console.log(stdout);
+                }
+            );
         });
         let sftp = new Client();
         sftp.connect(host)
@@ -131,7 +135,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                 console.log("Snakemake in remote");
                 if (body.cluster) {
                     connect(host, function (err, ssh) {
-                        exec(
+                        execs(
                             `${
                                 body.rerun
                                     ? `cd ${homeDir}`
@@ -151,7 +155,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                     });
                 } else {
                     connect(host, function (err, ssh) {
-                        exec(
+                        execs(
                             `${
                                 body.rerun
                                     ? `cd ${homeDir}`
