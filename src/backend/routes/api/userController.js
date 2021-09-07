@@ -81,39 +81,38 @@ router.post("/login", (req, res) => {
             if (isMatch) {
                 // User matched
                 // Create JWT Payload
-                portastic
-                    .find({
-                        min: 30000,
-                        max: 35000,
-                        retrieve: 1,
-                    })
-                    .then(function (port) {
-                        console.log(`found  http://localhost:${port} free`);
-                        const payload = {
-                            id: user.id,
-                            name: user.name,
-                            jbPath: user.jbPath,
-                            email: user.email,
-                            runs: user.runs,
-                            views: user.runs,
-                            machines: user.machines,
-                            port: port,
-                        };
-                        // Sign token
-                        jwt.sign(
-                            payload,
-                            process.env.SECRET,
-                            {
-                                expiresIn: 31556926, // 1 year in seconds
-                            },
-                            (err, token) => {
-                                res.json({
-                                    success: true,
-                                    token: "Bearer " + token,
-                                });
-                            }
-                        );
-                    });
+                // portastic
+                //     .find({
+                //         min: 30000,
+                //         max: 35000,
+                //         retrieve: 1,
+                //     })
+                //     .then(function (port) {
+                //         console.log(`found  http://localhost:${port} free`);
+                const payload = {
+                    id: user.id,
+                    name: user.name,
+                    jbPath: user.jbPath,
+                    email: user.email,
+                    runs: user.runs,
+                    views: user.runs,
+                    machines: user.machines,
+                };
+                // Sign token
+                jwt.sign(
+                    payload,
+                    process.env.SECRET,
+                    {
+                        expiresIn: 31556926, // 1 year in seconds
+                    },
+                    (err, token) => {
+                        res.json({
+                            success: true,
+                            token: "Bearer " + token,
+                        });
+                    }
+                );
+                // });
             } else {
                 return res
                     .status(400)

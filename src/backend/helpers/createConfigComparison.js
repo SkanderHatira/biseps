@@ -10,6 +10,7 @@ const createConfigComparison = (body, uniqueDir, uniqueDirRemote) => {
         comparisons: body.remote
             ? "config/comparison.tsv"
             : path.join(uniqueDir, "config/comparison.tsv"),
+        platform: "linux",
         general: {
             outdir: body.remote ? "" : uniqueDir + "/",
         },

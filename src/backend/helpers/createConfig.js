@@ -7,6 +7,7 @@ const createConfig = (body, uniqueDir) => {
         units: body.remote
             ? "config/units.tsv"
             : path.join(uniqueDir, "config/units.tsv"),
+        platform: "linux",
         general: {
             outdir: body.remote ? "" : uniqueDir + "/",
             benchmark: body.benchmark || 1,

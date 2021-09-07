@@ -53,6 +53,12 @@ export default function GlobalConfig() {
       [e.target.id]: document.getElementById(e.target.id).files[0].path,
     });
   };
+  const handleCustomAdapters = (e) => {
+    setRunState({
+      ...runState,
+      [e.target.id]: document.getElementById(e.target.id).files[0].path,
+    });
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = sessionStorage.jwtToken;
@@ -113,7 +119,7 @@ export default function GlobalConfig() {
 
   console.log(runState.remoteDir);
   console.log(value);
-
+  console.log(runState);
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -142,6 +148,7 @@ export default function GlobalConfig() {
             <Select
               value={runState.adapters}
               labelId="adapters"
+              disabled={runState.customAdapters != "" ? true : false}
               id="adapters"
               name="adapters"
               onChange={handleRunState}
@@ -150,6 +157,7 @@ export default function GlobalConfig() {
               <MenuItem value="TruSeq2-PE">TruSeq2-PE</MenuItem>
               <MenuItem value="TruSeq3-SE">TruSeq3-SE</MenuItem>
               <MenuItem value="TruSeq3-PE">TruSeq3-PE</MenuItem>
+
               {/* <input
                 accept=".fa"
                 className={classes.input}
@@ -163,6 +171,25 @@ export default function GlobalConfig() {
                 <MenuItem value="Upload">Upload</MenuItem>
               </label> */}
             </Select>
+            <Button
+              variant="contained"
+              component="label"
+              color={runState.customAdapters === "" ? "default" : "primary"}
+            >
+              {runState.customAdapters === ""
+                ? "custom adapters"
+                : runState.customAdapters.split(/[\\/]/).pop()}{" "}
+              <input
+                type="file"
+                required
+                id="customAdapters"
+                name="customAdapters"
+                label="customAdapters"
+                accept=".fasta , .fa , .fa.gz"
+                onChange={handleGenome}
+                hidden
+              />
+            </Button>
             <FormHelperText>Choose adapters</FormHelperText>
           </FormControl>
         </Grid>

@@ -408,120 +408,118 @@ export default function NewTable() {
               rowCount={units.length}
             />
             <TableBody>
-              {units
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((unit, index) => {
-                  const isItemSelected = isSelected(index);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {units.map((unit, index) => {
+                const isItemSelected = isSelected(index);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={index}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          onClick={(event) => handleClick(event, index)}
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={index}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        onClick={(event) => handleClick(event, index)}
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+
+                    <TableCell align="right">
+                      {" "}
+                      <InputBase
+                        inputProps={{ "data-idx": index }}
+                        label={`sample ${index}`}
+                        type="text"
+                        placeholder="Sample Name"
+                        value={unit.sample}
+                        required
+                        onChange={handleUnitChange}
+                        id="sample"
+                        type="text"
+                      ></InputBase>
+                    </TableCell>
+                    <TableCell align="right">
+                      {" "}
+                      <InputBase
+                        placeholder="Lane"
+                        inputProps={{ "data-idx": index }}
+                        label={`Lane ${index}`}
+                        placeholder="Lane Number"
+                        required
+                        type="text"
+                        value={unit.lane}
+                        onChange={handleUnitChange}
+                        id="lane"
+                      ></InputBase>
+                    </TableCell>
+                    <TableCell align="right">
+                      {" "}
+                      <InputBase
+                        inputProps={{ "data-idx": index }}
+                        onChange={handleUnitChange}
+                        placeholder="Technical Replicate"
+                        value={unit.techrep}
+                        id="techrep"
+                        type="text"
+                      ></InputBase>
+                    </TableCell>
+
+                    <TableCell align="right">
+                      {" "}
+                      <InputBase
+                        onChange={handleUnitChange}
+                        placeholder="Biological Replicate"
+                        value={unit.biorep}
+                        required
+                        inputProps={{ "data-idx": index }}
+                        id="biorep"
+                        type="text"
+                      ></InputBase>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Button
+                        variant="contained"
+                        component="label"
+                        color={unit.fq1 === "" ? "default" : "primary"}
+                      >
+                        {unit.fq1 === "" ? "Forward" : "Added"}
+                        <input
+                          data-idx={index}
+                          type="file"
+                          onChange={handleUnitFiles}
+                          id="fq1"
+                          name="fq1"
+                          accept=".fastq , .fq , .fastq.gz , .fq.gz"
+                          hidden
                         />
-                      </TableCell>
-
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
-                          inputProps={{ "data-idx": index }}
-                          label={`sample ${index}`}
-                          type="text"
-                          placeholder="Sample Name"
-                          value={unit.sample}
-                          required
-                          onChange={handleUnitChange}
-                          id="sample"
-                          type="text"
-                        ></InputBase>
-                      </TableCell>
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
-                          placeholder="Lane"
-                          inputProps={{ "data-idx": index }}
-                          label={`Lane ${index}`}
-                          placeholder="Lane Number"
-                          required
-                          type="text"
-                          value={unit.lane}
-                          onChange={handleUnitChange}
-                          id="lane"
-                        ></InputBase>
-                      </TableCell>
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
-                          inputProps={{ "data-idx": index }}
-                          onChange={handleUnitChange}
-                          placeholder="Technical Replicate"
-                          value={unit.techrep}
-                          id="techrep"
-                          type="text"
-                        ></InputBase>
-                      </TableCell>
-
-                      <TableCell align="right">
-                        {" "}
-                        <InputBase
-                          onChange={handleUnitChange}
-                          placeholder="Biological Replicate"
-                          value={unit.biorep}
-                          required
-                          inputProps={{ "data-idx": index }}
-                          id="biorep"
-                          type="text"
-                        ></InputBase>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Button
-                          variant="contained"
-                          component="label"
-                          color={unit.fq1 === "" ? "default" : "primary"}
-                        >
-                          {unit.fq1 === "" ? "Forward" : "Added"}
-                          <input
-                            data-idx={index}
-                            type="file"
-                            onChange={handleUnitFiles}
-                            id="fq1"
-                            name="fq1"
-                            accept=".fastq , .fq , .fastq.gz , .fq.gz"
-                            hidden
-                          />
-                        </Button>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Button
-                          variant="contained"
-                          component="label"
-                          color={unit.fq2 === "" ? "default" : "primary"}
-                        >
-                          {unit.fq2 === "" ? "Reverse" : "Added"}
-                          <input
-                            data-idx={index}
-                            type="file"
-                            onChange={handleUnitFiles}
-                            id="fq2"
-                            name="fq2"
-                            accept=".fastq , .fq , .fastq.gz , .fq.gz"
-                            hidden
-                          />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                      </Button>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Button
+                        variant="contained"
+                        component="label"
+                        color={unit.fq2 === "" ? "default" : "primary"}
+                      >
+                        {unit.fq2 === "" ? "Reverse" : "Added"}
+                        <input
+                          data-idx={index}
+                          type="file"
+                          onChange={handleUnitFiles}
+                          id="fq2"
+                          name="fq2"
+                          accept=".fastq , .fq , .fastq.gz , .fq.gz"
+                          hidden
+                        />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
@@ -530,7 +528,7 @@ export default function NewTable() {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+        {/* <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={units.length}
@@ -538,7 +536,7 @@ export default function NewTable() {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        /> */}
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

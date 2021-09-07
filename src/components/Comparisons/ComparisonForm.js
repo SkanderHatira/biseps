@@ -29,6 +29,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { useAuth } from "../../hooks/useAuth";
+import Button from "@material-ui/core/Button";
 
 const path = require("path");
 const fs = require("fs");
@@ -313,6 +314,7 @@ export default function ComparisonForm() {
     updatedUnits[index][e.target.name] = e.target.value.join();
     setComparisons(updatedUnits);
   };
+
   useEffect(() => {
     console.log(user.user.id);
     const fetchData = async () => {
@@ -372,6 +374,8 @@ export default function ComparisonForm() {
     treatments: [],
     control: "",
     treatment: "",
+    customcontrol: "",
+    customtreatment: "",
   };
   const [checked, setChecked] = useState([0]);
 
@@ -387,7 +391,29 @@ export default function ComparisonForm() {
 
     setChecked(newChecked);
   };
+  const handleCustom = (e, index) => {
+    let localPaths = "";
+    let remotePaths = "";
+    const files = document.getElementById(e.target.id).files;
+    for (let i = 0; i < files.length; i++) {
+      localPaths += `${files[i].path},`;
+      remotePaths += `data/${files[i].name},`;
+    }
+    console.log(localPaths.slice(0, -1));
+    console.log(remotePaths.slice(0, -1));
+    const updatedRemoteComparisons = [...remotecomparisons];
+    updatedRemoteComparisons[index][e.target.name] = remotePaths.slice(0, -1);
+    updatedRemoteComparisons[index][`custom${e.target.name}`] =
+      remotePaths.slice(0, -1);
 
+    setRemoteComparisons(updatedRemoteComparisons);
+
+    const updatedUnits = [...comparisons];
+    updatedUnits[index][e.target.name] = localPaths.slice(0, -1);
+    updatedUnits[index][`custom${e.target.name}`] = localPaths.slice(0, -1);
+
+    setComparisons(updatedUnits);
+  };
   const addUnit = () => {
     setRemoteComparisons([...remotecomparisons, { ...blankUnit }]);
 
@@ -509,125 +535,173 @@ export default function ComparisonForm() {
               rowCount={comparisons.length}
             />
             <TableBody>
-              {comparisons
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((comparison, index) => {
-                  const isItemSelected = isSelected(index);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  console.log(index);
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={index}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          onClick={(event) => handleClick(event, index)}
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <FormControl className={classes.formControl}>
-                          <Input
-                            onChange={handleLabelChange}
-                            value={comparison.id}
-                            // error={comparison.id.length === 0}
-                            placeholder="Label"
+              {comparisons.map((comparison, index) => {
+                const isItemSelected = isSelected(index);
+                const labelId = `enhanced-table-checkbox-${index}`;
+                console.log(index);
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={index}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        onClick={(event) => handleClick(event, index)}
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <FormControl className={classes.formControl}>
+                        <Input
+                          onChange={handleLabelChange}
+                          value={comparison.id}
+                          // error={comparison.id.length === 0}
+                          placeholder="Label"
+                          required
+                          inputProps={{ "data-idx": index }}
+                          id="id"
+                          type="text"
+                        ></Input>
+                      </FormControl>
+                    </TableCell>
+
+                    <TableCell>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-mutiple-checkbox-label">
+                          Control
+                        </InputLabel>
+                        <Select
+                          disabled={
+                            comparison.customcontrol != "" ? true : false
+                          }
+                          labelId="demo-mutiple-checkbox-label"
+                          name="control"
+                          multiple
+                          // error={comparison.controls.length === 0}
+                          value={comparison.controls}
+                          onChange={(event) => handleSelectChange(event, index)}
+                          input={<Input />}
+                          renderValue={(selected) =>
+                            selected.join(", ").length > 25
+                              ? selected.join(", ").substring(0, 25) + "..."
+                              : selected.join(", ")
+                          }
+                        >
+                          {result.map((res) => (
+                            <MenuItem
+                              disabled={fileExist(res) ? false : true}
+                              key={res}
+                              value={res}
+                            >
+                              <Checkbox
+                                checked={comparison.controls.indexOf(res) > -1}
+                              />
+                              <ListItemText primary={path.parse(res).name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <Button
+                          variant="contained"
+                          component="label"
+                          color={
+                            comparison.customcontrol === ""
+                              ? "default"
+                              : "primary"
+                          }
+                        >
+                          {comparison.customcontrol === ""
+                            ? "custom adapters"
+                            : comparison.customcontrol
+                                .split(/[\\/]/)
+                                .pop()}{" "}
+                          <input
+                            type="file"
                             required
-                            inputProps={{ "data-idx": index }}
-                            id="id"
-                            type="text"
-                          ></Input>
-                        </FormControl>
-                      </TableCell>
-
-                      <TableCell>
-                        <FormControl className={classes.formControl}>
-                          <InputLabel id="demo-mutiple-checkbox-label">
-                            Control
-                          </InputLabel>
-                          <Select
-                            labelId="demo-mutiple-checkbox-label"
+                            multiple
+                            id={`customcontrol-${index}`}
                             name="control"
-                            multiple
-                            // error={comparison.controls.length === 0}
-                            value={comparison.controls}
-                            onChange={(event) =>
-                              handleSelectChange(event, index)
-                            }
-                            input={<Input />}
-                            renderValue={(selected) =>
-                              selected.join(", ").length > 25
-                                ? selected.join(", ").substring(0, 25) + "..."
-                                : selected.join(", ")
-                            }
-                          >
-                            {result.map((res) => (
-                              <MenuItem
-                                disabled={fileExist(res) ? false : true}
-                                key={res}
-                                value={res}
-                              >
-                                <Checkbox
-                                  checked={
-                                    comparison.controls.indexOf(res) > -1
-                                  }
-                                />
-                                <ListItemText primary={path.parse(res).name} />
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </TableCell>
-                      <TableCell>
-                        <FormControl className={classes.formControl}>
-                          <InputLabel id="demo-mutiple-checkbox-label">
-                            Treatment
-                          </InputLabel>
-                          <Select
-                            inputProps={{ "data-idx": index }}
-                            labelId="demo-mutiple-checkbox-label"
-                            // error={comparison.treatments.length === 0}
-                            name="treatment"
-                            multiple
-                            value={comparison.treatments}
-                            onChange={(event) =>
-                              handleSelectChange(event, index)
-                            }
-                            input={<Input />}
-                            renderValue={(selected) =>
-                              selected.join(", ").length > 25
-                                ? selected.join(", ").substring(0, 25) + "..."
-                                : selected.join(", ")
-                            }
+                            label="customcontrol"
+                            onChange={(event) => handleCustom(event, index)}
+                            hidden
+                          />
+                        </Button>
+                      </FormControl>
+                    </TableCell>
+                    <TableCell>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-mutiple-checkbox-label">
+                          Treatment
+                        </InputLabel>
+                        <Select
+                          disabled={
+                            comparison.customtreatment != "" ? true : false
+                          }
+                          inputProps={{ "data-idx": index }}
+                          labelId="demo-mutiple-checkbox-label"
+                          // error={comparison.treatments.length === 0}
+                          name="treatment"
+                          multiple
+                          value={comparison.treatments}
+                          onChange={(event) => handleSelectChange(event, index)}
+                          input={<Input />}
+                          renderValue={(selected) =>
+                            selected.join(", ").length > 25
+                              ? selected.join(", ").substring(0, 25) + "..."
+                              : selected.join(", ")
+                          }
 
-                            // renderValue={(selected) => "Modify Treatment Input"}
-                          >
-                            {result.map((name) => (
-                              <MenuItem
-                                disabled={fileExist(name) ? false : true}
-                                key={name}
-                                value={name}
-                              >
-                                <Checkbox
-                                  checked={
-                                    comparison.treatments.indexOf(name) > -1
-                                  }
-                                />
-                                <ListItemText primary={path.parse(name).name} />
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                          // renderValue={(selected) => "Modify Treatment Input"}
+                        >
+                          {result.map((name) => (
+                            <MenuItem
+                              disabled={fileExist(name) ? false : true}
+                              key={name}
+                              value={name}
+                            >
+                              <Checkbox
+                                checked={
+                                  comparison.treatments.indexOf(name) > -1
+                                }
+                              />
+                              <ListItemText primary={path.parse(name).name} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <Button
+                          variant="contained"
+                          component="label"
+                          color={
+                            comparison.customtreatment === ""
+                              ? "default"
+                              : "primary"
+                          }
+                        >
+                          {comparison.customtreatment === ""
+                            ? "custom treatment"
+                            : comparison.customtreatment
+                                .split(/[\\/]/)
+                                .pop()}{" "}
+                          <input
+                            type="file"
+                            required
+                            multiple
+                            id={`customtreatment-${index}`}
+                            name="treatment"
+                            label="customtreatment"
+                            onChange={(event) => handleCustom(event, index)}
+                            hidden
+                          />
+                        </Button>
+                      </FormControl>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
@@ -636,7 +710,7 @@ export default function ComparisonForm() {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+        {/* <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={comparisons.length}
@@ -644,7 +718,7 @@ export default function ComparisonForm() {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        /> */}
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

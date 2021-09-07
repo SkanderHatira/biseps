@@ -125,7 +125,10 @@ export default function RunForm() {
       );
     }
     const isFullyDesigned = comparisons.every(
-      (comp) => comp.id && comp.control && comp.treatment
+      (comp) =>
+        comp.id &&
+        (comp.control || comp.customControl) &&
+        (comp.treatment || comp.customTreatment)
     );
     if (!isFullyDesigned) {
       errors.push("You have to correctly fill fields for each comparison");

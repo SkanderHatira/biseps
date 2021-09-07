@@ -350,37 +350,43 @@ export default function VisualizationFill() {
   console.log(result);
 
   const handleServe = () => {
-    const server = http.createServer(async (request, response) => {
-      handler(request, response, {
-        public: user.user.jbPath,
+    // const server = http.createServer(async (request, response) => {
+    //   handler(request, response, {
+    //     public: user.user.jbPath,
+    //   });
+    // });
+
+    // server.listen(user.user.port[0], () => {
+    //   console.log(server.listening);
+
+    //   shell.openExternal(`http:///localhost:${user.user.port[0]}`);
+    // });
+    // server.on("error", (err) => {
+    //   console.log(err);
+    // });
+
+    portastic
+      .find({
+        min: 30000,
+        max: 35000,
+        retrieve: 1,
+      })
+      .then(function (port) {
+        const server = http.createServer(async (request, response) => {
+          handler(request, response, {
+            public: user.user.jbPath,
+          });
+        });
+
+        server.listen(port[0], () => {
+          console.log(server.listening);
+
+          shell.openExternal(`http:///localhost:${port[0]}`);
+        });
+        server.on("error", (err) => {
+          console.log(err);
+        });
       });
-    });
-
-    server.listen(user.user.port[0], () => {
-      console.log(server.listening);
-
-      shell.openExternal(`http:///localhost:${user.user.port[0]}`);
-    });
-    server.on("error", (err) => {
-      console.log(err);
-    });
-
-    //   portastic
-    //     .find({
-    //       min: 30000,
-    //       max: 35000,
-    //       retrieve: 1,
-    //     })
-    //     .then(function (port) {
-    //       const server = http.createServer(async (request, response) => {
-    //         await handler(request, response, {
-    //           public: user.user.jbPath,
-    //         });
-    //       });
-    //       server.listen(user.user.port[0], () => {});
-    //       shell.openExternal(`http:///localhost:${port}`);
-    //     });
-    // }
   };
   return (
     <Container maxWidth="lg" className={classes.container} gutterbottom>

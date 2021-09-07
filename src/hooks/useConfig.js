@@ -17,6 +17,7 @@ const useProvideConfig = () => {
   const initialRun = {
     aligner: "bowtie2",
     adapters: "TruSeq2-SE",
+    customAdapters: "",
     genome: "",
     outdir: "",
     remoteDir: "",

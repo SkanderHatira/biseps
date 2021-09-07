@@ -54,7 +54,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             password: body.machine.password,
         };
         const child = exec(
-            `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --archive workflow.tar.gz`,
+            `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --config platform="other" --archive workflow.tar.gz`,
             options
         );
         // const child = spawn(
@@ -101,7 +101,6 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             fs.closeSync(fs.openSync(filename, "w"));
             // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
         } else {
-            console.log(data, err);
             const filename = `${uniqueDir}/archive.lock`;
             fs.closeSync(fs.openSync(filename, "w"));
         }
