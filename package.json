@@ -33,6 +33,12 @@
         {
           "name": "@electron-forge/maker-rpm",
           "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+
+          }
         }
       ],
       "plugins": [
@@ -92,6 +98,7 @@
     "@babel/preset-env": "^7.12.17",
     "@babel/preset-react": "^7.12.13",
     "@electron-forge/maker-dmg": "^6.0.0-beta.60",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.60",
     "@fontsource/roboto": "^4.2.2",
     "@jbrowse/cli": "^1.1.0",
     "@jbrowse/react-linear-genome-view": "^1.0.4",

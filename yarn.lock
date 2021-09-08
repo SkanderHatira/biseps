@@ -1477,6 +1477,17 @@
   optionalDependencies:
     electron-installer-snap "^5.1.0"
 
+"@electron-forge/maker-squirrel@^6.0.0-beta.60":
+  version "6.0.0-beta.60"
+  resolved "https://registry.yarnpkg.com/@electron-forge/maker-squirrel/-/maker-squirrel-6.0.0-beta.60.tgz#3f0de512efe4541359f7ee778d0cd7c4fc7fcba4"
+  integrity sha512-GUKV9LKiZX8YF0GXYFXzuxJjqDAERg0+7c50pqCpqnX9qY+0umpxB2kO4yvPJnUpgGoCUgmY3t7orlhUg8yhbQ==
+  dependencies:
+    "@electron-forge/maker-base" "6.0.0-beta.60"
+    "@electron-forge/shared-types" "6.0.0-beta.60"
+    fs-extra "^10.0.0"
+  optionalDependencies:
+    electron-winstaller "^5.0.0"
+
 "@electron-forge/maker-zip@^6.0.0-beta.54":
   version "6.0.0-beta.54"
   resolved "https://registry.yarnpkg.com/@electron-forge/maker-zip/-/maker-zip-6.0.0-beta.54.tgz#83d322afd912587fd233e87c30339d8150f29bed"

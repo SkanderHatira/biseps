@@ -1,43 +1,36 @@
 stages:
-  - create
+  - modules
   - build
 create:
-  stage: create
-  image: continuumio/miniconda3:latest
+  stage: modules
+  image: node:latest
   script:
+    - cd $CI_PROJECT_DIR/src/backend
+    - yarn install --frozen-lockfile
     - cd $CI_PROJECT_DIR/
-    - /opt/conda/bin/conda config --set always_yes yes --set changeps1 no --set add_pip_as_python_dependency no
-    - /opt/conda/bin/conda install -c conda-forge conda-pack
-    - /opt/conda/bin/conda env create  -n snakemake -f resources/snakeMinimal.yaml
-    - /opt/conda/bin/conda env create  -n mongo -f resources/mongodbLinux.yaml
-    - /opt/conda/bin/conda run -n snakemake conda pack -n snakemake
-    - /opt/conda/bin/conda run -n mongo conda pack -n mongo
-    - mkdir resources/snakemake/
-    - mkdir resources/database/mongo
-    - tar -xf snakemake.tar.gz -C resources/snakemake/
-    - tar -xf mongo.tar.gz -C resources/database/mongo
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - $CI_PROJECT_DIR/resources/snakemake/
-      - $CI_PROJECT_DIR/resources/database/mongo/
+    - yarn install --frozen-lockfile
   only:
     - master
 build:
   image: node:latest
   stage: build
   script:
-    - node --version
-    - npm install --global yarn
-    - cd $CI_PROJECT_DIR/src/backend
-    - yarn
-    - cd $CI_PROJECT_DIR/
-    - yarn
     - yarn make
   artifacts:
     expire_in: 1 week
     paths:
       - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
       - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
+  only:
+    - master
+build-win:
+  image: electronuserland/builder:wine-mono-05.21:latest
+  stage: build
+  script:
+    - yarn make --platform win32
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
   only:
     - master
