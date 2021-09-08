@@ -9,7 +9,7 @@ create:
     - /opt/conda/bin/conda config --set always_yes yes --set changeps1 no --set add_pip_as_python_dependency no
     - /opt/conda/bin/conda install -c conda-forge conda-pack
     - /opt/conda/bin/conda env create  -n snakemake -f resources/snakeMinimal.yaml
-    - /opt/conda/bin/conda env create  -n mongo -f resources/mongodb.yaml
+    - /opt/conda/bin/conda env create  -n mongo -f resources/mongodbLinux.yaml
     - /opt/conda/bin/conda run -n snakemake conda pack -n snakemake
     - /opt/conda/bin/conda run -n mongo conda pack -n mongo
     - mkdir resources/snakemake/
@@ -37,6 +37,5 @@ build:
     expire_in: 1 week
     paths:
       - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
-      - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
   only:
     - master
