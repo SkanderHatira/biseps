@@ -2,7 +2,7 @@ stages:
   - modules
   - build
 build:
-  image: electronuserland/builder:latest
+  image: electronjs/build:latest
   stage: build
   script:
     - cd $CI_PROJECT_DIR/src/backend
