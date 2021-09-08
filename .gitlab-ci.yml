@@ -24,7 +24,7 @@ create:
   only:
     - master
 build:
-  image: electronjs/build:latest
+  image: node:latest
   stage: build
   script:
     - node --version
