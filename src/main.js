@@ -25,7 +25,7 @@ const mongodLock = path.join(
 console.log("HAHAHAHAHA");
 console.log("HAHAHAHAHA");
 console.log("HAHAHAHAHA");
-
+console.log(process.env.UID);
 console.log(process.env.PATH);
 console.log("HAHAHAHAHA");
 console.log("HAHAHAHAHA");
