@@ -24,7 +24,7 @@ build:
   only:
     - master
 build-win:
-  image: electronuserland/builder:wine-mono-05.21:latest
+  image: electronuserland/builder:wine-mono-05.21
   stage: build
   script:
     - yarn make --platform win32
