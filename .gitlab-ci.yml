@@ -2,7 +2,7 @@ stages:
   - modules
   - build
 build:
-  image: electronuserland/builder:latest
+  image: node:latest
   stage: build
   script:
     - cd $CI_PROJECT_DIR/src/backend
@@ -15,20 +15,5 @@ build:
     paths:
       - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
       - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
-  only:
-    - master
-build-win:
-  image: electronuserland/builder:wine-mono-05.21
-  stage: build
-  script:
-    - cd $CI_PROJECT_DIR/src/backend
-    - yarn install
-    - cd $CI_PROJECT_DIR/
-    - yarn install
-    - yarn make --platform win32 --arch ia32
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
   only:
     - master
