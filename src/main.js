@@ -25,7 +25,7 @@ const mongodLock = path.join(
 console.log("HAHAHAHAHA");
 console.log("HAHAHAHAHA");
 console.log("HAHAHAHAHA");
-console.log(process.env.UID);
+console.log(process.getuid());
 console.log(process.env.PATH);
 console.log("HAHAHAHAHA");
 console.log("HAHAHAHAHA");
@@ -37,7 +37,7 @@ const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 console.log(bisepsTemp);
 process.platform == "darwin" || process.platform == "linux"
   ? exec(
-      "bash  " + path.join(__dirname, "resources/checkConda.sh"),
+      "bash -l " + path.join(__dirname, "resources/checkConda.sh"),
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
