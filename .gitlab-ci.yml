@@ -6,9 +6,9 @@ build:
   stage: build
   script:
     - cd $CI_PROJECT_DIR/src/backend
-    - yarn install --frozen-lockfile
+    - yarn install
     - cd $CI_PROJECT_DIR/
-    - yarn install --frozen-lockfile
+    - yarn install
     - yarn make
   artifacts:
     expire_in: 1 week
@@ -22,10 +22,10 @@ build-win:
   stage: build
   script:
     - cd $CI_PROJECT_DIR/src/backend
-    - yarn install --frozen-lockfile
+    - yarn install
     - cd $CI_PROJECT_DIR/
-    - yarn install --frozen-lockfile
-    - yarn make --platform win32
+    - yarn install
+    - yarn make --platform win32 --arch ia32
   artifacts:
     expire_in: 1 week
     paths:
