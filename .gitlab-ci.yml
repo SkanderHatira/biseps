@@ -37,5 +37,6 @@ build:
     expire_in: 1 week
     paths:
       - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
+      - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
   only:
     - master
