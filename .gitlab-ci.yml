@@ -6,6 +6,9 @@ build:
   stage: build
   script:
     - node --version
+    - apt-get update -y
+    - apt-get install -y dpkg
+    - apt-get update -y
     - apt-get install -y fakeroot
     - cd $CI_PROJECT_DIR/src/backend
     - yarn install
