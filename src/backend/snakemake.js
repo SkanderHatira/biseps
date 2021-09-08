@@ -3,7 +3,28 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     let Client = require("ssh2-sftp-client");
     const fs = require("fs");
     const path = require("path");
+    // exec(
+    //     "bash  " + path.join(__dirname, "../resources/checkConda.sh"),
+    //     (error, stdout, stderr) => {
+    //         fs.writeFileSync(
+    //             "/home/shatira/snakemake.txt",
+    //             stdout + error + stderr,
+    //             function (err) {
+    //                 if (err) throw err;
+    //                 console.log("Saved!");
+    //             }
+    //         );
 
+    //         if (error) {
+    //             console.log(`error: ${error.message}`);
+    //         }
+    //         if (stderr) {
+    //             console.log(`stderr: ${stderr}`);
+    //         }
+
+    //         console.log(`stdout: ${stdout}`);
+    //     }
+    // );
     // process.platform == "darwin" || process.platform == "linux"
     //     ? exec(
     //           "bash " +

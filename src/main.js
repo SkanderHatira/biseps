@@ -17,27 +17,19 @@ import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 const isDev = require("electron-is-dev");
-const { exec } = require("child_process");
+const { exec, execSync } = require("child_process");
 const mongodLock = path.join(
   __dirname,
   "resources/database/data/db/mongod.lock"
 );
-console.log("HAHAHAHAHA");
-console.log("HAHAHAHAHA");
-console.log("HAHAHAHAHA");
-console.log(process.getuid());
-console.log(process.env.PATH);
-console.log("HAHAHAHAHA");
-console.log("HAHAHAHAHA");
-console.log("HAHAHAHAHA");
-console.log(path.join(__dirname, "resources/database/data/db/mongod.lock"));
-console.log(process.env.SHELL);
+
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 console.log(bisepsTemp);
+console.log(process.platform);
 process.platform == "darwin" || process.platform == "linux"
   ? exec(
-      "bash -l " + path.join(__dirname, "resources/checkConda.sh"),
+      "bash  " + path.join(__dirname, "resources/checkConda.sh"),
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
@@ -54,8 +46,9 @@ process.platform == "darwin" || process.platform == "linux"
       }
     )
   : "";
+global.sharedObj = { conda: true, prop1: sock };
 
-exec(
+execSync(
   `conda env create -f ${__dirname}/resources/${
     process.platform == "darwin"
       ? "mongodbMac.yaml"
@@ -64,6 +57,14 @@ exec(
       : "mongodbLinux.yaml"
   } -n bisepsMongo || true`,
   (error, stdout, stderr) => {
+    fs.writeFileSync(
+      "/home/shatira/condaout.txt",
+      stdout + error + stderr,
+      function (err) {
+        if (err) throw err;
+        console.log("Saved!");
+      }
+    );
     if (error) {
       console.log(`error: ${error.message}`);
       return;
@@ -75,7 +76,7 @@ exec(
     console.log(`stdout: ${stdout}`);
   }
 );
-exec(
+execSync(
   `conda env create -f ${__dirname}/resources/${
     process.platform == "darwin"
       ? "snakemakeMac.yaml"
@@ -83,7 +84,16 @@ exec(
       ? "snakemakeWindows.yaml"
       : "snakemakeLinux.yaml"
   } -n bisepsSnakemake || true`,
+  { shell: true, stdio: "inherit" },
   (error, stdout, stderr) => {
+    fs.writeFileSync(
+      "/home/shatira/loginconda.txt",
+      stdout + error + stderr,
+      function (err) {
+        if (err) throw err;
+        console.log("Saved!");
+      }
+    );
     if (error) {
       console.log(`error: ${error.message}`);
       return;

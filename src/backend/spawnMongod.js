@@ -1,8 +1,29 @@
 const spawnChild = async () => {
-    const { spawn } = require("child_process");
+    const { exec, spawn } = require("child_process");
     const path = require("path");
     const fs = require("fs");
+    // exec(
+    //     "bash  " + path.join(__dirname, "resources/checkConda.sh"),
+    //     (error, stdout, stderr) => {
+    //         fs.writeFileSync(
+    //             "/home/shatira/mongod.txt",
+    //             stdout + error + stderr,
+    //             function (err) {
+    //                 if (err) throw err;
+    //                 console.log("Saved!");
+    //             }
+    //         );
 
+    //         if (error) {
+    //             console.log(`error: ${error.message}`);
+    //         }
+    //         if (stderr) {
+    //             console.log(`stderr: ${stderr}`);
+    //         }
+
+    //         console.log(`stdout: ${stdout}`);
+    //     }
+    // );
     // process.platform == "darwin" || process.platform == "linux"
     //     ? exec(
     //           "bash " + path.join(__dirname, "resources/checkConda.sh"),
@@ -42,7 +63,7 @@ const spawnChild = async () => {
             process.platform == "win32"
                 ? process.env.ComSpec
                 : `${process.env.SHELL}`,
-        stdio: ["ignore", output, output],
+        stdio: ["inherit", output, output],
     };
 
     const port = 27017;
