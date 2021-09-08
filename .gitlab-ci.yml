@@ -1,6 +1,11 @@
 stages:
   - modules
   - build
+variables:
+  PORT: 5000
+  SECRET: "secret"
+  DATABASE: "mongodb://%2Ftmp%2Fbisspropmongodb.sock"
+
 build:
   image: node:latest
   stage: build
@@ -8,6 +13,25 @@ build:
     - node --version
     - apt-get update -y
     - apt-get install -y cmake rpm fakeroot dpkg
+    - cd $CI_PROJECT_DIR/src/backend
+    - yarn install
+    - cd $CI_PROJECT_DIR/
+    - yarn install
+    - yarn make
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
+      - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
+  only:
+    - master
+build:
+  image: node:latest
+  stage: build-win
+  script:
+    - node --version
+    - apt-get update -y
+    - apt-get install -y cmake  fakeroot dpkg wine mono
     - cd $CI_PROJECT_DIR/src/backend
     - yarn install
     - cd $CI_PROJECT_DIR/
