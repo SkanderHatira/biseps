@@ -33,16 +33,28 @@ process.platform == "darwin" || process.platform == "linux"
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
-          return (global.sharedObj = { conda: false, prop1: sock });
+          return (global.sharedObj = {
+            platform: process.platform,
+            conda: false,
+            prop1: sock,
+          });
         }
         if (stderr) {
           console.log(`stderr: ${stderr}`);
 
-          return (global.sharedObj = { conda: false, prop1: sock });
+          return (global.sharedObj = {
+            platform: process.platform,
+            conda: false,
+            prop1: sock,
+          });
         }
 
         console.log(`stdout: ${stdout}`);
-        return (global.sharedObj = { conda: true, prop1: sock });
+        return (global.sharedObj = {
+          platform: process.platform,
+          conda: true,
+          prop1: sock,
+        });
       }
     )
   : "";

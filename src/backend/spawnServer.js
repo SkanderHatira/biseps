@@ -24,10 +24,10 @@ const spawnServer = async (sock) => {
     //         console.log(`stdout: ${stdout}`);
     //     }
     // );
-    // const options = {
-    //     slient: false,
-    //     detached: false,
-    // };
+    const options = {
+        slient: false,
+        detached: false,
+    };
     // const child = spawn(
     //     "node",
     //     [path.join(__dirname, "backend/server.js"), sock],

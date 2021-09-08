@@ -13,6 +13,15 @@ import { Link } from "react-router-dom";
 
 export const mainListItems = (
   <div>
+    {sessionStorage.Platform == "linux" ? (
+      ""
+    ) : (
+      <>
+        <ListItem></ListItem>
+        <ListItem></ListItem>
+      </>
+    )}
+
     <ListItem component={Link} to="/alignment" button>
       <ListItemIcon>
         <DashboardIcon />

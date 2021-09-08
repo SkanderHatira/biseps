@@ -18,10 +18,17 @@ import { Link } from "react-router-dom";
 import SettingsIcon from "@material-ui/icons/Settings";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 import { useConfig } from "../../hooks/useConfig";
+import Alert from "@material-ui/lab/Alert";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
+  alert: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
   root: {
     display: "flex",
   },
@@ -199,7 +206,17 @@ const DashLayout = ({ Filling }) => {
             ""
           )}
         </Toolbar>
+        {sessionStorage.Platform == "linux" ? (
+          ""
+        ) : (
+          <Alert severity="warning">
+            Pipeline execution is only supported on linux systems. You can,
+            however, add remote linux machines to execute your pipeline onto and
+            access data locally
+          </Alert>
+        )}
       </AppBar>
+
       <Drawer
         variant="permanent"
         classes={{
@@ -215,6 +232,7 @@ const DashLayout = ({ Filling }) => {
             <ChevronLeftIcon />
           </IconButton>
         </div>
+
         <Divider />
         <List>{mainListItems}</List>
         <Divider />
