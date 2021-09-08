@@ -1,20 +1,14 @@
 stages:
   - modules
   - build
-create:
-  stage: modules
+build:
   image: node:latest
+  stage: build
   script:
     - cd $CI_PROJECT_DIR/src/backend
     - yarn install --frozen-lockfile
     - cd $CI_PROJECT_DIR/
     - yarn install --frozen-lockfile
-  only:
-    - master
-build:
-  image: node:latest
-  stage: build
-  script:
     - yarn make
   artifacts:
     expire_in: 1 week
@@ -27,6 +21,10 @@ build-win:
   image: electronuserland/builder:wine-mono-05.21
   stage: build
   script:
+    - cd $CI_PROJECT_DIR/src/backend
+    - yarn install --frozen-lockfile
+    - cd $CI_PROJECT_DIR/
+    - yarn install --frozen-lockfile
     - yarn make --platform win32
   artifacts:
     expire_in: 1 week
