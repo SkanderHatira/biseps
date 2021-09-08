@@ -1359,13 +1359,6 @@
   dependencies:
     "@electron-forge/async-ora" "6.0.0-beta.54"
 
-"@electron-forge/installer-base@6.0.0-beta.60":
-  version "6.0.0-beta.60"
-  resolved "https://registry.yarnpkg.com/@electron-forge/installer-base/-/installer-base-6.0.0-beta.60.tgz#66b1b392b260691d6954bfa572b346ad325e4098"
-  integrity sha512-WnU7LEw98Lew1/5Kv/DzvqW19BNPPXxPTtTfpHnhOybm5g9uJ2sEjol4We5bgK0UFbCCORmwgbZYZsMCN/mx4A==
-  dependencies:
-    "@electron-forge/async-ora" "6.0.0-beta.60"
-
 "@electron-forge/installer-darwin@6.0.0-beta.54":
   version "6.0.0-beta.54"
   resolved "https://registry.yarnpkg.com/@electron-forge/installer-darwin/-/installer-darwin-6.0.0-beta.54.tgz#a8d94adf9fceaa05db54a53aaebde9decd8cf5ae"
@@ -1374,16 +1367,6 @@
     "@electron-forge/async-ora" "6.0.0-beta.54"
     "@electron-forge/installer-base" "6.0.0-beta.54"
     fs-extra "^9.0.1"
-    sudo-prompt "^9.1.1"
-
-"@electron-forge/installer-darwin@6.0.0-beta.60":
-  version "6.0.0-beta.60"
-  resolved "https://registry.yarnpkg.com/@electron-forge/installer-darwin/-/installer-darwin-6.0.0-beta.60.tgz#455a66afd13e3b50d7cca1db0b1b72223049ce99"
-  integrity sha512-qAbPhr5Dt+aALmwC47cjNKR70hj+spNKRkMYSJMxD6tpbG4JDS+UQaHeuQAWY50XGgBWdialN6Hvr+y+d+QgGg==
-  dependencies:
-    "@electron-forge/async-ora" "6.0.0-beta.60"
-    "@electron-forge/installer-base" "6.0.0-beta.60"
-    fs-extra "^10.0.0"
     sudo-prompt "^9.1.1"
 
 "@electron-forge/installer-deb@6.0.0-beta.54":
@@ -1402,16 +1385,6 @@
     "@malept/cross-spawn-promise" "^1.1.0"
     debug "^4.1.0"
     fs-extra "^9.0.1"
-
-"@electron-forge/installer-dmg@^6.0.0-beta.60":
-  version "6.0.0-beta.60"
-  resolved "https://registry.yarnpkg.com/@electron-forge/installer-dmg/-/installer-dmg-6.0.0-beta.60.tgz#a64f7277da9aba6da3090b8f2ac806d0d7aeb91b"
-  integrity sha512-N0rXYeMA4qcsDH9WadJU4RT/HmveO8ggNw3zDVmuvvV1y0nt1OGU3kHaJuslDYAUY6DNpwdHoz6wd7XLsBzDrw==
-  dependencies:
-    "@electron-forge/installer-darwin" "6.0.0-beta.60"
-    "@malept/cross-spawn-promise" "^2.0.0"
-    debug "^4.3.1"
-    fs-extra "^10.0.0"
 
 "@electron-forge/installer-exe@6.0.0-beta.54":
   version "6.0.0-beta.54"
