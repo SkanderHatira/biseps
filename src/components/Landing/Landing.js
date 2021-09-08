@@ -7,10 +7,11 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
+import Linky from "@material-ui/core/Link";
 
-import Toolbar from "@material-ui/core/Toolbar";
+const { shell } = window.require("electron");
+
 const useStyles = makeStyles((theme) => ({
   heroContent: {
     backgroundColor: theme.palette.background.paper,
@@ -49,39 +50,64 @@ const Landing = () => {
               color="textPrimary"
               gutterBottom
             >
-              <b>Run</b> our powerful DMR Identification Pipeline{" "}
-              <b>
-                <span style={{ fontFamily: "monospace" }}>BiSePS</span>
-              </b>{" "}
-              from a User-Friendly <b>GUI!</b>
+              {sessionStorage.Conda == "true" ? (
+                <>
+                  <b>Run</b> our Snakemake DMR Identification Pipeline{" "}
+                  <b>
+                    <span style={{ fontFamily: "monospace" }}>BiSePS</span>
+                  </b>{" "}
+                  from a User-Friendly <b>GUI!</b>{" "}
+                </>
+              ) : (
+                <>
+                  <b>Oops..</b> it seems like you're missing conda in your $PATH
+                  <b></b>
+                  <div>
+                    {" "}
+                    You can install <b>Miniconda</b> following this{" "}
+                    <Linky
+                      onClick={() =>
+                        shell.openExternal(
+                          "https://docs.conda.io/en/latest/miniconda.html"
+                        )
+                      }
+                    >
+                      link
+                    </Linky>{" "}
+                  </div>
+                </>
+              )}
             </Typography>
-
-            <div className={classes.heroButtons}>
-              <Grid container spacing={2} justify="center">
-                <Grid item>
-                  <Button
-                    size="large"
-                    variant="contained"
-                    component={Link}
-                    to="/register"
-                    color="primary"
-                  >
-                    Register
-                  </Button>
+            {sessionStorage.Conda == "true" ? (
+              <div className={classes.heroButtons}>
+                <Grid container spacing={2} justify="center">
+                  <Grid item>
+                    <Button
+                      size="large"
+                      variant="contained"
+                      component={Link}
+                      to="/register"
+                      color="primary"
+                    >
+                      Register
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="large"
+                      variant="outlined"
+                      component={Link}
+                      to="/login"
+                      color="primary"
+                    >
+                      Login
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Button
-                    size="large"
-                    variant="outlined"
-                    component={Link}
-                    to="/login"
-                    color="primary"
-                  >
-                    Login
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
+              </div>
+            ) : (
+              ""
+            )}
           </Container>
         </div>
       </Box>
