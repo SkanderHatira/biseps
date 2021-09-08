@@ -1,7 +1,7 @@
 {
   "name": "biseps",
   "productName": "biseps",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Bisulfite sequencing processing software",
   "main": "./.webpack/main",
   "scripts": {

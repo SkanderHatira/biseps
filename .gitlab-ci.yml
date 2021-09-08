@@ -28,12 +28,12 @@ build:
   stage: build
   script:
     - node --version
-    - sudo npm install --global yarn
+    - npm install --global yarn
     - cd $CI_PROJECT_DIR/src/backend
-    - sudo yarn
+    - yarn
     - cd $CI_PROJECT_DIR/
-    - sudo yarn
-    - sudo yarn make
+    - yarn
+    - yarn make
   artifacts:
     expire_in: 1 week
     paths:
