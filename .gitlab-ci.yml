@@ -13,6 +13,8 @@ build:
     - node --version
     - apt-get update -y
     - apt-get install -y cmake rpm fakeroot dpkg
+    - cd $CI_PROJECT_DIR/resources/biseps
+    - git pull
     - cd $CI_PROJECT_DIR/src/backend
     - yarn install
     - cd $CI_PROJECT_DIR/
