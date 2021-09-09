@@ -20,7 +20,9 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {"asar":{ "unpack": "**/.webpack/main/resources/**/*",
+        "unpackDir": "./resources/app.asar"} 
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-deb",

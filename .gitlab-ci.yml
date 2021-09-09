@@ -7,7 +7,7 @@ variables:
   DATABASE: "mongodb://%2Ftmp%2Fbisspropmongodb.sock"
   GIT_SUBMODULE_STRATEGY: normal
 
-build:
+make-linux:
   image: node:latest
   stage: build
   script:
@@ -24,5 +24,25 @@ build:
     paths:
       - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
       - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
+  only:
+    - master
+make-win32:
+  image: electronuserland/builder:wine-mono-05.21
+  stage: build
+  script:
+    - apt-get update -y
+    - apt-get install -y cmake rpm fakeroot dpkg
+    - cd $CI_PROJECT_DIR/src/backend
+    - yarn install
+    - cd $CI_PROJECT_DIR/
+    - yarn install
+    - rm -rf /root/.wine
+    - winecfg
+    - yarn make --platform win32 --target @electron-forge/maker-squirrel
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
+      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
   only:
     - master
