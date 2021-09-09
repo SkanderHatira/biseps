@@ -6,6 +6,7 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
+
 const uid = uuidv4();
 const sock = `/tmp/bissprop${uid}.sock`;
 const mongod = require("./backend/spawnMongod.js");
