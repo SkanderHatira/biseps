@@ -204,8 +204,8 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         const child = exec(
             `${
                 unlock
-                    ? `${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} --unlock ${unlock} 2> ${uniqueDir}/biseps.txt`
-                    : "true"
+                    ? `${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} --unlock 2> ${uniqueDir}/biseps.txt`
+                    : `true 2> ${uniqueDir}/biseps.txt `
             }` +
                 `&& ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} 2>> ${uniqueDir}/biseps.txt &&  ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} --report ${uniqueDir}/report.html 2>> ${uniqueDir}/biseps.txt`,
             options

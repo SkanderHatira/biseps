@@ -58,8 +58,11 @@ process.platform == "darwin" || process.platform == "linux"
         });
       }
     )
-  : "";
-global.sharedObj = { conda: true, prop1: sock };
+  : (global.sharedObj = {
+      platform: process.platform,
+      conda: true,
+      prop1: sock,
+    });
 
 execSync(
   `conda env create -f ${__dirname}/resources/${

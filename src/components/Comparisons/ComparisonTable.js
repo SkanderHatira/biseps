@@ -81,6 +81,7 @@ export default function InteractiveList() {
     newSelected[idx] = !selected[idx];
 
     setSelected(newSelected);
+    console.log(selected);
   };
   const handleChange = (e) => {
     setDeleted(e.target.value);
@@ -172,7 +173,7 @@ export default function InteractiveList() {
   const handleRerun = (row, selected) => {
     const request = {
       rerun: true,
-      unlock: selected,
+      unlock: selected || false,
       ...row,
     };
     const token = sessionStorage.jwtToken;
@@ -563,16 +564,17 @@ export default function InteractiveList() {
                     >
                       RERUN{" "}
                     </Button>
-                    <ToggleButton
+                    <Button
                       variant="contained"
                       className={classes.button}
-                      selected={selected[idx]}
-                      onChange={(e) => {
+                      color={selected[idx] ? "primary" : "secondary"}
+                      onClick={(e) => {
                         handleUnlock(e, idx);
                       }}
+                      endIcon={selected[idx] ? <LockOpenIcon /> : <LockIcon />}
                     >
-                      {selected[idx] ? <LockOpenIcon /> : <LockIcon />}
-                    </ToggleButton>
+                      {selected[idx] ? "lock" : "unlock"}
+                    </Button>
                   </>
                 ) : (
                   ""

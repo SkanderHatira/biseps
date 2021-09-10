@@ -25,7 +25,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import ToggleButton from "@material-ui/lab/ToggleButton";
+// import ToggleButton from "@material-ui/lab/ToggleButton";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import TimelapseOutlinedIcon from "@material-ui/icons/TimelapseOutlined";
@@ -100,6 +100,7 @@ export default function InteractiveList() {
     newSelected[idx] = !selected[idx];
 
     setSelected(newSelected);
+    console.log(selected);
   };
   console.log(selected);
   const handleLog = (row, filePath) => {
@@ -217,7 +218,7 @@ export default function InteractiveList() {
   const handleOpenAlert = () => {
     setOpenAlert(true);
   };
-  const handleRerun = (row, selected) => {
+  const handleRerun = (row, selected, idx) => {
     const request = {
       rerun: true,
       unlock: selected || false,
@@ -662,16 +663,19 @@ export default function InteractiveList() {
                       >
                         RERUN{" "}
                       </Button>
-                      <ToggleButton
+                      <Button
                         variant="contained"
                         className={classes.button}
-                        selected={selected[idx]}
-                        onChange={(e) => {
+                        color={selected[idx] ? "primary" : "secondary"}
+                        onClick={(e) => {
                           handleUnlock(e, idx);
                         }}
+                        endIcon={
+                          selected[idx] ? <LockOpenIcon /> : <LockIcon />
+                        }
                       >
-                        {selected[idx] ? <LockOpenIcon /> : <LockIcon />}
-                      </ToggleButton>
+                        {selected[idx] ? "lock" : "unlock"}
+                      </Button>
                     </>
                   ) : (
                     ""

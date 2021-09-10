@@ -45,4 +45,4 @@ make-win32:
       - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
       - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
   only:
-    - master
+    - win
