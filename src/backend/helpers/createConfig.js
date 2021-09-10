@@ -35,11 +35,7 @@ const createConfig = (body, uniqueDir) => {
             },
             adapters: body.remote
                 ? path.join(".test/resources/adapters", body.adapters + ".fa")
-                : path.join(
-                      __dirname,
-                      "../../resources/adapters",
-                      body.adapters + ".fa"
-                  ) || "",
+                : body.adapters,
         },
 
         params: {

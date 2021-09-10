@@ -15,9 +15,15 @@ const createSymlink = (body, uniqueDir) => {
         body.genome,
         path.join(uniqueDir, "resources/genome", path.basename(body.genome))
     );
-    createSymlinkSync(
-        body.adapters,
-        path.join(uniqueDir, "resources/adapters", path.basename(body.adapters))
-    );
+    body.remote && body.customAdapters != ""
+        ? ""
+        : createSymlinkSync(
+              body.adapters,
+              path.join(
+                  uniqueDir,
+                  "resources/adapters",
+                  path.basename(body.adapters)
+              )
+          );
 };
 module.exports = createSymlink;
