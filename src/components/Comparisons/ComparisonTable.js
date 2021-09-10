@@ -384,7 +384,7 @@ export default function InteractiveList() {
         </Alert>
       </Snackbar>
       <Grid container direction="column" alignItems="center">
-        <Box m={3}>
+        <Box m={sessionStorage.Platform == "linux" ? 3 : 10}>
           <Button
             variant="contained"
             variant="outlined"
