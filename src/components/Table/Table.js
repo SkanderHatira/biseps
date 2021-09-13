@@ -530,8 +530,10 @@ export default function InteractiveList() {
             return (
               <Grid key={row._id} item xs={12} md={12}>
                 <Typography variant="h6" className={classes.title}>
-                  {row.remote ? "Remote " : "Local "}Analysis created by{" "}
-                  {row.createdBy.name} on {row.date.split("T")[0]}
+                  {row.remote ? "Remote " : "Local "}
+                  Analysis created by {row.createdBy.name}{" "}
+                  {row.remote ? `on ${row.machine.hostname}` : ""} :{" "}
+                  {row.date.split("T")[0]}
                 </Typography>
 
                 <div>

@@ -335,7 +335,9 @@ export default function VisualizationFill() {
   };
   const blankSample = {};
   const helper = {};
-  const result = data.reduce(function (r, o) {
+  const mix = data.concat(comp);
+  console.log(mix);
+  const result = mix.reduce(function (r, o) {
     console.log(r);
     const key = o.genome;
     const genome = path.basename(o.genome);

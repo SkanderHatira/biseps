@@ -74,58 +74,59 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             }),
             password: body.machine.password,
         };
-        const child = exec(
-            `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --config platform="other" --archive workflow.tar.gz`,
-            options
-        );
-        // const child = spawn(
-        //     command,
-        //     [
-        //         "run",
-        //         "-n",
-        //         "bisepsSnakemake",
-        //         "--cwd",
-        //         uniqueDir,
-        //         "--no-capture-output",
-        //         "--live-stream",
-        //         "snakemake",
-        //         "--profile",
-        //         profile,
-        //         "--archive",
-        //         "workflow.tar.gz",
-        //     ],
-        //     options
-        // );
-        // const child = execFile(
-        //     remoteScript,
-        //     [env, profile, uniqueDir, shell],
-        //     options
-        // );
-        let data = "";
-        for await (const chunk of child.stdout) {
-            console.log("stdout chunk: " + chunk);
+        if (!fs.existsSync(path.join(uniqueDir, workflow.tar.gz))) {
+            const child = exec(
+                `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --config platform="other" --archive workflow.tar.gz`,
+                options
+            );
+            // const child = spawn(
+            //     command,
+            //     [
+            //         "run",
+            //         "-n",
+            //         "bisepsSnakemake",
+            //         "--cwd",
+            //         uniqueDir,
+            //         "--no-capture-output",
+            //         "--live-stream",
+            //         "snakemake",
+            //         "--profile",
+            //         profile,
+            //         "--archive",
+            //         "workflow.tar.gz",
+            //     ],
+            //     options
+            // );
+            // const child = execFile(
+            //     remoteScript,
+            //     [env, profile, uniqueDir, shell],
+            //     options
+            // );
+            let data = "";
+            for await (const chunk of child.stdout) {
+                console.log("stdout chunk: " + chunk);
 
-            data += chunk;
+                data += chunk;
+            }
+            let error = "";
+            for await (const chunk of child.stderr) {
+                console.error("stderr chunk: " + chunk);
+
+                error += chunk;
+            }
+            const exitCode = await new Promise((resolve, reject) => {
+                child.on("close", resolve);
+            });
+
+            if (exitCode) {
+                const filename = `${uniqueDir}/failed.archive.lock`;
+                fs.closeSync(fs.openSync(filename, "w"));
+                // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+            } else {
+                const filename = `${uniqueDir}/archive.lock`;
+                fs.closeSync(fs.openSync(filename, "w"));
+            }
         }
-        let error = "";
-        for await (const chunk of child.stderr) {
-            console.error("stderr chunk: " + chunk);
-
-            error += chunk;
-        }
-        const exitCode = await new Promise((resolve, reject) => {
-            child.on("close", resolve);
-        });
-
-        if (exitCode) {
-            const filename = `${uniqueDir}/failed.archive.lock`;
-            fs.closeSync(fs.openSync(filename, "w"));
-            // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
-        } else {
-            const filename = `${uniqueDir}/archive.lock`;
-            fs.closeSync(fs.openSync(filename, "w"));
-        }
-
         const connect = require("ssh2-connect");
         const execs = require("ssh2-exec");
         connect(host, function (err, ssh) {
@@ -162,8 +163,8 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                     : `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
                             }  && sbatch exec_scripts/${
                                 "contexts" in body
-                                    ? "slurmComparison.sh"
-                                    : "slurmScript.sh"
+                                    ? "slurmComparison.sh " + unlock
+                                    : "slurmScript.sh " + unlock
                             }`,
                             { ssh: ssh },
                             (err, stdout, stderr) => {
@@ -182,8 +183,8 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                     : `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
                             }    &&  bash exec_scripts/${
                                 "contexts" in body
-                                    ? "localComparison.sh"
-                                    : "localScript.sh"
+                                    ? "localComparison.sh " + unlock
+                                    : "localScript.sh " + unlock
                             } `,
                             { ssh: ssh },
                             (err, stdout, stderr) => {

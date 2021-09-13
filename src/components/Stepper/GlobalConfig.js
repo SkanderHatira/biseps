@@ -32,6 +32,7 @@ const styles = {
     color: "black",
   },
 };
+console.log(__dirname);
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),

@@ -15,7 +15,7 @@ const createSymlink = (body, uniqueDir) => {
         body.genome,
         path.join(uniqueDir, "resources/genome", path.basename(body.genome))
     );
-    body.remote && body.customAdapters != ""
+    body.customAdapters == ""
         ? ""
         : createSymlinkSync(
               body.adapters,
