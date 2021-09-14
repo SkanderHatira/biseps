@@ -74,7 +74,10 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             }),
             password: body.machine.password,
         };
-        if (!fs.existsSync(path.join(uniqueDir, workflow.tar.gz))) {
+        if (
+            !fs.existsSync(path.join(uniqueDir, "workflow.tar.gz")) &&
+            !body.rerun
+        ) {
             const child = exec(
                 `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --config platform="other" --archive workflow.tar.gz`,
                 options

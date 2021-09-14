@@ -3,6 +3,12 @@
 const path = require("path");
 const { execSync } = require("child_process");
 const fs = require("fs");
+const scripts = path.join(
+  __dirname,
+  ".webpack/main/resources/biseps/workflow/scripts"
+);
+const resources = path.join(__dirname, ".webpack/main/resources/");
+const chmodr = require("chmodr");
 
 module.exports = {
   generateAssets: async (forgeConfig, options) => {
@@ -22,21 +28,34 @@ module.exports = {
     );
   },
   postStart: async (forgeConfig, options) => {
-    // chmodr(resources, 0o777, (err) => {
-    //   if (err) {
-    //     console.log("Failed to execute chmod", err);
-    //   } else {
-    //     console.log("Successful");
-    //   }
-    // });
-    // chmodr(jbrowse, 0o777, (err) => {
-    //   if (err) {
-    //     console.log("Failed to execute chmod", err);
-    //   } else {
-    //     console.log("Successful");
-    //   }
-    // });
+    chmodr(scripts, 0o777, (err) => {
+      if (err) {
+        console.log("Failed to execute chmod", err);
+      } else {
+        console.log("Successful");
+      }
+    });
+    chmodr(resources, 0o777, (err) => {
+      if (err) {
+        console.log("Failed to execute chmod", err);
+      } else {
+        console.log("Successful");
+      }
+    });
   },
 
-  postPackage: async (forgeConfig, options) => {},
+  postPackage: async (forgeConfig, options) => {
+    const resources = path.join(
+      options.outputPaths[0],
+      "resources/app/.webpack/main/resources/"
+    );
+
+    chmodr(resources, 0o777, (err) => {
+      if (err) {
+        console.log("Failed to execute chmod", err);
+      } else {
+        console.log("Successful");
+      }
+    });
+  },
 };

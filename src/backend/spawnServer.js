@@ -26,7 +26,7 @@ const spawnServer = async (sock) => {
     // );
     const options = {
         slient: false,
-        detached: false,
+        detached: true,
     };
     // const child = spawn(
     //     "node",

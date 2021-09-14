@@ -18,7 +18,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
 
 const handler = require("serve-handler");
-const electron = window.require("electron");
 const { shell } = window.require("electron");
 const fs = require("fs");
 const http = require("http");
@@ -379,11 +378,11 @@ export default function VisualizationFill() {
             public: user.user.jbPath,
           });
         });
-
+        console.log(user.user.jbPath);
         server.listen(port[0], () => {
           console.log(server.listening);
 
-          shell.openExternal(`http:///localhost:${port[0]}`);
+          shell.openExternal(`http://localhost:${port[0]}`);
         });
         server.on("error", (err) => {
           console.log(err);

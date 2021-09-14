@@ -166,6 +166,7 @@ export default function RunForm() {
     }
     const request = {
       ...compState,
+      rerun: false,
       comparisons,
       remotecomparisons,
       userId: user.user.id,
