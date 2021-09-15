@@ -706,17 +706,18 @@ export default function InteractiveList() {
                               : true
                           }
                           key={sample._id}
-                          onClick={() => {
-                            if (row.remote) {
-                              // handleRemoteFiles(row, sample);
-                              downloadFiles(row, sample, tracks);
-                            } else {
-                              console.log(sample);
-                              const path = `${row.outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
-                              console.log(path);
-                              createBrowserWindow(path);
-                            }
-                          }}
+                          onClick={
+                            row.remote
+                              ? () =>
+                                  // handleRemoteFiles(row, sample);
+                                  downloadFiles(row, sample, tracks)
+                              : () => {
+                                  console.log(sample);
+                                  const path = `${row.outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
+                                  console.log(path);
+                                  createBrowserWindow(path);
+                                }
+                          }
                         >
                           <ListItemAvatar>
                             <Avatar>

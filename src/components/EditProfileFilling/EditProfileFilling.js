@@ -49,22 +49,23 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-const initialState = {
-  name: "",
-  email: "",
-  password: "",
-  password2: "",
-  errors: {},
-};
-const Register = () => {
+
+const EditProfileFilling = () => {
   const classes = useStyles();
 
   const auth = useAuth();
+  const initialState = {
+    name: auth.user.user.name,
+    email: auth.user.user.email,
+    oldpass: "",
+    password: "",
+    password2: "",
+    errors: {},
+  };
+  console.log(auth.user.user.name);
   const [state, dispatch] = useReducer(formReducer, initialState);
   const history = useHistory();
-  useEffect(() => {
-    auth.checkauth(history, "/alignment");
-  }, [auth, history]);
+
   const onChange = (e) => {
     e.persist();
     dispatch({
@@ -74,8 +75,8 @@ const Register = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log("signing in yaaaaaaaaaaaaaaay");
-    auth.signin(state, dispatch, history);
+    console.log("updating info");
+    auth.handleEditProfile(state, dispatch, history);
   };
   const { errors } = state;
 
@@ -88,32 +89,11 @@ const Register = () => {
         </Avatar>
 
         <Typography component="h1" variant="h5">
-          Register
+          Update {auth.user.user.name} Account Information
         </Typography>
 
         <form className={classes.form} noValidate onSubmit={onSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                onChange={onChange}
-                value={state.name}
-                error={errors.name === ""}
-                helperText={errors.name === "" ? "Empty!" : errors.name}
-                className={classnames("", {
-                  invalid: errors.name,
-                })}
-                id="name"
-                type="text"
-                autoComplete="name"
-                name="name"
-                variant="outlined"
-                required
-                fullWidth
-                label="Account Name"
-                autoFocus
-              />
-            </Grid>
-
             <Grid item xs={12}>
               <TextField
                 onChange={onChange}
@@ -133,6 +113,30 @@ const Register = () => {
                 autoComplete="email"
               />
             </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                onChange={onChange}
+                value={state.oldpass}
+                error={errors.passwordincorrect === ""}
+                helperText={
+                  errors.passwordincorrect === ""
+                    ? "Empty!"
+                    : errors.passwordincorrect
+                }
+                className={classnames("", {
+                  invalid: errors.passwordincorrect,
+                })}
+                id="oldpass"
+                type="password"
+                variant="outlined"
+                required
+                fullWidth
+                name="oldpass"
+                label="Old Password"
+                type="password"
+                autoComplete="current-password"
+              />
+            </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 onChange={onChange}
@@ -148,7 +152,7 @@ const Register = () => {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="New Password"
                 autoComplete="current-password"
               />
             </Grid>
@@ -169,7 +173,7 @@ const Register = () => {
                 required
                 fullWidth
                 name="password2"
-                label="password2"
+                label="Confirm New Password"
                 type="password"
                 autoComplete="current-password"
               />
@@ -182,29 +186,12 @@ const Register = () => {
             color="primary"
             className={classes.submit}
           >
-            Register{" "}
+            Update{" "}
           </Button>
-          <Grid container justify="flex-end">
-            <Grid container>
-              <Grid item xs>
-                <Link to="/" variant="body2">
-                  Go Back
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link to="/login" variant="body2">
-                  {"Already have an account? Sign in"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Grid>
         </form>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
     </Container>
   );
 };
 
-export default Register;
+export default EditProfileFilling;

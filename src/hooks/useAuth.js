@@ -107,6 +107,7 @@ const useProvideAuth = () => {
     req.end();
   };
   const handleEditProfile = async (userData, dispatch, history) => {
+    console.log(userData);
     const options = {
       method: "PUT",
       path: `http://localhost/api/users/${user.user.id}`,
@@ -128,14 +129,9 @@ const useProvideAuth = () => {
       res.on("end", function () {
         const body = Buffer.concat(chunks).toString();
         const jsbody = JSON.parse(body);
-        if (!jsbody.token) {
-          dispatch({
-            type: GET_ERRORS,
-            payload: jsbody,
-          });
-          console.log(jsbody);
-          history.push("/alignment");
-        } else {
+        console.log(jsbody);
+
+        if ("success" in jsbody) {
           // Save to localStorage
           // Set token to localStorage
           const { token } = jsbody;
@@ -148,7 +144,13 @@ const useProvideAuth = () => {
             type: SET_CURRENT_USER,
             payload: decoded,
           });
+          console.log("successful put request");
           history.push("/alignment");
+        } else {
+          dispatch({
+            type: GET_ERRORS,
+            payload: jsbody,
+          });
         }
       });
     });

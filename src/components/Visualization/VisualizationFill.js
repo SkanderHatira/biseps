@@ -188,16 +188,13 @@ export default function VisualizationFill() {
       return false;
     }
   };
-  const downloadFiles = (row, sample, tracks) => {
+  const downloadFiles = (row, tracks) => {
     let sftp = new Client();
 
     console.log(tracks);
-    console.log(row, sample);
     console.log("download files");
 
     console.log(homedir);
-    console.log(row.machine);
-    console.log(sample);
 
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
@@ -600,7 +597,7 @@ export default function VisualizationFill() {
                           edge="end"
                           disabled={sampleExist}
                           aria-label="files"
-                          onClick={() => downloadFiles(row, sample, tracks)}
+                          onClick={() => downloadFiles(row, tracks)}
                         >
                           <GetAppIcon
                             style={{
@@ -661,6 +658,7 @@ export default function VisualizationFill() {
                         path.basename(bed)
                       );
                       console.log(checkedComp);
+                      const tracks = [bed, bedtbi];
                       return (
                         <ListItem
                           key={`${comparison._id}-${idx}-${context}`}
@@ -735,9 +733,7 @@ export default function VisualizationFill() {
                               <IconButton
                                 edge="end"
                                 aria-label="files"
-                                onClick={() =>
-                                  downloadFiles(row, sample, tracks)
-                                }
+                                onClick={() => downloadFiles(row, tracks)}
                               >
                                 <GetAppIcon />
                               </IconButton>

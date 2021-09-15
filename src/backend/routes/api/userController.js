@@ -18,6 +18,7 @@ const User = require("../../models/User");
 // @desc Register user
 // @access Public
 router.post("/register", (req, res) => {
+    console.log(req.body);
     // Form validation
     const { errors, isValid } = validateRegisterInput(req.body);
     // Check validation
@@ -191,23 +192,85 @@ router.get("/:id", function (req, res) {
 //     //     }
 //     // );
 // });
-router.put("/:id", (req, res, next) => {
+router.put("/:id", (req, res) => {
+    console.log(req.body);
+    console.log(req.params);
+    const { errors, isValid } = validateRegisterInput(req.body);
+    // Check validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
+    let newPassword = [];
     const updatedUser = new User({
         _id: req.params.id,
         name: req.body.name,
         email: req.body.email,
         machines: req.body.machines,
     });
-    User.updateOne({ _id: req.params.id }, updatedUser)
-        .then(() => {
-            res.status(201).json({
-                message: "Thing updated successfully!",
-            });
-        })
-        .catch((error) => {
-            res.status(400).json({
-                error: error,
-            });
+    User.findOne({ _id: req.params.id }).then((user) => {
+        // Check if user exists
+        if (!user) {
+            return res
+                .status(404)
+                .json({ namenotfound: "Account name not found" });
+        }
+        // Check password
+        bcrypt.compare(req.body.oldpass, user.password).then((isMatch) => {
+            if (isMatch) {
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(req.body.password, salt, (err, hash) => {
+                        if (err) throw err;
+                        newPassword = hash;
+                        console.log(newPassword);
+                        User.findByIdAndUpdate(
+                            req.params.id,
+                            {
+                                $set: {
+                                    password: newPassword,
+                                    email: req.body.email,
+                                },
+                            },
+                            {
+                                safe: true,
+                                useFindAndModify: false,
+                            },
+                            function (err, model) {
+                                console.log(err);
+                            }
+                        );
+                    });
+                });
+
+                const payload = {
+                    id: user.id,
+                    name: user.name,
+                    jbPath: user.jbPath,
+                    email: req.body.email,
+                    runs: user.runs,
+                    views: user.runs,
+                    machines: user.machines,
+                };
+                // Sign token
+                jwt.sign(
+                    payload,
+                    process.env.SECRET,
+                    {
+                        expiresIn: 31556926, // 1 year in seconds
+                    },
+                    (err, token) => {
+                        res.json({
+                            success: true,
+                            token: "Bearer " + token,
+                        });
+                    }
+                );
+                // });
+            } else {
+                return res
+                    .status(400)
+                    .json({ passwordincorrect: "Old Password incorrect" });
+            }
         });
+    });
 });
 module.exports = router;

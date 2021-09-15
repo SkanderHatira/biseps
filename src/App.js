@@ -13,6 +13,7 @@ import Visualization from "./components/Visualization/Visualization";
 import Comparisons from "./components/Comparisons/Comparisons";
 import Comparison from "./components/Comparisons/Comparison";
 import Profile from "./pages/Profile/Profile";
+import EditProfile from "./components/EditProfile/EditProfile";
 import RunBoard from "./components/RunBoard/RunBoard";
 import NotFound from "./pages/NotFound";
 
@@ -28,8 +29,8 @@ function App() {
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/newrun" component={RunBoard} />
               <PrivateRoute exact path="/comparison" component={Comparisons} />
-              <PrivateRoute exact path="/profile" component={Profile} />
-
+              <PrivateRoute exact path="/machines" component={Profile} />
+              <PrivateRoute exact path="/profile" component={EditProfile} />
               <PrivateRoute
                 exact
                 path="/newcomparison"

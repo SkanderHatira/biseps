@@ -85,7 +85,7 @@ const Login = () => {
   const { errors } = state;
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="md">
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>

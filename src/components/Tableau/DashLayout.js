@@ -19,7 +19,12 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 import { useConfig } from "../../hooks/useConfig";
 import Alert from "@material-ui/lab/Alert";
-
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Fade from "@material-ui/core/Fade";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import EditIcon from "@material-ui/icons/Edit";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -131,7 +136,16 @@ const DashLayout = ({ Filling }) => {
   const handleDrawerClose = () => {
     setOpenDrawer(false);
   };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -159,24 +173,12 @@ const DashLayout = ({ Filling }) => {
             noWrap
             className={classes.title}
           >
-            {auth.user.user.name} Dashboard
+            Dashboard
           </Typography>
 
           {auth.user.isAuthenticated ? (
             <>
-              <IconButton component={Link} to="/profile" color="inherit">
-                <Typography
-                  component="h1"
-                  variant="h6"
-                  color="inherit"
-                  noWrap
-                  className={classes.title}
-                >
-                  Manage Remote Machines
-                </Typography>{" "}
-                <SettingsIcon />
-              </IconButton>
-              <IconButton component={Link} to="/profile" color="inherit">
+              {/* <IconButton component={Link} to="/docs" color="inherit">
                 <Typography
                   component="h1"
                   variant="h6"
@@ -188,8 +190,9 @@ const DashLayout = ({ Filling }) => {
                 </Typography>
 
                 <LibraryBooksIcon />
-              </IconButton>
-              <IconButton onClick={auth.signout} color="inherit">
+              </IconButton> */}
+
+              <IconButton onClick={handleClick} color="inherit">
                 <Typography
                   component="h1"
                   variant="h6"
@@ -197,10 +200,41 @@ const DashLayout = ({ Filling }) => {
                   noWrap
                   className={classes.title}
                 >
-                  Logout
+                  Account
                 </Typography>
-                <ExitToAppIcon />
+                <AccountCircleIcon />
               </IconButton>
+
+              <Menu
+                id="fade-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={open}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+              >
+                <MenuItem component={Link} to="/profile">
+                  <ListItemIcon>
+                    <EditIcon />
+                  </ListItemIcon>
+                  <Typography variant="inherit">Edit Profile </Typography>
+                </MenuItem>
+                <MenuItem component={Link} to="/machines">
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    Manage Remote Machines
+                  </Typography>
+                </MenuItem>
+
+                <MenuItem onClick={auth.signout}>
+                  <ListItemIcon>
+                    <ExitToAppIcon />
+                  </ListItemIcon>
+                  <Typography variant="inherit">Logout </Typography>
+                </MenuItem>
+              </Menu>
             </>
           ) : (
             ""
