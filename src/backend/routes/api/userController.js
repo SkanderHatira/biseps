@@ -9,6 +9,8 @@ const http = require("http");
 const createJB = require("../../helpers/createJbrowse");
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
+const validateEditInput = require("../../validation/edit");
+
 const validateLoginInput = require("../../validation/login");
 
 // Load User model
@@ -195,7 +197,7 @@ router.get("/:id", function (req, res) {
 router.put("/:id", (req, res) => {
     console.log(req.body);
     console.log(req.params);
-    const { errors, isValid } = validateRegisterInput(req.body);
+    const { errors, isValid } = validateEditInput(req.body);
     // Check validation
     if (!isValid) {
         return res.status(400).json(errors);
@@ -218,27 +220,33 @@ router.put("/:id", (req, res) => {
         bcrypt.compare(req.body.oldpass, user.password).then((isMatch) => {
             if (isMatch) {
                 bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(req.body.password, salt, (err, hash) => {
-                        if (err) throw err;
-                        newPassword = hash;
-                        console.log(newPassword);
-                        User.findByIdAndUpdate(
-                            req.params.id,
-                            {
-                                $set: {
-                                    password: newPassword,
-                                    email: req.body.email,
+                    bcrypt.hash(
+                        req.body.password == ""
+                            ? req.body.oldpass
+                            : req.body.password,
+                        salt,
+                        (err, hash) => {
+                            if (err) throw err;
+                            newPassword = hash;
+                            console.log(newPassword);
+                            User.findByIdAndUpdate(
+                                req.params.id,
+                                {
+                                    $set: {
+                                        password: newPassword,
+                                        email: req.body.email,
+                                    },
                                 },
-                            },
-                            {
-                                safe: true,
-                                useFindAndModify: false,
-                            },
-                            function (err, model) {
-                                console.log(err);
-                            }
-                        );
-                    });
+                                {
+                                    safe: true,
+                                    useFindAndModify: false,
+                                },
+                                function (err, model) {
+                                    console.log(err);
+                                }
+                            );
+                        }
+                    );
                 });
 
                 const payload = {
@@ -268,7 +276,7 @@ router.put("/:id", (req, res) => {
             } else {
                 return res
                     .status(400)
-                    .json({ passwordincorrect: "Old Password incorrect" });
+                    .json({ passwordincorrect: "Current Password incorrect" });
             }
         });
     });

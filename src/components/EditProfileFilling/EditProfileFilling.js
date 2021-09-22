@@ -149,7 +149,6 @@ const EditProfileFilling = () => {
                 id="password"
                 type="password"
                 variant="outlined"
-                required
                 fullWidth
                 name="password"
                 label="New Password"
@@ -170,7 +169,6 @@ const EditProfileFilling = () => {
                 id="password2"
                 type="password"
                 variant="outlined"
-                required
                 fullWidth
                 name="password2"
                 label="Confirm New Password"
