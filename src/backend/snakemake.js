@@ -3,56 +3,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     let Client = require("ssh2-sftp-client");
     const fs = require("fs");
     const path = require("path");
-    // exec(
-    //     "bash  " + path.join(__dirname, "../resources/checkConda.sh"),
-    //     (error, stdout, stderr) => {
-    //         fs.writeFileSync(
-    //             "/home/shatira/snakemake.txt",
-    //             stdout + error + stderr,
-    //             function (err) {
-    //                 if (err) throw err;
-    //                 console.log("Saved!");
-    //             }
-    //         );
 
-    //         if (error) {
-    //             console.log(`error: ${error.message}`);
-    //         }
-    //         if (stderr) {
-    //             console.log(`stderr: ${stderr}`);
-    //         }
-
-    //         console.log(`stdout: ${stdout}`);
-    //     }
-    // );
-    // process.platform == "darwin" || process.platform == "linux"
-    //     ? exec(
-    //           "bash " +
-    //               path.join(__dirname, "../resources/checkConda.sh") +
-    //               " " +
-    //               __dirname,
-    //           (error, stdout, stderr) => {
-    //               fs.writeFileSync(
-    //                   "/home/shatira/snakemakeConda.txt",
-    //                   stdout + error + stderr,
-    //                   function (err) {
-    //                       if (err) throw err;
-    //                       console.log("Saved!");
-    //                   }
-    //               );
-    //               if (error) {
-    //                   console.log(`error: ${error.message}`);
-    //                   return;
-    //               }
-    //               if (stderr) {
-    //                   console.log(`stderr: ${stderr}`);
-
-    //                   return;
-    //               }
-    //               console.log(`stdout: ${stdout}`);
-    //           }
-    //       )
-    //     : "";
     const logfile = path.join(uniqueDir, "biseps.txt");
     const output = fs.openSync(logfile, "a");
     const workflow = path.join(__dirname, "../resources/biseps/");
@@ -82,29 +33,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                 `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --config platform="other" --archive workflow.tar.gz`,
                 options
             );
-            // const child = spawn(
-            //     command,
-            //     [
-            //         "run",
-            //         "-n",
-            //         "bisepsSnakemake",
-            //         "--cwd",
-            //         uniqueDir,
-            //         "--no-capture-output",
-            //         "--live-stream",
-            //         "snakemake",
-            //         "--profile",
-            //         profile,
-            //         "--archive",
-            //         "workflow.tar.gz",
-            //     ],
-            //     options
-            // );
-            // const child = execFile(
-            //     remoteScript,
-            //     [env, profile, uniqueDir, shell],
-            //     options
-            // );
+
             let data = "";
             for await (const chunk of child.stdout) {
                 console.log("stdout chunk: " + chunk);
@@ -128,6 +57,9 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             } else {
                 const filename = `${uniqueDir}/archive.lock`;
                 fs.closeSync(fs.openSync(filename, "w"));
+                if (fs.existsSync(filename)) {
+                    fs.unlinkSync(filename);
+                }
             }
         }
         const connect = require("ssh2-connect");
@@ -214,23 +146,6 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                 `&& ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} 2>> ${uniqueDir}/biseps.txt &&  ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} --report ${uniqueDir}/report.html 2>> ${uniqueDir}/biseps.txt`,
             options
         );
-        // const child = spawn(
-        //     command,
-        //     [
-        //         "run",
-        //         "-n",
-        //         "bisepsSnakemake",
-        //         "--cwd",
-        //         workflow,
-        //         "--no-capture-output",
-        //         "--live-stream",
-        //         "snakemake",
-        //         "--profile",
-        //         profile,
-        //         unlock ? "--unlock" : "",
-        //     ],
-        //     options
-        // );
 
         let data = "";
         for await (const chunk of child.stdout) {
@@ -245,11 +160,15 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         const exitCode = await new Promise((resolve, reject) => {
             child.on("close", resolve);
         });
+        const failed = `${uniqueDir}/failed.lock`;
 
         if (exitCode) {
-            const filename = `${uniqueDir}/failed.lock`;
-            fs.closeSync(fs.openSync(filename, "w"));
+            fs.closeSync(fs.openSync(failed, "w"));
             // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+        } else {
+            if (fs.existsSync(failed)) {
+                fs.unlinkSync(failed);
+            }
         }
         return data;
     }

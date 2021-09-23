@@ -132,7 +132,7 @@ const EditProfileFilling = () => {
                 required
                 fullWidth
                 name="oldpass"
-                label="Old Password"
+                label="Current Password"
                 type="password"
                 autoComplete="current-password"
               />

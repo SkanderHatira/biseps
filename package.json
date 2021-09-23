@@ -1,7 +1,7 @@
 {
   "name": "biseps",
   "productName": "biseps",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Bisulfite sequencing processing software",
   "main": "./.webpack/main",
   "scripts": {
@@ -24,19 +24,27 @@
       "makers": [
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {  "options": {
+            "icon": "./src/public/logo.png"
+          }}
         },
         {
           "name": "@electron-forge/maker-dmg",
-          "config": {}
+          "config": {  "options": {
+            "icon": "./src/public/logo.png"
+          }}
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "config": {  "options": {
+            "icon": "./src/public/logo.icns"
+          }}
         },
         {
           "name": "@electron-forge/maker-squirrel",
-          "config": {}
+          "config": {  "options": {
+            "icon": "./src/public/logo.ico"
+          }}
         }
       ],
       "plugins": [
