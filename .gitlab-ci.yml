@@ -9,7 +9,7 @@ variables:
 
 make-linux:
   tags:
-    - electron
+    - docker
   image: node:latest
   stage: build
   script:
