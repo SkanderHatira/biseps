@@ -8,9 +8,9 @@ variables:
   GIT_SUBMODULE_STRATEGY: normal
 
 make-linux:
+  tags:
+    - electron
   image: node:latest
-    tags:
-    - docker
   stage: build
   script:
     - node --version
