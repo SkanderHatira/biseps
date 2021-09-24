@@ -9,6 +9,8 @@ variables:
 
 make-linux:
   image: node:latest
+    tags:
+    - docker
   stage: build
   script:
     - node --version
