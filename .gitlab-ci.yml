@@ -46,3 +46,20 @@ make-win32:
       - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
   only:
     - win
+make-mac:
+  tags:
+    - electron
+  stage: build
+  script:
+    - node --version
+    - cd $CI_PROJECT_DIR/src/backend
+    - yarn install
+    - cd $CI_PROJECT_DIR/
+    - yarn install
+    - yarn make
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - $CI_PROJECT_DIR/out/make/*.dmg
+  only:
+    - master
