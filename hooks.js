@@ -45,10 +45,16 @@ module.exports = {
   },
 
   postPackage: async (forgeConfig, options) => {
-    const resources = path.join(
-      options.outputPaths[0],
-      "resources/app/.webpack/main/resources/"
-    );
+    const resources =
+      process.platform == "darwin"
+        ? path.join(
+            options.outputPaths[0],
+            "biseps.app/Contents/Resources/app/.webpack/main/resources/"
+          )
+        : path.join(
+            options.outputPaths[0],
+            "resources/app/.webpack/main/resources/"
+          );
 
     chmodr(resources, 0o777, (err) => {
       if (err) {
