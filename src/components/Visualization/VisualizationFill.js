@@ -657,6 +657,12 @@ export default function VisualizationFill() {
                         bisepsTemp,
                         path.basename(bed)
                       );
+                      const debExist = fileExist(
+                        path.join(
+                          user.user.jbPath,
+                          `${associatedGenome}/${comparison.id}-${context}.bed.gz`
+                        )
+                      );
                       console.log(checkedComp);
                       const tracks = [bed, bedtbi];
                       return (
@@ -721,11 +727,7 @@ export default function VisualizationFill() {
                             >
                               <CheckCircleOutlineIcon
                                 style={{
-                                  color: fileExist(
-                                    row.remote ? bedPathLocal : bed
-                                  )
-                                    ? "green"
-                                    : "gray",
+                                  color: debExist ? "green" : "gray",
                                 }}
                               />
                             </IconButton>

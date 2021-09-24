@@ -237,7 +237,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1080,
     height: 720,
-    icon: __dirname + "/public/logo.png",
+    icon: __dirname + "/public/logo2.png",
     webPreferences: {
       nodeIntegration: true,
       preload: __dirname + "/preload.js",
@@ -245,7 +245,7 @@ const createWindow = () => {
       devTools: true,
     },
   });
-  fs.unlinkSync("/home/shatira/taratatatatatata.txt");
+
   // mainWindow.webContents.on("did-finish-load", () => {
   //   console.log("this is where the ping is happening");
   //   mainWindow.webContents.send("ping", sock);

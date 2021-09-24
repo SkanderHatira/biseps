@@ -25,25 +25,25 @@
         {
           "name": "@electron-forge/maker-deb",
           "config": {  "options": {
-            "icon": "./src/public/logo.png"
+            "icon": "./src/public/logo2.png"
           }}
         },
         {
           "name": "@electron-forge/maker-dmg",
           "config": {  "options": {
-            "icon": "./src/public/logo.png"
+            "icon": "./src/public/logo2.png"
           }}
         },
         {
           "name": "@electron-forge/maker-rpm",
           "config": {  "options": {
-            "icon": "./src/public/logo.icns"
+            "icon": "./src/public/logo2.icns"
           }}
         },
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {  "options": {
-            "icon": "./src/public/logo.ico"
+            "icon": "./src/public/logo2.ico"
           }}
         }
       ],
