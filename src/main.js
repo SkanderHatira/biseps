@@ -32,14 +32,6 @@ process.platform == "darwin" || process.platform == "linux"
   ? exec(
       "bash  " + path.join(__dirname, "resources/checkConda.sh"),
       (error, stdout, stderr) => {
-        fs.writeFileSync(
-          "/home/shatira/condaout.txt",
-          stdout + error + stderr,
-          function (err) {
-            if (err) throw err;
-            console.log("Saved!");
-          }
-        );
         if (error) {
           console.log(`error: ${error.message}`);
           return (global.sharedObj = {
@@ -102,14 +94,6 @@ execSync(
   } -n bisepsSnakemake || true`,
   { shell: true, stdio: "inherit" },
   (error, stdout, stderr) => {
-    fs.writeFileSync(
-      "/home/shatira/loginconda.txt",
-      stdout + error + stderr,
-      function (err) {
-        if (err) throw err;
-        console.log("Saved!");
-      }
-    );
     if (error) {
       console.log(`error: ${error.message}`);
       return;
