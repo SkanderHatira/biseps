@@ -7,8 +7,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const logfile = path.join(uniqueDir, "biseps.txt");
     const output = fs.openSync(logfile, "a");
     const workflow = path.join(__dirname, "../resources/biseps/");
-    const command =
-        process.platform == "win32" ? "conda" : `$HOME/miniconda3/bin/conda`;
+    const command = process.platform == "win32" ? "conda" : `conda`;
     const options = {
         slient: false,
         // detached: true,

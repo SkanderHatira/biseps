@@ -32,6 +32,14 @@ process.platform == "darwin" || process.platform == "linux"
   ? exec(
       "bash  " + path.join(__dirname, "resources/checkConda.sh"),
       (error, stdout, stderr) => {
+        fs.writeFileSync(
+          "/home/shatira/condaout.txt",
+          stdout + error + stderr,
+          function (err) {
+            if (err) throw err;
+            console.log("Saved!");
+          }
+        );
         if (error) {
           console.log(`error: ${error.message}`);
           return (global.sharedObj = {
@@ -73,14 +81,6 @@ execSync(
       : "mongodbLinux.yaml"
   } -n bisepsMongo || true`,
   (error, stdout, stderr) => {
-    fs.writeFileSync(
-      "/home/shatira/condaout.txt",
-      stdout + error + stderr,
-      function (err) {
-        if (err) throw err;
-        console.log("Saved!");
-      }
-    );
     if (error) {
       console.log(`error: ${error.message}`);
       return;
@@ -132,8 +132,7 @@ if (fs.existsSync(mongodLock)) {
         }
         if (running(data)) {
           console.log(
-            "database already running on /tmp/bisspropmongodb.sock pid : " +
-              data
+            "database already running on /tmp/bisepsmongodb.sock pid : " + data
           );
         } else {
           fs.unlinkSync(mongodLock);
@@ -157,7 +156,7 @@ if (fs.existsSync(mongodLock)) {
 //           }
 //           if (running(data)) {
 //             console.log(
-//               "database already running on /tmp/bisspropmongodb.sock pid : " +
+//               "database already running on /tmp/bisepsmongodb.sock pid : " +
 //                 data
 //             );
 //           } else {
@@ -237,7 +236,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1080,
     height: 720,
-    icon: __dirname + "/public/logo2.png",
+    // icon: __dirname + "/public/logo2.png",
     webPreferences: {
       nodeIntegration: true,
       preload: __dirname + "/preload.js",
