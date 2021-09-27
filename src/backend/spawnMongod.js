@@ -7,7 +7,10 @@ const spawnChild = async () => {
     const homedir = require("os").homedir();
     const logfile = path.join(homedir, "mongoWindow.txt");
     const output = fs.openSync(logfile, "a");
-    const command = process.platform == "win32" ? "conda" : `conda`;
+    const command =
+        process.platform == "win32"
+            ? "conda"
+            : `$(head -n 1 $HOME/.conda/environments.txt)/bin/conda`;
 
     const options = {
         slient: false,

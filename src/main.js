@@ -30,7 +30,7 @@ console.log(bisepsTemp);
 console.log(process.platform);
 process.platform == "darwin" || process.platform == "linux"
   ? exec(
-      "bash  " + path.join(__dirname, "resources/checkConda.sh"),
+      `${process.platform == "win32" ? "where conda" : "command -v conda"}`,
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
