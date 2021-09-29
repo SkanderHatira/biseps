@@ -34,7 +34,7 @@ make-win:
   stage: build
   script:
     - node --version
-    - conda --version
+    - npm install --global yarn 
     - cd $CI_PROJECT_DIR/src/backend
     - yarn install
     - cd $CI_PROJECT_DIR/
