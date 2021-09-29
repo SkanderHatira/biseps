@@ -1,12 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
-const {
-  app,
-  BrowserWindow,
-  ipcMain,
-  session,
-  ipcRenderer,
-} = require("electron");
-
+const { app, BrowserWindow, Menu } = require("electron");
+const conda =
+  process.platform == "win32"
+    ? "conda"
+    : "$(head -n 1 $HOME/.conda/environments.txt)/bin/conda";
 const uid = uuidv4();
 const sock = `/tmp/bissprop${uid}.sock`;
 const mongod = require("./backend/spawnMongod.js");
@@ -65,7 +62,7 @@ process.platform == "darwin" || process.platform == "linux"
     });
 
 execSync(
-  `conda env create -f ${__dirname}/resources/${
+  `${conda} env create -f ${__dirname}/resources/${
     process.platform == "darwin"
       ? "mongodbMac.yaml"
       : process.platform == "win32"
@@ -85,7 +82,7 @@ execSync(
   }
 );
 execSync(
-  `conda env create -f ${__dirname}/resources/${
+  `${conda} env create -f ${__dirname}/resources/${
     process.platform == "darwin"
       ? "snakemakeMac.yaml"
       : process.platform == "win32"
@@ -128,34 +125,6 @@ if (fs.existsSync(mongodLock)) {
 } else {
   mongod();
 }
-// try {
-//   if (fs.existsSync(mongodLock)) {
-//     fs.stat(mongodLock, function (err, stats) {
-//       if (stats.size === 0) {
-//         mongod();
-//       } else {
-//         fs.readFile(mongodLock, "utf8", function (err, data) {
-//           if (err) {
-//             return console.log(err);
-//           }
-//           if (running(data)) {
-//             console.log(
-//               "database already running on /tmp/bisepsmongodb.sock pid : " +
-//                 data
-//             );
-//           } else {
-//             fs.unlinkSync(mongodLock);
-//             mongod();
-//           }
-//         });
-//       }
-//     });
-//   } else {
-//     mongod();
-//   }
-// } catch (err) {
-//   console.log(err);
-// }
 
 const server = require("../src/backend/spawnServer.js");
 
@@ -168,53 +137,12 @@ try {
   require("electron-reloader")(module);
 } catch (_) {}
 
-async function createJB(port) {
-  // Create the browser window.
-  // const newWindow = new BrowserWindow({
-  //   width: 1080,
-  //   height: 720,
-  //   webPreferences: {
-  //     nodeIntegration: true,
-  //     enableRemoteModule: true,
-  //     webSecurity: false,
-  //   },
-  // });
-  // Load app
-  // newWindow.webContents.loadURL(SECOND_WINDOW_WEBPACK_ENTRY);
-  // rest of code..
-}
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
 }
-// ipcMain.on("ping", (event, port) => {
-//   // console.log(port);
-//   // createJB(port);
-//   const newWindow = new BrowserWindow({
-//     width: 1080,
-//     height: 720,
-//     webPreferences: {
-//       preload: __dirname + "/preloadJB.js",
-//       nodeIntegration: false,
-//       nativeWindowOpen: true,
-//       nodeIntegrationInSubFrames: true,
-//       webSecurity: false,
-//     },
-//   });
-//   const dirname = "/home/Bureau/jbrowse2";
-//   // const url = require("url").format({
-//   //   protocol: "file",
-//   //   slashes: true,
-//   //   pathname: path.join(dirname, "worker.html"),
-//   // });
-//   // newWindow.loadURL(url);
 
-//   newWindow.loadURL(`http:///localhost:${port}`);
-//   newWindow.once("ready-to-show", () => {
-//     newWindow.show();
-//   });
-// });
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
