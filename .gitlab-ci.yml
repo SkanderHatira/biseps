@@ -34,12 +34,11 @@ make-win:
   stage: build
   script:
     - node --version
-    - npm install --global yarn 
     - cd $CI_PROJECT_DIR/src/backend
-    - yarn install
+    - npx yarn install
     - cd $CI_PROJECT_DIR/
     - yarn install
-    - yarn make
+    - npx yarn make
   artifacts:
     expire_in: 1 week
     paths:
