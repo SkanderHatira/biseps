@@ -6,13 +6,15 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
-
 const uid = uuidv4();
-const sock = `/tmp/bissprop${uid}.sock`;
 const mongod = require("./backend/spawnMongod.js");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
+console.log(os.tmpdir())
+const sock = process.platform == "win32" ?  path.join('\\\\?\\pipe', `biseps${uid}`)  :`/tmp/biseps${uid}.sock`
+const unixSocket =  process.platform == "win32" ? "mongodb://localhost:27017"  :`/tmp/bisepsMongod`
+
 const running = require("is-running");
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
@@ -27,10 +29,12 @@ const mongodLock = path.join(
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 console.log(bisepsTemp);
+console.log(unixSocket)
+console.log(sock)
 console.log(process.platform);
 process.platform == "darwin" || process.platform == "linux"
   ? exec(
-      `${process.platform == "win32" ? "where conda" : "command -v conda"}`,
+      `${process.platform == "win32" ? "(Get-command conda).path" : "command -v conda"}`,
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
@@ -65,13 +69,13 @@ process.platform == "darwin" || process.platform == "linux"
     });
 
 execSync(
-  `conda env create -f ${__dirname}/resources/${
+  `conda env create -f ${path.join(__dirname,"resources",
     process.platform == "darwin"
       ? "mongodbMac.yaml"
       : process.platform == "win32"
-      ? "mongodbWindows.yaml"
+      ? "mongoWindows.yaml"
       : "mongodbLinux.yaml"
-  } -n bisepsMongo || true`,
+  )} -n bisepsMongo ${process.platform == "win32" ?  "; $? -or $true" : ' || true ' } `,{"shell": process.platform == "win32" ? "powershell.exe" : "/bin/sh"},
   (error, stdout, stderr) => {
     if (error) {
       console.log(`error: ${error.message}`);
@@ -85,13 +89,13 @@ execSync(
   }
 );
 execSync(
-  `conda env create -f ${__dirname}/resources/${
-    process.platform == "darwin"
-      ? "snakemakeMac.yaml"
-      : process.platform == "win32"
-      ? "snakemakeWindows.yaml"
-      : "snakemakeLinux.yaml"
-  } -n bisepsSnakemake || true`,
+  `conda env create -f ${path.join(__dirname,"resources",
+  process.platform == "darwin"
+    ? "snakemakeMac.yaml"
+    : process.platform == "win32"
+    ? "snakemakeWindows.yaml"
+    : "snakemakeLinux.yaml"
+)} -n bisepsSnakemake ${process.platform == "win32" ?  '; $? -or $true' : ' || true ' }`,{"shell": process.platform == "win32" ? "powershell.exe" : "/bin/sh"},
   { shell: true, stdio: "inherit" },
   (error, stdout, stderr) => {
     if (error) {
@@ -108,7 +112,7 @@ execSync(
 if (fs.existsSync(mongodLock)) {
   fs.stat(mongodLock, function (err, stats) {
     if (stats.size === 0) {
-      mongod();
+      mongod(unixSocket);
     } else {
       fs.readFile(mongodLock, "utf8", function (err, data) {
         if (err) {
@@ -116,51 +120,24 @@ if (fs.existsSync(mongodLock)) {
         }
         if (running(data)) {
           console.log(
-            "database already running on /tmp/bisepsmongodb.sock pid : " + data
+            "database already running on bisepsmongodb.sock pid : " + data
           );
         } else {
           fs.unlinkSync(mongodLock);
-          mongod();
+          mongod(unixSocket);
         }
       });
     }
   });
 } else {
-  mongod();
+  mongod(unixSocket);
 }
-// try {
-//   if (fs.existsSync(mongodLock)) {
-//     fs.stat(mongodLock, function (err, stats) {
-//       if (stats.size === 0) {
-//         mongod();
-//       } else {
-//         fs.readFile(mongodLock, "utf8", function (err, data) {
-//           if (err) {
-//             return console.log(err);
-//           }
-//           if (running(data)) {
-//             console.log(
-//               "database already running on /tmp/bisepsmongodb.sock pid : " +
-//                 data
-//             );
-//           } else {
-//             fs.unlinkSync(mongodLock);
-//             mongod();
-//           }
-//         });
-//       }
-//     });
-//   } else {
-//     mongod();
-//   }
-// } catch (err) {
-//   console.log(err);
-// }
+
 
 const server = require("../src/backend/spawnServer.js");
 
 // setTimeout(function () {
-server(sock);
+server(sock,unixSocket);
 // }, 4000);
 // const sock = "/tmp/bissprop.sock";
 
@@ -257,7 +234,9 @@ app.on("window-all-closed", () => {
     fs.rmdirSync(bisepsTemp, {
       recursive: true,
     });
-    fs.unlinkSync(sock);
+    if (process.platform !=="win32") {
+      fs.unlinkSync(sock);
+    }
     console.log("App Successfully Terminated");
     app.quit();
   }

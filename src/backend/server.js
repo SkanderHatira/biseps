@@ -15,6 +15,9 @@ const cors = require("cors");
 // const http = require("http");
 // const https = require("https");
 require("dotenv").config({ path: path.join(__dirname, "../backend/.env") });
+const sock = process.argv[2];
+const unixSocket = process.argv[3];
+console.log(process.argv)
 console.log(__dirname);
 const app = express();
 app.use(cors());
@@ -25,9 +28,16 @@ app.use(
 );
 app.use(bodyParser.json());
 console.log("where am i");
+console.log(unixSocket)
+console.log(process.argv)
+console.log("hahahahaha")
+console.log("hahahahaha")
+console.log("hahahahaha")
+console.log("hahahahaha")
+
 const connectWithRetry = () => {
     return mongoose.connect(
-        process.env.DATABASE,
+        unixSocket,
         { useNewUrlParser: true },
         function (err) {
             if (err) {
@@ -74,7 +84,7 @@ app.use(
     comparisons
 );
 // const sock = "/tmp/bissprop.sock";
-const sock = process.argv[2];
+
 fs.stat(sock, function (err) {
     console.log(!err);
 

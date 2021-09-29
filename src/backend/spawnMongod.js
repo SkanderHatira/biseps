@@ -1,9 +1,14 @@
-const spawnChild = async () => {
+const spawnChild = async (unixSocket) => {
     const { exec, spawn } = require("child_process");
     const path = require("path");
     const fs = require("fs");
+console.log(unixSocket)
+console.log("hihihihi")
+console.log("hihihihi")
+console.log("hihihihi")
+console.log("hihihihi")
+console.log("hihihihi")
 
-    console.log(process.env.SHELL);
     const homedir = require("os").homedir();
     const logfile = path.join(homedir, "mongoWindow.txt");
     const output = fs.openSync(logfile, "a");
@@ -17,18 +22,16 @@ const spawnChild = async () => {
         detached: true,
         shell:
             process.platform == "win32"
-                ? process.env.ComSpec
+                ? "powershell.exe"
                 : `${process.env.SHELL}`,
         stdio: ["inherit", output, output],
     };
-
     const port = 27017;
     const dbpath = path.join(__dirname, "resources/database/data/db");
-    const unixSocket = "/tmp/bisepsmongodb.sock";
+    console.log(port,dbpath,command,unixSocket)
 
     const child = spawn(
         command,
-
         [
             "run",
             "-n",
@@ -40,8 +43,6 @@ const spawnChild = async () => {
             port,
             "--dbpath",
             dbpath,
-            "--bind_ip",
-            unixSocket,
         ],
         options
     );

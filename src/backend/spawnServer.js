@@ -1,4 +1,4 @@
-const spawnServer = async (sock) => {
+const spawnServer = async (sock,unixSocket) => {
     const { fork, exec } = require("child_process");
     const path = require("path");
     const fs = require("fs");
@@ -6,6 +6,7 @@ const spawnServer = async (sock) => {
     const options = {
         slient: false,
         detached: true,
+        shell : process.platform == "win32" ? "powershell.exe" : "/bin/sh"
     };
     // const child = spawn(
     //     "node",
@@ -15,7 +16,7 @@ const spawnServer = async (sock) => {
 
     const child = fork(
         path.join(__dirname, "backend/server.js"),
-        [sock],
+        [sock,unixSocket],
         options
     );
     let data = "";
