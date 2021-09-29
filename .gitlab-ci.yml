@@ -29,7 +29,6 @@ make-linux:
   only:
     - master
 make-win32:
-  image: electronumake-win:
   tags:
     - windows
   stage: build
@@ -40,7 +39,7 @@ make-win32:
     - cd $CI_PROJECT_DIR/
     - npx yarn install
     - npx yarn make
-s:
+artifacts:
       - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
       - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
   only:
