@@ -22,13 +22,14 @@ make-linux:
     - yarn install
     - yarn make
   artifacts:
-    expire_in: 1 week
+    expire_in: never
     paths:
       - $CI_PROJECT_DIR/out/make/deb/x64/*.deb
       - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
   only:
     - master
-make-win:
+make-win32:
+  image: electronumake-win:
   tags:
     - windows
   stage: build
@@ -39,13 +40,11 @@ make-win:
     - cd $CI_PROJECT_DIR/
     - npx yarn install
     - npx yarn make
-  artifacts:
-    expire_in: 1 week
-    paths:
+s:
       - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
       - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
   only:
-    - win
+    - master
 make-mac:
   tags:
     - electron
@@ -58,7 +57,7 @@ make-mac:
     - yarn install
     - yarn make
   artifacts:
-    expire_in: 1 week
+    expire_in: never
     paths:
       - $CI_PROJECT_DIR/out/make/*.dmg
   only:
