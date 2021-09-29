@@ -30,7 +30,7 @@ make-linux:
     - master
 make-win:
   tags:
-    - electron
+    - windows
   stage: build
   script:
     - cd $CI_PROJECT_DIR/src/backend
