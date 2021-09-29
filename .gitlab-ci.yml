@@ -28,7 +28,7 @@ make-linux:
       - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
   only:
     - master
-make-win32:
+make-win:
   tags:
     - windows
   stage: build
@@ -39,9 +39,9 @@ make-win32:
     - cd $CI_PROJECT_DIR/
     - npx yarn install
     - npx yarn make
-artifacts:
-      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
-      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
+  artifacts:
+    - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
+    - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
   only:
     - master
 make-mac:
