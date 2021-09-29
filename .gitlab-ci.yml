@@ -37,7 +37,7 @@ make-win:
     - cd $CI_PROJECT_DIR/src/backend
     - npx yarn install
     - cd $CI_PROJECT_DIR/
-    - yarn install
+    - npx yarn install
     - npx yarn make
   artifacts:
     expire_in: 1 week
