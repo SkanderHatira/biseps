@@ -40,8 +40,10 @@ make-win:
     - npx yarn install
     - npx yarn make
   artifacts:
-    - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
-    - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
+    expire_in: never
+    paths:
+      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.exe
+      - $CI_PROJECT_DIR/out/make/squirrel.windows/x64/*.nupkg
   only:
     - master
 make-mac:
