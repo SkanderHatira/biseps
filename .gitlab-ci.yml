@@ -33,6 +33,8 @@ make-win:
     - windows
   stage: build
   script:
+    - node --version
+    - conda --version
     - cd $CI_PROJECT_DIR/src/backend
     - yarn install
     - cd $CI_PROJECT_DIR/
