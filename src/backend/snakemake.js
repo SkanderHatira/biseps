@@ -10,7 +10,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const command =
         process.platform == "win32"
             ? "conda"
-            : "$(head -n 1 $HOME/.conda/environments.txt)/bin/conda";
+            : `$(head -n 1 $HOME/.conda/environments.txt)/bin/conda`;
     const options = {
         slient: false,
         // detached: true,

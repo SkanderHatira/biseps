@@ -28,19 +28,17 @@ make-linux:
       - $CI_PROJECT_DIR/out/make/rpm/x64/*.rpm
   only:
     - master
-make-win32:
-  image: electronuserland/builder:wine-mono-05.21
+make-win:
+  tags:
+    - windows
   stage: build
   script:
-    - apt-get update -y
-    - apt-get install -y cmake rpm fakeroot dpkg
+    - node --version
     - cd $CI_PROJECT_DIR/src/backend
-    - yarn install
+    - npx yarn install
     - cd $CI_PROJECT_DIR/
-    - yarn install
-    - rm -rf /root/.wine
-    - winecfg
-    - yarn make --platform win32 --target @electron-forge/maker-squirrel
+    - npx yarn install
+    - npx yarn make
   artifacts:
     expire_in: 1 week
     paths:

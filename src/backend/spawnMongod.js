@@ -1,34 +1,31 @@
-const spawnChild = async () => {
-    const { exec, spawn } = require("child_process");
+const spawnChild = async (unixSocket) => {
+    const { spawn } = require("child_process");
     const path = require("path");
     const fs = require("fs");
 
-    console.log(process.env.SHELL);
+
     const homedir = require("os").homedir();
     const logfile = path.join(homedir, "mongoWindow.txt");
     const output = fs.openSync(logfile, "a");
     const command =
         process.platform == "win32"
             ? "conda"
-            : "$(head -n 1 $HOME/.conda/environments.txt)/bin/conda";
+            : `$(head -n 1 $HOME/.conda/environments.txt)/bin/conda`;
 
     const options = {
         slient: false,
-        detached: true,
+        detached: process.platform == "win32" ? false : true,
         shell:
             process.platform == "win32"
-                ? process.env.ComSpec
+                ? "powershell.exe"
                 : `${process.env.SHELL}`,
         stdio: ["inherit", output, output],
     };
 
     const port = 27017;
     const dbpath = path.join(__dirname, "resources/database/data/db");
-    const unixSocket = "/tmp/bisepsmongodb.sock";
-
     const child = spawn(
         command,
-
         [
             "run",
             "-n",
@@ -40,8 +37,7 @@ const spawnChild = async () => {
             port,
             "--dbpath",
             dbpath,
-            "--bind_ip",
-            unixSocket,
+            process.platform == "win32" ? "" : `--bind_ip ${unixSocket}`,
         ],
         options
     );
