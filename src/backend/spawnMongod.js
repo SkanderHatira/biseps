@@ -1,13 +1,8 @@
 const spawnChild = async (unixSocket) => {
-    const { exec, spawn } = require("child_process");
+    const { spawn } = require("child_process");
     const path = require("path");
     const fs = require("fs");
-console.log(unixSocket)
-console.log("hihihihi")
-console.log("hihihihi")
-console.log("hihihihi")
-console.log("hihihihi")
-console.log("hihihihi")
+
 
     const homedir = require("os").homedir();
     const logfile = path.join(homedir, "mongoWindow.txt");
@@ -19,17 +14,16 @@ console.log("hihihihi")
 
     const options = {
         slient: false,
-        detached: true,
+        detached: process.platform == "win32" ? false : true,
         shell:
             process.platform == "win32"
                 ? "powershell.exe"
                 : `${process.env.SHELL}`,
         stdio: ["inherit", output, output],
     };
+
     const port = 27017;
     const dbpath = path.join(__dirname, "resources/database/data/db");
-    console.log(port,dbpath,command,unixSocket)
-
     const child = spawn(
         command,
         [
@@ -43,6 +37,7 @@ console.log("hihihihi")
             port,
             "--dbpath",
             dbpath,
+            process.platform == "win32" ? "" : `--bind_ip ${unixSocket}`,
         ],
         options
     );
