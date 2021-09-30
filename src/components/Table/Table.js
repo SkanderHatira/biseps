@@ -559,15 +559,15 @@ export default function InteractiveList() {
                     onClick={
                       row.remote
                         ? () => {
-                            openInFolder(`${row.outdir}/results`);
+                            openInFolder(`${row.outdir}`);
                             setSuccessMessage(
                               "Remote path copied To clipboard!"
                             );
                             setErrors("");
                             handleOpenAlert();
-                            clipboard.writeText(`${row.remoteDir}/results/`);
+                            clipboard.writeText(`${row.remoteDir}`);
                           }
-                        : () => openInFolder(`${row.outdir}/results`)
+                        : () => openInFolder(`${row.outdir}`)
                     }
                     className={classes.button}
                     endIcon={
