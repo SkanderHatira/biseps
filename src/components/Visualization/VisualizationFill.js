@@ -389,7 +389,7 @@ export default function VisualizationFill() {
   return (
     <Container maxWidth="lg" className={classes.container} gutterbottom>
       <Grid container direction="column" alignItems="center" gutterBottom>
-        <Box m={3}>
+        <Box m={sessionStorage.Platform == "linux" ? 3 : 10}>
           {" "}
           <ButtonGroup
             color="primary"
