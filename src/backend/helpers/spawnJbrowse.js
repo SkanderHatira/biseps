@@ -4,7 +4,12 @@ const spawnChild = (body) => {
     const http = require("http");
     const path = require("path");
     console.log("hereeeeee");
-    const jbrowse = "../node_modules/.bin/jbrowse";
+    const jbrowse = path.join(
+        __dirname,
+        `../node_modules/@jbrowse/cli/bin/run${
+            process.platform == "win32" ? ".cmd" : ""
+        }`
+    );
     const script = path.join(__dirname, "../../resources/jbrowse.sh");
     const workflow = path.join(__dirname, "../../resources/jbrowse2");
     const bams = path.join(__dirname, "../node_modules/.bin/jbrowse");
@@ -25,7 +30,7 @@ const spawnChild = (body) => {
             console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
 
             fork(
-                path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+                jbrowse,
                 [
                     "add-assembly",
                     genome,
@@ -99,7 +104,7 @@ const spawnChild = (body) => {
             );
 
             fork(
-                path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+                jbrowse,
                 [
                     "add-track",
                     track.track,
@@ -146,7 +151,7 @@ const spawnChild = (body) => {
             // import bigwig_cg
 
             fork(
-                path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+                jbrowse,
                 [
                     "add-track",
                     track.cgbw,
@@ -189,7 +194,7 @@ const spawnChild = (body) => {
             // );
             // import bigwig_chg
             fork(
-                path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+                jbrowse,
                 [
                     "add-track",
                     track.chgbw,
@@ -234,7 +239,7 @@ const spawnChild = (body) => {
             // import bigwig_chh
 
             fork(
-                path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+                jbrowse,
                 [
                     "add-track",
                     track.chhbw,
@@ -278,7 +283,7 @@ const spawnChild = (body) => {
             // );
             // import bigwig_bedgraph
             fork(
-                path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+                jbrowse,
                 [
                     "add-track",
                     track.bedbw,
@@ -325,7 +330,7 @@ const spawnChild = (body) => {
         body.comparisons.map((comparison) => {
             // import import_bedgz and index
             fork(
-                path.join(__dirname, "../node_modules/@jbrowse/cli/bin/run"),
+                jbrowse,
                 [
                     "add-track",
                     comparison.bed,

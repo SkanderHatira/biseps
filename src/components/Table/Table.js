@@ -446,7 +446,7 @@ export default function InteractiveList() {
 
   console.log(data);
   const openInFolder = (path) => {
-    shell.showItemInFolder(path);
+    shell.openPath(path);
   };
   console.log(data);
 

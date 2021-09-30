@@ -319,7 +319,7 @@ export default function InteractiveList() {
   };
 
   const openInFolder = (path) => {
-    shell.showItemInFolder(path);
+    shell.openPath(path);
   };
   console.log(data);
   const handleLog = (row, filePath) => {
