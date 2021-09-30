@@ -615,7 +615,7 @@ export default function ComparisonForm() {
                           }
                         >
                           {comparison.customcontrol === ""
-                            ? "custom adapters"
+                            ? "custom report(s)"
                             : comparison.customcontrol
                                 .split(/[\\/]/)
                                 .pop()}{" "}
@@ -682,7 +682,7 @@ export default function ComparisonForm() {
                           }
                         >
                           {comparison.customtreatment === ""
-                            ? "custom treatment"
+                            ? "custom report(s)"
                             : comparison.customtreatment
                                 .split(/[\\/]/)
                                 .pop()}{" "}

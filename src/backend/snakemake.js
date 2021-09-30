@@ -7,14 +7,16 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const logfile = path.join(uniqueDir, "biseps.txt");
     const output = fs.openSync(logfile, "a");
     const workflow = path.join(__dirname, "../resources/biseps/");
-    const command =
+    const base =
         process.platform == "win32"
             ? "conda"
-            : `$(head -n 1 $HOME/.conda/environments.txt)/bin/conda`;
+            : `$(head -n 1 $HOME/.conda/environments.txt)`;
+    const command = process.platform == "win32" ? "conda" : `${base}/bin/conda`;
     const options = {
         slient: false,
         // detached: true,
-        shell: true,
+        shell:
+            process.platform == "win32" ? "powershell.exe" : process.env.SHELL,
         // stdio: ["ignore", output, output],
     };
     if (body.remote) {
@@ -32,7 +34,8 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             !body.rerun
         ) {
             const child = exec(
-                `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --config platform="other" --archive workflow.tar.gz`,
+                `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} 
+                --config platform="other" --archive workflow.tar.gz`,
                 options
             );
 
@@ -142,10 +145,10 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         const child = exec(
             `${
                 unlock
-                    ? `${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} --unlock 2> ${uniqueDir}/biseps.txt`
+                    ? `${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile   ${profile}  --unlock 2> ${uniqueDir}/biseps.txt`
                     : `true 2> ${uniqueDir}/biseps.txt `
             }` +
-                `&& ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} 2>> ${uniqueDir}/biseps.txt &&  ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile} --report ${uniqueDir}/report.html 2>> ${uniqueDir}/biseps.txt`,
+                `&& ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile  ${profile}  2>> ${uniqueDir}/biseps.txt &&  ${command} run -n bisepsSnakemake --cwd ${workflow} --no-capture-output --live-stream snakemake --profile ${profile}  --report ${uniqueDir}/report.html 2>> ${uniqueDir}/biseps.txt`,
             options
         );
 
