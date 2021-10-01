@@ -69,15 +69,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         }
         const connect = require("ssh2-connect");
         const execs = require("ssh2-exec");
-        connect(host, function (err, ssh) {
-            execs(
-                "ls > testing.ls.txt",
-                { ssh: ssh },
-                (err, stdout, stderr) => {
-                    console.log(stdout);
-                }
-            );
-        });
+
         let sftp = new Client();
         sftp.connect(host)
             .then(() => {
@@ -115,7 +107,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                           .join(
                                               path.posix.sep
                                           )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
-                            }  && sbatch exec_scripts/${
+                            }  &&  tr -d "\15\32" < realScript.sh > realScript1.sh < exec_scripts/script.sh > exec_scripts/script.sh  && sbatch exec_scripts/${
                                 "contexts" in body
                                     ? "slurmComparison.sh " + unlock
                                     : "slurmScript.sh " + unlock
@@ -141,7 +133,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                           .join(
                                               path.posix.sep
                                           )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
-                            }    &&  bash exec_scripts/${
+                            }    && tr -d "\15\32" < realScript.sh > realScript1.sh < exec_scripts/script.sh > exec_scripts/script.sh  &&  bash exec_scripts/${
                                 "contexts" in body
                                     ? "localComparison.sh " + unlock
                                     : "localScript.sh " + unlock
