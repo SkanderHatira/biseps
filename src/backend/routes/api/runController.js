@@ -30,15 +30,11 @@ router.post("/run", (req, res) => {
         return res.status(400).json(errors);
     } else {
         if (!req.body.remote) {
-            const uniqueDir = path
-                .join(req.body.outdir, new Date().getTime().toString())
-                .split(path.sep)
-                .join(path.posix.sep);
-            const profile = path
-                .join(uniqueDir, "config/profiles/local")
-                .split(path.sep)
-                .join(path.posix.sep);
-
+            const uniqueDir = path.join(
+                req.body.outdir,
+                new Date().getTime().toString()
+            );
+            const profile = path.join(uniqueDir, "config/profiles/local");
             const newRun = new Run({
                 params: {
                     trimmomatic: {
@@ -93,29 +89,13 @@ router.post("/run", (req, res) => {
             spawnChild(req.body, profile, uniqueDir, "", false);
         } else {
             const date = new Date().getTime().toString();
-            const uniqueDir = path
-                .join(req.body.outdir, date)
-                .split(path.sep)
-                .join(path.posix.sep);
-            const uniqueDirRemote = path
-                .join(req.body.remoteDir, date)
-                .split(path.sep)
-                .join(path.posix.sep);
-            const homeDir = path
-                .join(req.body.remoteDir, date)
-                .split(path.sep)
-                .join(path.posix.sep);
+            const uniqueDir = path.join(req.body.outdir, date);
+            const uniqueDirRemote = path.join(req.body.remoteDir, date);
+            const homeDir = path.join(req.body.remoteDir, date);
             console.log(homeDir);
             const profile = req.body.cluster
-                ? path
-                      .join(uniqueDir, "config/profiles/slurm")
-                      .split(path.sep)
-                      .join(path.posix.sep)
-                : path
-                      .join(uniqueDir, "config/profiles/local")
-                      .split(path.sep)
-                      .join(path.posix.sep);
-
+                ? path.join(uniqueDir, "config/profiles/slurm")
+                : path.join(uniqueDir, "config/profiles/local");
             const newRun = new Run({
                 outdir: uniqueDir,
                 remoteDir: uniqueDirRemote,

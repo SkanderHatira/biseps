@@ -81,14 +81,22 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         let sftp = new Client();
         sftp.connect(host)
             .then(() => {
-                return sftp.exists(path.join(homeDir, "workflow.tar.gz"));
+                return sftp.exists(
+                    path
+                        .join(homeDir, "workflow.tar.gz")
+                        .split(path.sep)
+                        .join(path.posix.sep)
+                );
             })
             .then((data) => {
                 if (!data) {
-                    sftp.mkdir(homeDir);
+                    sftp.mkdir(homeDir.split(path.sep).join(path.posix.sep));
                     return sftp.fastPut(
                         path.join(uniqueDir, "workflow.tar.gz"),
-                        path.join(homeDir, "workflow.tar.gz")
+                        path
+                            .join(homeDir, "workflow.tar.gz")
+                            .split(path.sep)
+                            .join(path.posix.sep)
                     );
                 }
             })
@@ -99,8 +107,14 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                         execs(
                             `${
                                 body.rerun
-                                    ? `cd ${homeDir}`
-                                    : `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
+                                    ? `cd ${homeDir
+                                          .split(path.sep)
+                                          .join(path.posix.sep)}`
+                                    : `cd ${homeDir
+                                          .split(path.sep)
+                                          .join(
+                                              path.posix.sep
+                                          )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
                             }  && sbatch exec_scripts/${
                                 "contexts" in body
                                     ? "slurmComparison.sh " + unlock
@@ -119,8 +133,14 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                         execs(
                             `${
                                 body.rerun
-                                    ? `cd ${homeDir}`
-                                    : `cd ${homeDir} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
+                                    ? `cd ${homeDir
+                                          .split(path.sep)
+                                          .join(path.posix.sep)}`
+                                    : `cd ${homeDir
+                                          .split(path.sep)
+                                          .join(
+                                              path.posix.sep
+                                          )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
                             }    &&  bash exec_scripts/${
                                 "contexts" in body
                                     ? "localComparison.sh " + unlock
