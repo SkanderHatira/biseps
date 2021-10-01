@@ -31,7 +31,6 @@ router.post("/comparison", (req, res) => {
     } else {
         console.log("made validation");
         if (!req.body.remote) {
-            const date = new Date().getTime().toString();
             const uniqueDir = path.join(
                 req.body.outdir,
                 new Date().getTime().toString()
@@ -100,15 +99,23 @@ router.post("/comparison", (req, res) => {
             //     "../../../bisepsComparison/",
             //     date
             // );
-            const uniqueDir = path.join(
-                req.body.outdir,
-                new Date().getTime().toString()
-            );
-            const uniqueDirRemote = path.join(req.body.remoteDir, date);
+            const uniqueDir = path
+                .join(req.body.outdir, new Date().getTime().toString())
+                .split(path.sep)
+                .join(path.posix.sep);
+            const uniqueDirRemote = path
+                .join(req.body.remoteDir, date)
+                .split(path.sep)
+                .join(path.posix.sep);
             const profile = req.body.cluster
-                ? path.join(uniqueDir, "config/profiles/slurmComparison")
-                : path.join(uniqueDir, "config/profiles/localComparison");
-            const homeDir = path.join(req.body.remoteDir, date);
+                ? path
+                      .join(uniqueDir, "config/profiles/slurmComparison")
+                      .split(path.sep)
+                      .join(path.posix.sep)
+                : path
+                      .join(uniqueDir, "config/profiles/localComparison")
+                      .split(path.sep)
+                      .join(path.posix.sep);
 
             const newComparison = new Comparison({
                 outdir: uniqueDir,

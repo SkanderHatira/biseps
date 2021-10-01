@@ -111,7 +111,6 @@ export default function InteractiveList() {
     console.log(row);
     let remotePath = `${row.remoteDir}/${filePath}`;
     let localPath = row.date + filePath;
-    console.log(path.join(bisepsTemp, localPath));
     sftp
       .connect({
         host: row.machine.hostname,
@@ -127,7 +126,10 @@ export default function InteractiveList() {
         console.log(localPath);
         console.log("made it all the way here?");
 
-        return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
+        return sftp.fastGet(
+          remotePath,
+          path.join(bisepsTemp, localPath).split(path.sep).join(path.posix.sep)
+        );
       })
       .then((data) => {
         console.log(data);

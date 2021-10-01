@@ -3,6 +3,7 @@ const createUnits = (body, uniqueDir) => {
     const fs = require("fs");
     const path = require("path");
     const fields = ["sample", "lane", "techrep", "biorep", "fq1", "fq2"];
+
     const opts = { fields, delimiter: "\t" };
     console.log("creating units");
     if (body.remote) {

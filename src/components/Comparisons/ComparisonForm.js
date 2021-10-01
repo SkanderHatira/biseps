@@ -300,7 +300,12 @@ export default function ComparisonForm() {
     console.log(e.target.value);
     const newFiles = [];
     for (const file in e.target.value) {
-      newFiles.push(path.join("data/", path.basename(e.target.value[file])));
+      newFiles.push(
+        path
+          .join("data/", path.basename(e.target.value[file]))
+          .split(path.sep)
+          .join(path.posix.sep)
+      );
 
       console.log(e.target.value);
       console.log(newFiles);

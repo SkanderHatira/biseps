@@ -321,10 +321,10 @@ export default function NewTable() {
     console.log(e.target.dataset.idx);
 
     const updatedRemoteUnits = [...remoteunits];
-    updatedRemoteUnits[e.target.dataset.idx][e.target.id] = path.join(
-      "data",
-      path.basename(e.target.files[0].path)
-    );
+    updatedRemoteUnits[e.target.dataset.idx][e.target.id] = path
+      .join("data", path.basename(e.target.files[0].path))
+      .split(path.sep)
+      .join(path.posix.sep);
     setRemoteUnits(updatedRemoteUnits);
 
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.files[0].path;
