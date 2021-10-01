@@ -127,7 +127,7 @@ export default function InteractiveList() {
         console.log("made it all the way here?");
 
         return sftp.fastGet(
-          remotePath,
+          remotePath.split(path.sep).join(path.posix.sep),
           path.join(bisepsTemp, localPath).split(path.sep).join(path.posix.sep)
         );
       })

@@ -222,7 +222,7 @@ export default function VisualizationFill() {
             console.log(path.join(bisepsTemp, path.basename(tracks[track])));
             try {
               await sftp.fastGet(
-                tracks[track],
+                tracks[track].split(path.sep).join(path.posix.sep),
                 path.join(bisepsTemp, path.basename(tracks[track]))
               );
             } catch (err) {
