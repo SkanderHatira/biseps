@@ -19,6 +19,8 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             process.platform == "win32" ? "powershell.exe" : process.env.SHELL,
         // stdio: ["ignore", output, output],
     };
+    const failedArchive = `${uniqueDir}/failed.archive.lock`;
+
     if (body.remote) {
         const host = {
             host: body.machine.hostname,
@@ -34,8 +36,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             !body.rerun
         ) {
             const child = exec(
-                `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} 
-                --config platform="other" --archive workflow.tar.gz`,
+                `${command} run -n bisepsSnakemake --cwd ${uniqueDir} --no-capture-output --live-stream snakemake --profile ${profile} --config platform="other" --archive workflow.tar.gz`,
                 options
             );
 
@@ -56,14 +57,13 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
             });
 
             if (exitCode) {
-                const filename = `${uniqueDir}/failed.archive.lock`;
-                fs.closeSync(fs.openSync(filename, "w"));
+                fs.closeSync(fs.openSync(failedArchive, "w"));
                 // throw new Error(`subprocess error exit ${exitCode}, ${error}`);
             } else {
                 const filename = `${uniqueDir}/archive.lock`;
                 fs.closeSync(fs.openSync(filename, "w"));
-                if (fs.existsSync(filename)) {
-                    fs.unlinkSync(filename);
+                if (fs.existsSync(failedArchive)) {
+                    fs.unlinkSync(failedArchive);
                 }
             }
         }
