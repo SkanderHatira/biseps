@@ -107,7 +107,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                           .join(
                                               path.posix.sep
                                           )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
-                            }  &&  tr -d "\15\32" < realScript.sh > realScript1.sh < exec_scripts/script.sh > exec_scripts/script.sh  && sbatch exec_scripts/${
+                            }  &&  tr -d "\15\32" < exec_scripts/script.sh > exec_scripts/script.sh  && sbatch exec_scripts/${
                                 "contexts" in body
                                     ? "slurmComparison.sh " + unlock
                                     : "slurmScript.sh " + unlock
@@ -133,7 +133,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                           .join(
                                               path.posix.sep
                                           )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
-                            }    && tr -d "\15\32" < realScript.sh > realScript1.sh < exec_scripts/script.sh > exec_scripts/script.sh  &&  bash exec_scripts/${
+                            }    && tr -d "\15\32" < exec_scripts/script.sh > exec_scripts/script.sh  &&  bash exec_scripts/${
                                 "contexts" in body
                                     ? "localComparison.sh " + unlock
                                     : "localScript.sh " + unlock
