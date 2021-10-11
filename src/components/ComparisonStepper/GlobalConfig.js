@@ -303,7 +303,7 @@ export default function GlobalConfig() {
                 name="binsize"
                 onChange={handleSlider}
                 value={compState.binsize}
-                step={200}
+                step={50}
                 min={0}
                 max={5000}
                 valueLabelDisplay="auto"
