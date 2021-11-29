@@ -604,6 +604,9 @@ export default function VisualizationFill() {
                               color: sampleExist ? "green" : "gray",
                             }}
                           />
+                          {sampleExist
+                            ? "Alignment files available"
+                            : "Download alignment files"}
                         </IconButton>
                       ) : (
                         ""

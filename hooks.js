@@ -4,15 +4,24 @@ const path = require("path");
 const { execSync } = require("child_process");
 const scripts = path.join(
   __dirname,
-  ".webpack","main","resources","biseps","workflow","scripts"
+  ".webpack",
+  "main",
+  "resources",
+  "biseps",
+  "workflow",
+  "scripts"
 );
-const resources = path.join(__dirname, ".webpack","main","resources");
+const resources = path.join(__dirname, ".webpack", "main", "resources");
 const chmodr = require("chmodr");
 
 module.exports = {
   generateAssets: async (forgeConfig, options) => {
     execSync(
-      `${path.join(__dirname, "src/backend/node_modules/@jbrowse/cli/bin/run")}${process.platform == "win32" ? ".cmd" : ""} create ${path.join(__dirname,"resources","jbrowse2")} -f`,
+      `npx @jbrowse/cli  create ${path.join(
+        __dirname,
+        "resources",
+        "jbrowse2"
+      )} -f`,
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);

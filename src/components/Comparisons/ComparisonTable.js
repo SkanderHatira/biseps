@@ -547,7 +547,7 @@ export default function InteractiveList() {
                 {row.createdBy._id === user.user.id ? (
                   <Button
                     variant="contained"
-                    color={row.public ? "primary" : "Secondary"}
+                    color={row.public ? "primary" : "secondary"}
                     onClick={() => makePublic(row)}
                   >
                     {row.public ? "Make Private" : "Make Public"}

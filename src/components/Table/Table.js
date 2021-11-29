@@ -31,6 +31,9 @@ import MuiAlert from "@material-ui/lab/Alert";
 import TimelapseOutlinedIcon from "@material-ui/icons/TimelapseOutlined";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import LockIcon from "@material-ui/icons/Lock";
+import IconButton from "@material-ui/core/IconButton";
+import GetAppIcon from "@material-ui/icons/GetApp";
+
 const { clipboard } = require("electron");
 const fs = require("fs");
 const path = require("path");
@@ -144,7 +147,25 @@ export default function InteractiveList() {
         sftp.end();
       });
   };
-
+  const downloadCX = (row, sample, cx) => {
+    let sftp = new Client();
+    sftp
+      .connect({
+        host: row.machine.hostname,
+        port: row.machine.port,
+        username: row.machine.username,
+        ...(!(row.machine.privateKey === "") && {
+          privateKey: require("fs").readFileSync(row.machine.privateKey),
+        }),
+        password: row.machine.password,
+      })
+      .then(async () => {
+        console.log("made it all the way here?");
+        if (!fs.existsSync(path.join(bisepsTemp, path.basename(cx)))) {
+          return sftp.fastGet(cx, path.join(bisepsTemp, path.basename(cx)));
+        }
+      });
+  };
   const downloadFiles = (row, sample, tracks) => {
     let sftp = new Client();
 
@@ -691,10 +712,14 @@ export default function InteractiveList() {
                       const outdir = row.remote
                         ? `${row.remoteDir}`
                         : row.outdir;
-
                       const Multiqc = `${outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
                       const CX = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`;
-                      const tracks = [Multiqc, CX];
+                      const sampleExist = fileExist(
+                        row.remote
+                          ? path.join(bisepsTemp, path.basename(CX))
+                          : CX
+                      );
+                      const tracks = [Multiqc];
                       return (
                         <ListItem
                           button
@@ -708,18 +733,6 @@ export default function InteractiveList() {
                               : true
                           }
                           key={sample._id}
-                          onClick={
-                            row.remote
-                              ? () =>
-                                  // handleRemoteFiles(row, sample);
-                                  downloadFiles(row, sample, tracks)
-                              : () => {
-                                  console.log(sample);
-                                  const path = `${row.outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
-                                  console.log(path);
-                                  createBrowserWindow(path);
-                                }
-                          }
                         >
                           <ListItemAvatar>
                             <Avatar>
@@ -727,9 +740,40 @@ export default function InteractiveList() {
                             </Avatar>
                           </ListItemAvatar>
                           <ListItemText
+                            onClick={
+                              row.remote
+                                ? () =>
+                                    // handleRemoteFiles(row, sample);
+                                    downloadFiles(row, sample, tracks)
+                                : () => {
+                                    console.log(sample);
+                                    const path = `${row.outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
+                                    console.log(path);
+                                    createBrowserWindow(path);
+                                  }
+                            }
                             primary={`${sample.sample} MultiQC Report`}
                             secondary={secondary ? "Secondary text" : null}
                           />
+                          {row.remote ? (
+                            <IconButton
+                              edge="end"
+                              disabled={sampleExist}
+                              aria-label="files"
+                              onClick={() => downloadCX(row, sample, CX)}
+                            >
+                              <GetAppIcon
+                                style={{
+                                  color: sampleExist ? "green" : "gray",
+                                }}
+                              />
+                              {sampleExist
+                                ? "CX report available"
+                                : "Download CX report"}
+                            </IconButton>
+                          ) : (
+                            ""
+                          )}{" "}
                         </ListItem>
                       );
                     })}

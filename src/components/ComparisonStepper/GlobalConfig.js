@@ -305,7 +305,7 @@ export default function GlobalConfig() {
                 value={compState.binsize}
                 step={50}
                 min={0}
-                max={5000}
+                max={1000}
                 valueLabelDisplay="auto"
               />
               <FormHelperText>

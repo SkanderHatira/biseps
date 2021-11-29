@@ -14,7 +14,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const command = process.platform == "win32" ? "conda" : `${base}/bin/conda`;
     const options = {
         slient: false,
-        // detached: true,
+        detached: false,
         shell:
             process.platform == "win32" ? "powershell.exe" : process.env.SHELL,
         // stdio: ["ignore", output, output],
