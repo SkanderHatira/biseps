@@ -652,8 +652,8 @@ export default function VisualizationFill() {
                       const associatedGenome =
                         path.parse(associatedGenomePath).name;
 
-                      const bed = `${outdir}/results/${comparison.id}/${comparison.id}-${context}.bed.gz`;
-                      const bedtbi = `${outdir}/results/${comparison.id}/${comparison.id}-${context}.bed.gz.tbi`;
+                      const bed = `${outdir}/methylation/${comparison.id}-${context}/${comparison.id}-${context}-overallMethylation.bed.gz`;
+                      const bedtbi = `${bed}.tbi`;
                       const bedtbiPathLocal = path.join(
                         bisepsTemp,
                         path.basename(bedtbi)

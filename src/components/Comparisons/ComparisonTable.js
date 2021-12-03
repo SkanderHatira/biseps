@@ -372,6 +372,7 @@ export default function InteractiveList() {
   const handleClose = () => {
     setOpen(false);
   };
+  console.log(data);
   return (
     <Container maxWidth="lg" className={classes.container}>
       <Snackbar
@@ -588,7 +589,7 @@ export default function InteractiveList() {
               <div className={classes.demo}>
                 <List dense={dense}>
                   {row.comparisons.map((comparison) =>
-                    row.context.map((context) => (
+                    row.contexts.map((context) => (
                       <ListItem
                         key={context}
                         button
@@ -596,7 +597,7 @@ export default function InteractiveList() {
                           row.remote
                             ? false
                             : fileExist(
-                                `${row.outdir}/results/${comparison.id}/${comparison.id}-${context}.bed`
+                                `${row.outdir}/methylation/${comparison.id}-${context}/${comparison.id}-${context}-overallMethylation-stats.txt`
                               )
                             ? false
                             : true
@@ -606,10 +607,10 @@ export default function InteractiveList() {
                             // handleRemoteFiles(row, sample);
                             handleLog(
                               row,
-                              `results/${comparison.id}/${comparison.id}-${context}.bed`
+                              `methylation/${comparison.id}-${context}/${comparison.id}-${context}-overallMethylation-stats.txt`
                             );
                           } else {
-                            const path = `${row.outdir}/results/${comparison.id}/${comparison.id}-${context}.bed`;
+                            const path = `${row.outdir}/methylation/${comparison.id}-${context}/${comparison.id}-${context}-overallMethylation-stats.txt`;
                             createBrowserWindow(path);
                           }
                         }}
