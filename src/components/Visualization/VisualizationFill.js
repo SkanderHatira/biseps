@@ -336,6 +336,7 @@ export default function VisualizationFill() {
   const result = mix.reduce(function (r, o) {
     console.log(r);
     const key = o.genome;
+    console.log(o.genome);
     const genome = path.basename(o.genome);
     const genomePath = o.genome;
     if (!helper[key]) {

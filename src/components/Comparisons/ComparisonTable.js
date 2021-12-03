@@ -314,7 +314,7 @@ export default function InteractiveList() {
       width: 1080,
     });
     console.log("here");
-
+    console.log(path);
     win.loadURL(`file://${path}`);
   };
 
@@ -588,7 +588,7 @@ export default function InteractiveList() {
               <div className={classes.demo}>
                 <List dense={dense}>
                   {row.comparisons.map((comparison) =>
-                    row.contexts.map((context) => (
+                    row.context.map((context) => (
                       <ListItem
                         key={context}
                         button

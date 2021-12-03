@@ -18,6 +18,7 @@ import { useHistory } from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+const path = require("path");
 const http = require("http");
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -116,6 +117,10 @@ export default function RunForm() {
     // in a signle array
     const errors = [];
 
+    if (compState.species.length === 0) {
+      errors.push("You have to specify a a species name");
+    }
+
     if (compState.genome.length === 0) {
       errors.push("You have to specify a genome");
     }
@@ -164,16 +169,18 @@ export default function RunForm() {
       setLoading(false);
       return errors;
     }
+    console.log(path.dirname(compState.genome));
     const request = {
       ...compState,
       rerun: false,
       comparisons,
       remotecomparisons,
+      outdir: path.dirname(compState.genome),
       userId: user.user.id,
       email: user.user.email,
     };
     const token = sessionStorage.jwtToken;
-
+    console.log(request);
     const options = {
       method: "POST",
       path: "http://localhost/api/comparisons/comparison",

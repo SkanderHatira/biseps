@@ -185,12 +185,7 @@ export default function GlobalConfig() {
               onChange={handleCompState}
             >
               <MenuItem value="bins">Bins</MenuItem>
-              <MenuItem value="neighbourhood">Neighbourhood</MenuItem>{" "}
-              {compState.stat != "betareg" ? (
-                <MenuItem value="noise_filter">Noise Filter</MenuItem>
-              ) : (
-                ""
-              )}
+              <MenuItem value="base">Base Level</MenuItem>
             </Select>
             <FormHelperText>
               Choose DMR Calling method. Default: bins
@@ -210,9 +205,9 @@ export default function GlobalConfig() {
               input={<Input />}
               renderValue={(selected) => selected.join(", ")}
             >
-              <MenuItem key={1} value="CG">
-                <Checkbox checked={compState.contexts.indexOf("CG") > -1} />
-                <ListItemText primary={"CG"} />
+              <MenuItem key={1} value="CpG">
+                <Checkbox checked={compState.contexts.indexOf("CpG") > -1} />
+                <ListItemText primary={"CpG"} />
               </MenuItem>
               <MenuItem key={2} value={"CHG"}>
                 <Checkbox checked={compState.contexts.indexOf("CHG") > -1} />
@@ -238,26 +233,10 @@ export default function GlobalConfig() {
               name="stat"
               onChange={handleCompState}
             >
-              <MenuItem value="score">Score</MenuItem>
-              <MenuItem value="fisher">Fisher</MenuItem>
-              {compState.method != "noise_filter" ? (
-                <MenuItem value="betareg">Betareg</MenuItem>
-              ) : (
-                ""
-              )}
-
-              {/* <input
-                accept=".fa"
-                className={classes.input}
-                style={{ display: "none" }}
-                id="test"
-                multiple
-                onChange={handleRunFiles}
-                type="file"
-              />
-              <label htmlFor="test">
-                <MenuItem value="Upload">Upload</MenuItem>
-              </label> */}
+              <MenuItem value="F">F</MenuItem>
+              <MenuItem value="fast.fisher">Fast Fisher</MenuItem>
+              <MenuItem value="midPval">midPval</MenuItem>
+              <MenuItem value="Chisq">Chisq</MenuItem>
             </Select>
             <FormHelperText>Choose test</FormHelperText>
           </FormControl>
@@ -280,7 +259,7 @@ export default function GlobalConfig() {
               <Link
                 onClick={() =>
                   createBrowserWindow(
-                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                    "https://bioconductor.org/packages/release/bioc/manuals/methylKit/man/methylKit.pdf"
                   )
                 }
               >
@@ -290,63 +269,27 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
-        {compState.method === "neighbourhood" ? (
-          ""
-        ) : (
-          <Grid item xs={12} sm={4}>
-            <FormControl className={classes.formControl}>
-              <Typography gutterBottom>
-                {compState.method === "bins" ? "Bin Size" : "Window Size"}{" "}
-              </Typography>
-              <Slider
-                id="binsize"
-                name="binsize"
-                onChange={handleSlider}
-                value={compState.binsize}
-                step={50}
-                min={0}
-                max={1000}
-                valueLabelDisplay="auto"
-              />
-              <FormHelperText>
-                Choose bin size for Bins and Noise Filter methods. See{" "}
-                <Link
-                  onClick={() =>
-                    createBrowserWindow(
-                      "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
-                    )
-                  }
-                >
-                  docs
-                </Link>
-                .
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-        )}
-        {compState.stat != "betareg" ? (
+
+        {compState.method != "bins" ? (
           ""
         ) : (
           <>
             <Grid item xs={12} sm={4}>
               <FormControl className={classes.formControl}>
-                <Typography gutterBottom>
-                  Methylated Reads Pseudocount
-                </Typography>
+                <Typography gutterBottom>Window Size</Typography>
                 <Input
-                  id="pseudocountM"
-                  name="pseudocountM"
+                  id="binsize"
+                  name="binsize"
                   type="number"
                   onChange={handleCompState}
-                  value={compState.pseudocountM}
+                  value={compState.binsize}
                 />
                 <FormHelperText>
-                  Numerical Value to be added to methylated reads before beta
-                  regression. See{" "}
+                  Choose bin size for Bins and Noise Filter methods. See{" "}
                   <Link
                     onClick={() =>
                       createBrowserWindow(
-                        "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                        "https://bioconductor.org/packages/release/bioc/manuals/methylKit/man/methylKit.pdf"
                       )
                     }
                   >
@@ -358,21 +301,20 @@ export default function GlobalConfig() {
             </Grid>
             <Grid item xs={12} sm={4}>
               <FormControl className={classes.formControl}>
-                <Typography gutterBottom>Total Reads Pseudocount</Typography>
+                <Typography gutterBottom>Step Size</Typography>
                 <Input
-                  id="pseudocountN"
-                  name="pseudocountN"
+                  id="stepsize"
+                  name="stepsize"
                   type="number"
                   onChange={handleCompState}
-                  value={compState.pseudocountN}
+                  value={compState.stepsize}
                 />
                 <FormHelperText>
-                  Numerical Value to be added to total reads before beta
-                  regression. See{" "}
+                  Step to use to go over genome.
                   <Link
                     onClick={() =>
                       createBrowserWindow(
-                        "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                        "https://bioconductor.org/packages/release/bioc/manuals/methylKit/man/methylKit.pdf"
                       )
                     }
                   >
@@ -384,32 +326,7 @@ export default function GlobalConfig() {
             </Grid>
           </>
         )}
-        <Grid item xs={12} sm={4}>
-          <FormControl className={classes.formControl}>
-            <Typography gutterBottom>Minimum Cytosines Count</Typography>
-            <Input
-              id="minCytosinesCount"
-              name="minCytosinesCount"
-              type="number"
-              onChange={handleCompState}
-              value={compState.minCytosinesCount}
-            />
-            <FormHelperText>
-              Minimum methylated cytosines count present in a region to be
-              qualified as DMR. See{" "}
-              <Link
-                onClick={() =>
-                  createBrowserWindow(
-                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
-                  )
-                }
-              >
-                docs
-              </Link>
-              .
-            </FormHelperText>
-          </FormControl>
-        </Grid>
+
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <Typography gutterBottom>Minimum Reads Per Cytosine </Typography>
@@ -425,7 +342,7 @@ export default function GlobalConfig() {
               <Link
                 onClick={() =>
                   createBrowserWindow(
-                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                    "https://bioconductor.org/packages/release/bioc/manuals/methylKit/man/methylKit.pdf"
                   )
                 }
               >
@@ -456,7 +373,7 @@ export default function GlobalConfig() {
               <Link
                 onClick={() =>
                   createBrowserWindow(
-                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                    "https://bioconductor.org/packages/release/bioc/manuals/methylKit/man/methylKit.pdf"
                   )
                 }
               >
@@ -466,31 +383,7 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl className={classes.formControl}>
-            <Typography gutterBottom>Minimum Gap</Typography>
-            <Input
-              id="minGap"
-              name="minGap"
-              type="number"
-              onChange={handleCompState}
-              value={compState.minGap}
-            />
-            <FormHelperText>
-              DMRs separated by a gap of at least minGap are not merged. See{" "}
-              <Link
-                onClick={() =>
-                  createBrowserWindow(
-                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
-                  )
-                }
-              >
-                docs
-              </Link>
-              .
-            </FormHelperText>
-          </FormControl>
-        </Grid>
+
         <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <Typography gutterBottom>Minimum Size</Typography>
@@ -506,7 +399,7 @@ export default function GlobalConfig() {
               <Link
                 onClick={() =>
                   createBrowserWindow(
-                    "https://bioconductor.org/packages/release/bioc/html/DMRcaller.html"
+                    "https://bioconductor.org/packages/release/bioc/manuals/methylKit/man/methylKit.pdf"
                   )
                 }
               >
@@ -517,57 +410,7 @@ export default function GlobalConfig() {
           </FormControl>
         </Grid>
 
-        {compState.method != "noise_filter" ? (
-          ""
-        ) : (
-          <Grid item xs={12} sm={4}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Kernel Function</InputLabel>
-              <Select
-                value={compState.kernelFunction}
-                labelId="kernelFunction"
-                id="kernelFunction"
-                name="kernelFunction"
-                onChange={handleCompState}
-              >
-                <MenuItem value="uniform">Uniform</MenuItem>
-                <MenuItem value="triangular">Triangular</MenuItem>{" "}
-                <MenuItem value="gaussian">Gaussian</MenuItem>
-                <MenuItem value="epanechnicov">Epanechnicov</MenuItem>
-              </Select>
-              <FormHelperText>
-                Choose kernel function to be used with noise filter method.
-                Default : uniform.
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-        )}
-
         <Grid item sm={12}>
-          <FormControl className={classes.formControl}>
-            <Button
-              variant="contained"
-              component="label"
-              color={compState.genome === "" ? "default" : "primary"}
-            >
-              {compState.genome === ""
-                ? "upload genome"
-                : compState.genome.split(/[\\/]/).pop()}
-              <input
-                type="file"
-                required
-                id="genome"
-                name="genome"
-                label="Genome"
-                accept=".fasta , .fa , .fq , .fq.gz"
-                onChange={handleGenome}
-                type="file"
-                hidden
-              />
-            </Button>
-
-            <FormHelperText>Choose genome in .fasta Format </FormHelperText>
-          </FormControl>
           <FormControl className={classes.formControl}>
             <Button
               variant="contained"
@@ -590,127 +433,49 @@ export default function GlobalConfig() {
             </Button>
 
             <FormHelperText>
-              Choose annotation file in gff/bed Format
+              Choose annotation file in gff/bed Format.
             </FormHelperText>
           </FormControl>
-        </Grid>
 
-        {/* <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
             <Button
               variant="contained"
               component="label"
-              color={compState.outdir === "" ? "default" : "primary"}
+              color={compState.genome === "" ? "default" : "primary"}
             >
-              {compState.outdir === ""
+              {compState.genome === ""
                 ? "upload genome"
-                : compState.outdir.split(/[\\/]/).pop()}
+                : compState.genome.split(/[\\/]/).pop()}
               <input
                 type="file"
-                required
                 id="genome"
                 name="genome"
                 label="Genome"
-                accept=".fasta , .fa , .fq , .fq.gz"
-                onChange={handleGenome}
+                accept=".fasta , .fa"
+                onChange={handleFile}
                 type="file"
                 hidden
               />
             </Button>
 
-            <FormHelperText>Choose genome in .fasta Format</FormHelperText>
+            <FormHelperText>
+              Choose genome used to make the alignments.
+            </FormHelperText>
           </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel>Number of Mismatches</InputLabel>
-            <Select
-              value={compState.n}
-              labelId="n"
-              id="n"
-              name="n"
+            <Input
               onChange={handleCompState}
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-            </Select>
-            <FormHelperText>
-              Choose Number of Mismatches. Default: 0, choosing 1 makes process
-              much slower
-            </FormHelperText>
+              id="species"
+              name="species"
+              label="Species"
+              value={compState.species}
+              placeholder="Species"
+              required
+              type="text"
+            ></Input>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl className={classes.formControl}>
-            <Typography gutterBottom>Minlen </Typography>
-            <Slider
-              name="minlen"
-              id="minlen"
-              onChange={handleSlider}
-              value={compState.minlen}
-              aria-labelledby="minlen"
-              step={10}
-              min={30}
-              max={100}
-              valueLabelDisplay="auto"
-            />{" "}
-            <FormHelperText>Choose minimal read length</FormHelperText>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl className={classes.formControl}>
-            <Typography gutterBottom>Min-Score </Typography>
-            <Slider
-              id="minscore"
-              name="minscore"
-              onChange={handleSlider}
-              value={compState.minscore}
-              step={-0.1}
-              min={-1}
-              max={-0.2}
-              valueLabelDisplay="auto"
-            />
-            <FormHelperText>
-              Choose minimal alignement quality score. See
-              <Link href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide_v0.7.12.pdf">
-                docs
-              </Link>
-              .
-            </FormHelperText>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl className={classes.formControl}>
-            <Typography gutterBottom>L</Typography>
-            <Slider
-              value={compState.l}
-              onChange={handleSlider}
-              aria-labelledby="l"
-              id="l"
-              name="l"
-              step={1}
-              min={20}
-              max={32}
-              valueLabelDisplay="auto"
-            />
-            <FormHelperText>
-              Choose k-mer length for alignment. Higher : Faster but less
-              sensitive
-            </FormHelperText>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControlLabel
-            className={classes.formControl}
-            control={
-              <Checkbox
-                onChange={handleCheckBox}
-                color="secondary"
-                name="subsample"
-              />
-            }
-         ></FormControlLabel>
-        </Grid> */}
+
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom>
             Execution Parameters{" "}
