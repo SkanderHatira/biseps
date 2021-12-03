@@ -188,6 +188,7 @@ export default function VisualizationFill() {
       return false;
     }
   };
+  console.log(comp);
   const downloadFiles = (row, tracks) => {
     let sftp = new Client();
 

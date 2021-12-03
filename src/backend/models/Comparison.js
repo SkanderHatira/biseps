@@ -24,7 +24,7 @@ const comparisonSchema = new Schema({
     qValue: { type: Number, required: false },
     minCov: { type: Number, required: false },
     minDiff: { type: Number, required: false },
-    context: [{ type: String, required: false }],
+    contexts: [{ type: String, required: false }],
     species: { type: String, required: false },
     remote: { type: Boolean, required: false },
     cluster: { type: Boolean, required: false },
