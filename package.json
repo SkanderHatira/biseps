@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make": "electron-forge make NODE_OPTIONS=--openssl-legacy-provider",
     "image": "electron-forge make && electron-builder --prepackaged ./out/biseps-linux-x64",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
