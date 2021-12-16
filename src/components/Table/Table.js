@@ -469,7 +469,7 @@ export default function InteractiveList() {
 
   console.log(data);
   const openInFolder = (path) => {
-    shell.openPath(path);
+    shell.showItemInFolder(path);
   };
   console.log(data);
 
@@ -582,7 +582,7 @@ export default function InteractiveList() {
                     onClick={
                       row.remote
                         ? () => {
-                            openInFolder(`${row.outdir}`);
+                            openInFolder(`${row.outdir}/config`);
                             setSuccessMessage(
                               "Remote path copied To clipboard!"
                             );
@@ -590,7 +590,7 @@ export default function InteractiveList() {
                             handleOpenAlert();
                             clipboard.writeText(`${row.remoteDir}`);
                           }
-                        : () => openInFolder(`${row.outdir}`)
+                        : () => openInFolder(`${row.outdir}/config`)
                     }
                     className={classes.button}
                     endIcon={
