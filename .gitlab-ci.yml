@@ -10,7 +10,7 @@ variables:
 make-linux:
   tags:
     - docker
-  image: node:latest
+  image: node:lts
   stage: build
   script:
     - node --version

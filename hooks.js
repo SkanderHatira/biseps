@@ -15,27 +15,26 @@ const resources = path.join(__dirname, ".webpack", "main", "resources");
 const chmodr = require("chmodr");
 
 module.exports = {
-  // generateAssets: async (forgeConfig, options) => {
-  //   execSync(
-  //     `npx @jbrowse/cli  create ${path.join(
-  //       __dirname,
-  //       "resources",
-  //       "jbrowse2"
-  //     )} -f`,
-  //     (error, stdout, stderr) => {
-  //       if (error) {
-  //         console.log(`error: ${error.message}`);
-  //         return;
-  //       }
-  //       if (stderr) {
-  //         console.log(`stderr: ${stderr}`);
-  //         return;
-  //       }
-  //       console.log(`stdout: ${stdout}`);
-  //     }
-  //   );
-  // },
-  // no need to generate assets , not working on deployment runner
+  generateAssets: async (forgeConfig, options) => {
+    execSync(
+      `npx @jbrowse/cli  create ${path.join(
+        __dirname,
+        "resources",
+        "jbrowse2"
+      )} -f`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+      }
+    );
+  },
   postStart: async (forgeConfig, options) => {
     chmodr(scripts, 0o777, (err) => {
       if (err) {
