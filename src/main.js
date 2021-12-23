@@ -38,46 +38,31 @@ console.log(bisepsTemp);
 console.log(unixSocket);
 console.log(sock);
 console.log(process.platform);
-process.platform == "darwin" || process.platform == "linux"
-  ? exec(
-      `${
-        process.platform == "win32"
-          ? "(Get-command conda).path"
-          : "command -v conda"
-      }`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.log(`error: ${error.message}`);
-          return (global.sharedObj = {
-            platform: process.platform,
-            conda: false,
-            prop1: sock,
-          });
-        }
-        if (stderr) {
-          console.log(`stderr: ${stderr}`);
 
-          return (global.sharedObj = {
-            platform: process.platform,
-            conda: false,
-            prop1: sock,
-          });
-        }
-
-        console.log(`stdout: ${stdout}`);
-        return (global.sharedObj = {
-          platform: process.platform,
-          conda: true,
-          prop1: sock,
-        });
-      }
-    )
-  : (global.sharedObj = {
-      platform: process.platform,
-      conda: true,
-      prop1: sock,
-    });
-
+exec(
+  `${
+    process.platform == "win32"
+      ? "(Get-command conda).path"
+      : "command -v conda"
+  }`,
+  (error, stdout, stderr) => {
+    if (error) {
+      console.log(`error: ${error.message}`);
+      return (global.sharedObj = {
+        platform: process.platform,
+        conda: false,
+        prop1: sock,
+      });
+    } else {
+      console.log(`stdout: ${stdout}`);
+      return (global.sharedObj = {
+        platform: process.platform,
+        conda: true,
+        prop1: sock,
+      });
+    }
+  }
+);
 execSync(
   `conda env create -f ${path.join(
     __dirname,

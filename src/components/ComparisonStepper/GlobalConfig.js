@@ -384,7 +384,7 @@ export default function GlobalConfig() {
           </FormControl>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        {/* <Grid item xs={12} sm={4}>
           <FormControl className={classes.formControl}>
             <Typography gutterBottom>Minimum Size</Typography>
             <Input
@@ -408,7 +408,7 @@ export default function GlobalConfig() {
               .
             </FormHelperText>
           </FormControl>
-        </Grid>
+        </Grid> */}
 
         <Grid item sm={12}>
           <FormControl className={classes.formControl}>

@@ -27,7 +27,7 @@ const createSymlinkComparison = (body, uniqueDir) => {
         body.genome,
         path.join(uniqueDir, "resources/genome", path.basename(body.genome))
     );
-    body.annot != ""
+    body.annot !== ""
         ? createSymlinkSync(
               body.annot,
               path.join(
@@ -36,6 +36,7 @@ const createSymlinkComparison = (body, uniqueDir) => {
                   path.basename(body.annot)
               )
           )
-        : "";
+        : console.log("no annotation file to symlink");
 };
+
 module.exports = createSymlinkComparison;
