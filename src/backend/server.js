@@ -17,8 +17,7 @@ const cors = require("cors");
 require("dotenv").config({ path: path.join(__dirname, "../backend/.env") });
 const sock = process.argv[2];
 const unixSocket = process.argv[3];
-console.log(process.argv);
-console.log(__dirname);
+
 const app = express();
 app.use(cors());
 app.use(
@@ -27,14 +26,7 @@ app.use(
     })
 );
 app.use(bodyParser.json());
-console.log("where am i");
-console.log(unixSocket);
-console.log(process.argv);
-console.log("hahahahaha");
-console.log("hahahahaha");
-console.log("hahahahaha");
-console.log("hahahahaha");
-console.log(process.platform);
+
 const connectWithRetry = () => {
     return mongoose.connect(
         process.platform == "win32" ? unixSocket : process.env.DATABASE,
@@ -42,10 +34,10 @@ const connectWithRetry = () => {
         function (err) {
             if (err) {
                 console.error(
-                    "Failed to connect to mongo on startup - retrying in 0,5 sec",
+                    "Failed to connect to mongo on startup - retrying in 1 sec",
                     err
                 );
-                setTimeout(connectWithRetry, 500);
+                setTimeout(connectWithRetry, 1000, 5);
             } else {
                 console.log("MongoDB successfully connected");
             }

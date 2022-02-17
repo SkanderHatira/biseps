@@ -3,14 +3,11 @@ const spawnChild = async (unixSocket) => {
     const path = require("path");
     const fs = require("fs");
 
-
     const homedir = require("os").homedir();
     const logfile = path.join(homedir, "mongoWindow.txt");
     const output = fs.openSync(logfile, "a");
-    const command =
-        process.platform == "win32"
-            ? "conda"
-            : `$(head -n 1 $HOME/.conda/environments.txt)/bin/conda`;
+    const command = process.platform == "win32" ? "conda" : "conda";
+    // : `$(head -n 1 $HOME/.conda/environments.txt)/bin/conda`;
 
     const options = {
         slient: false,
@@ -24,7 +21,7 @@ const spawnChild = async (unixSocket) => {
 
     const port = 27017;
     const dbpath = path.join(__dirname, "resources/database/data/db");
-    const child = spawn(
+    const child = await spawn(
         command,
         [
             "run",

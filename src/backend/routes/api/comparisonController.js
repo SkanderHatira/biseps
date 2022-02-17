@@ -20,7 +20,6 @@ const User = require("../../models/User");
 // @access Public
 
 router.post("/comparison", (req, res) => {
-    console.log(req.body);
 
     // Form validation
     const { errors, isValid } = validateConfigurationInput(req.body);
@@ -178,8 +177,6 @@ router.get("/:userId", function (req, res) {
 router.delete("/:id", function (req, res) {
     const id = req.params.id;
     const userId = req.user._id;
-    console.log(req.outdir);
-    console.log(req.user);
     Comparison.deleteOne({ _id: id })
         .then((result) => {
             res.json(`Deleted ${id}`);
@@ -196,7 +193,6 @@ router.delete("/:id", function (req, res) {
 });
 
 router.post("/rerun", function (req, res) {
-    console.log(req.body);
     const uniqueDir = req.body.outdir;
 
     if (!req.body.remote) {
@@ -226,8 +222,6 @@ router.post("/rerun", function (req, res) {
 });
 
 router.put("/:id", (req, res, next) => {
-    console.log(req.body);
-    console.log(req.params);
 
     const updatedComparison = new Comparison({
         _id: req.params.id,

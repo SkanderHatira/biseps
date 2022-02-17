@@ -51,7 +51,6 @@ export default function VisualizationFill() {
 
   const handleToggle = (genome) => () => {
     const currentIndex = checked.indexOf(genome);
-    console.log(currentIndex);
     const newChecked = [...checked];
 
     if (currentIndex === -1) {
@@ -66,7 +65,6 @@ export default function VisualizationFill() {
   const handleToggleTrack =
     (track, associatedGenome, id, name, cgbw, chgbw, chhbw, bedbw) => () => {
       const currentIndex = checkedTrack.findIndex((x) => x.id === id);
-      console.log(currentIndex);
       const newChecked = [...checkedTrack];
 
       if (currentIndex === -1) {
@@ -89,7 +87,6 @@ export default function VisualizationFill() {
 
   const handleToggleComp = (bed, bedtbi, associatedGenome, id) => () => {
     const currentIndex = checkedComp.findIndex((x) => x.id === id);
-    console.log(currentIndex);
     const newChecked = [...checkedComp];
 
     if (currentIndex === -1) {
@@ -178,7 +175,6 @@ export default function VisualizationFill() {
     fetchData();
     fetchComparisons();
   }, [refresh]);
-  console.log(comp);
   const fileExist = (path) => {
     try {
       if (fs.existsSync(path)) {
@@ -188,14 +184,11 @@ export default function VisualizationFill() {
       return false;
     }
   };
-  console.log(comp);
   const downloadFiles = (row, tracks) => {
     let sftp = new Client();
 
-    console.log(tracks);
     console.log("download files");
 
-    console.log(homedir);
 
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
@@ -220,7 +213,6 @@ export default function VisualizationFill() {
           if (
             !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
           ) {
-            console.log(path.join(bisepsTemp, path.basename(tracks[track])));
             try {
               await sftp.fastGet(
                 tracks[track].split(path.sep).join(path.posix.sep),
@@ -333,11 +325,8 @@ export default function VisualizationFill() {
   const blankSample = {};
   const helper = {};
   const mix = data.concat(comp);
-  console.log(mix);
   const result = mix.reduce(function (r, o) {
-    console.log(r);
     const key = o.genome;
-    console.log(o.genome);
     const genome = path.basename(o.genome);
     const genomePath = o.genome;
     if (!helper[key]) {
@@ -347,7 +336,6 @@ export default function VisualizationFill() {
     return r;
   }, []);
 
-  console.log(result);
 
   const handleServe = () => {
     // const server = http.createServer(async (request, response) => {
@@ -377,9 +365,7 @@ export default function VisualizationFill() {
             public: user.user.jbPath,
           });
         });
-        console.log(user.user.jbPath);
         server.listen(port[0], () => {
-          console.log(server.listening);
 
           shell.openExternal(`http://localhost:${port[0]}`);
         });
@@ -434,7 +420,6 @@ export default function VisualizationFill() {
       >
         {result.map((genome, idx) => {
           const labelId = `checkbox-list-label-${genome}`;
-          console.log(idx);
 
           return (
             <ListItem
@@ -493,8 +478,6 @@ export default function VisualizationFill() {
             <div>
               {row.samples.map((sample, idx) => {
                 const outdir = row.remote ? `${row.remoteDir}` : row.outdir;
-                console.log(row);
-                console.log(outdir);
                 const bedGraph = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.sorted.bedGraph.bw`;
                 const cgBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.cg.bw`;
                 const chgBW = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt.sorted.chg.bw`;
@@ -512,7 +495,6 @@ export default function VisualizationFill() {
                   bisepsTemp,
                   path.basename(samplePath)
                 );
-                console.log(samplePathLocal);
 
                 const tracks = [
                   samplePath,
@@ -527,12 +509,7 @@ export default function VisualizationFill() {
                   ""
                 );
                 const associatedGenome = path.parse(associatedGenomePath).name;
-                console.log(
-                  path.join(
-                    user.user.jbPath,
-                    `${associatedGenomePath}/${sample.samplePath}.deduplicated.bw`
-                  )
-                );
+       
 
                 const sampleExist = fileExist(
                   row.remote ? samplePathLocal : samplePath
@@ -640,8 +617,6 @@ export default function VisualizationFill() {
                 return (
                   <>
                     {row.contexts.map((context) => {
-                      console.log(context);
-                      console.log(comparison);
                       const outdir = row.remote
                         ? `${row.remoteDir}`
                         : row.outdir;
@@ -668,7 +643,6 @@ export default function VisualizationFill() {
                           `${associatedGenome}/${comparison.id}-${context}.bed.gz`
                         )
                       );
-                      console.log(checkedComp);
                       const tracks = [bed, bedtbi];
                       return (
                         <ListItem

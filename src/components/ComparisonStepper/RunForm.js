@@ -180,7 +180,6 @@ export default function RunForm() {
       email: user.user.email,
     };
     const token = sessionStorage.jwtToken;
-    console.log(request);
     const options = {
       method: "POST",
       path: "http://localhost/api/comparisons/comparison",

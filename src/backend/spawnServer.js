@@ -15,7 +15,7 @@ const spawnServer = async (sock, unixSocket) => {
     //     options
     // );
 
-    const child = fork(
+    const child = await fork(
         path.join(__dirname, "backend/server.js"),
         [sock, unixSocket],
         options

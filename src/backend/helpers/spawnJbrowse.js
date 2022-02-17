@@ -26,7 +26,6 @@ const spawnChild = (body) => {
     // );
     body.genomes != [] &&
         body.genomes.map((genome) => {
-            console.log(path.extname(genome));
             console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
 
             fork(
@@ -99,10 +98,6 @@ const spawnChild = (body) => {
     body.tracks != [] &&
         body.tracks.map((track) => {
             // import bam
-            console.log(
-                `${body.jbPath}/${track.associatedGenome}/${track.id}_bam.lock`
-            );
-
             fork(
                 jbrowse,
                 [

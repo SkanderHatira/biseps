@@ -84,7 +84,6 @@ const useProvideAuth = () => {
             type: GET_ERRORS,
             payload: jsbody,
           });
-          console.log(jsbody);
         } else {
           // Save to localStorage
           // Set token to localStorage
@@ -107,7 +106,6 @@ const useProvideAuth = () => {
     req.end();
   };
   const handleEditProfile = async (userData, dispatch, history) => {
-    console.log(userData);
     const options = {
       method: "PUT",
       path: `http://localhost/api/users/${user.user.id}`,
@@ -129,7 +127,6 @@ const useProvideAuth = () => {
       res.on("end", function () {
         const body = Buffer.concat(chunks).toString();
         const jsbody = JSON.parse(body);
-        console.log(jsbody);
 
         if ("success" in jsbody) {
           // Save to localStorage
@@ -163,18 +160,13 @@ const useProvideAuth = () => {
     if (await sessionStorage.jwtToken) {
       // Set auth token header auth
       const token = sessionStorage.jwtToken;
-      console.log(token);
       // setAuthToken(token);
       // Decode token and get user info and exp
       const decoded = jwt_decode(token);
-      console.log(decoded);
       // Check for expired token
       const currentTime = Date.now() / 1000; // to get in milliseconds
       if (decoded.exp < currentTime) {
-        console.log("yes");
         // Remove token from local storage
-        console.log(currentTime);
-        console.log(decoded.exp);
         sessionStorage.removeItem("jwtToken");
         // setAuthToken(false);
         dispatchUser({
@@ -189,8 +181,6 @@ const useProvideAuth = () => {
         type: SET_CURRENT_USER,
         payload: decoded,
       });
-      console.log(decoded);
-      console.log(user);
       history.push(`${path}`);
     }
   };

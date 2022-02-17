@@ -9,7 +9,6 @@ sessionStorage.setItem("Sock", remote.getGlobal("sharedObj").prop1);
 sessionStorage.setItem("Conda", remote.getGlobal("sharedObj").conda);
 sessionStorage.setItem("Platform", remote.getGlobal("sharedObj").platform);
 
-console.log(sessionStorage);
 function render() {
   ReactDOM.render(
     <React.Fragment>

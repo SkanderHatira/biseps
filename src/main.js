@@ -11,7 +11,6 @@ const mongod = require("./backend/spawnMongod.js");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
-console.log(os.tmpdir());
 const sock =
   process.platform == "win32"
     ? path.join("\\\\?\\pipe", `biseps${uid}`)
@@ -34,10 +33,7 @@ const mongodLock = path.join(
 
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
-console.log(bisepsTemp);
-console.log(unixSocket);
-console.log(sock);
-console.log(process.platform);
+
 
 exec(
   `${

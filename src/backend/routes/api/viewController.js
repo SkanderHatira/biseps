@@ -15,7 +15,6 @@ const User = require("../../models/User");
 // @desc Run
 // @access Public
 router.post("/visualize", (req, res) => {
-    console.log(req.body);
     // Form validation
     const { errors, isValid } = validateConfigurationInput(req.body);
     // Check validation
@@ -29,7 +28,6 @@ router.post("/resetJB", (req, res) => {
     createJB(req.body.jbPath, true);
 });
 router.post("/serve", (req, res) => {
-    console.log(req.body);
 });
 router.get("/", function (req, res) {
     View.find({}, function (err, views) {

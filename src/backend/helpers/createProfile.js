@@ -3,7 +3,6 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
     const fs = require("fs");
     const path = require("path");
     console.log("creating profile");
-    console.log(body);
 
     if (!fs.existsSync(path.join(uniqueDir, "config"))) {
         fs.mkdirSync(path.join(uniqueDir, "config/profiles/slurm"), {

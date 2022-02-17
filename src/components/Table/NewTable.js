@@ -296,29 +296,23 @@ export default function NewTable() {
     const updatedSelected = [...selected];
     const sorted = updatedSelected.sort((a, b) => a - b);
     while (sorted.length) {
-      console.log(sorted);
 
       updatedUnits.splice(sorted.pop(), 1);
     }
     setUnits(updatedUnits);
     setSelected([]);
   };
-  console.log(selected);
-  console.log(units);
   const handleUnitChange = (e) => {
     const updatedRemoteUnits = [...remoteunits];
-    console.log(e.target.dataset.idx);
     updatedRemoteUnits[e.target.dataset.idx][e.target.id] = e.target.value;
     setRemoteUnits(updatedRemoteUnits);
 
     const updatedUnits = [...units];
-    console.log(e.target.dataset.idx);
     updatedUnits[e.target.dataset.idx][e.target.id] = e.target.value;
     setUnits(updatedUnits);
   };
   const handleUnitFiles = (e) => {
     const updatedUnits = [...units];
-    console.log(e.target.dataset.idx);
 
     const updatedRemoteUnits = [...remoteunits];
     updatedRemoteUnits[e.target.dataset.idx][e.target.id] = path
@@ -348,7 +342,6 @@ export default function NewTable() {
   const handleClick = (event, index) => {
     const selectedIndex = selected.indexOf(index);
     let newSelected = [];
-    console.log(index);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, index);
     } else if (selectedIndex === 0) {
@@ -364,7 +357,6 @@ export default function NewTable() {
 
     setSelected(newSelected);
   };
-  console.log(selected);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

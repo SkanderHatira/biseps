@@ -126,7 +126,6 @@ export default function InteractiveList() {
         });
       });
       req.on("error", (err) => console.log(err));
-      console.log(request);
       req.end();
       if (remote) {
         let client = new Client();
@@ -223,7 +222,6 @@ export default function InteractiveList() {
       ...selectedRow,
       public: !selectedRow.public,
     };
-    console.log(request);
     const token = sessionStorage.jwtToken;
     const options = {
       method: "PUT",

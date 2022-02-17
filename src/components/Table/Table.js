@@ -92,7 +92,6 @@ export default function InteractiveList() {
   const handleChange = (e) => {
     setDeleted(e.target.value);
   };
-  console.log(deleted);
   const handleClickOpen = (row) => {
     setSelectedRow(row);
     setOpen(true);
@@ -103,15 +102,12 @@ export default function InteractiveList() {
     newSelected[idx] = !selected[idx];
 
     setSelected(newSelected);
-    console.log(selected);
   };
-  console.log(selected);
   const handleLog = (row, filePath) => {
     let sftp = new Client();
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
-    console.log(row);
     let remotePath = `${row.remoteDir}/${filePath}`;
     let localPath = row.date + filePath;
     sftp
@@ -125,9 +121,7 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(() => {
-        console.log(remotePath);
-        console.log(localPath);
-        console.log("made it all the way here?");
+
 
         return sftp.fastGet(
           remotePath.split(path.sep).join(path.posix.sep),
@@ -135,8 +129,6 @@ export default function InteractiveList() {
         );
       })
       .then((data) => {
-        console.log(data);
-        console.log("done done done");
         createBrowserWindow(path.join(bisepsTemp, localPath));
         sftp.end();
       })
@@ -160,7 +152,6 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(async () => {
-        console.log("made it all the way here?");
         if (!fs.existsSync(path.join(bisepsTemp, path.basename(cx)))) {
           return sftp.fastGet(cx, path.join(bisepsTemp, path.basename(cx)));
         }
@@ -169,13 +160,7 @@ export default function InteractiveList() {
   const downloadFiles = (row, sample, tracks) => {
     let sftp = new Client();
 
-    console.log(tracks);
-    console.log(row, sample);
-    console.log("download files");
 
-    console.log(homedir);
-    console.log(row.machine);
-    console.log(sample);
 
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
@@ -192,7 +177,6 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(async () => {
-        console.log("made it all the way here?");
         // return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
         // tracks.map((track) => {
         //   console.log(track);
@@ -200,7 +184,6 @@ export default function InteractiveList() {
           if (
             !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
           ) {
-            console.log(path.join(bisepsTemp, path.basename(tracks[track])));
             try {
               await sftp.fastGet(
                 tracks[track],
@@ -221,7 +204,6 @@ export default function InteractiveList() {
             path.join(`${sample.samplePath}-multiqc_report.html`)
           )
         );
-        console.log("done done done");
         sftp.end();
       })
       .catch((err) => {
@@ -247,7 +229,6 @@ export default function InteractiveList() {
       unlock: selected || false,
       ...row,
     };
-    console.log(request);
     const token = sessionStorage.jwtToken;
     const options = {
       method: "POST",
@@ -290,9 +271,6 @@ export default function InteractiveList() {
     handleOpenAlert();
   };
   const handleDelete = (user, row, deleted) => {
-    console.log(row);
-    console.log(row);
-    console.log(deleted);
     if (deleted === "DELETE") {
       const request = {
         user: user.user,
@@ -330,7 +308,6 @@ export default function InteractiveList() {
         });
       });
       req.on("error", (err) => console.log(err));
-      console.log(request);
       req.end();
       if (row.remote) {
         let client = new Client();
@@ -373,7 +350,6 @@ export default function InteractiveList() {
       ...selectedRow,
       public: !selectedRow.public,
     };
-    console.log(request);
     const token = sessionStorage.jwtToken;
     const options = {
       method: "PUT",
@@ -462,16 +438,13 @@ export default function InteractiveList() {
       height: 720,
       width: 1080,
     });
-    console.log("here");
 
     win.loadURL(`file://${path}`);
   };
 
-  console.log(data);
   const openInFolder = (path) => {
     shell.showItemInFolder(path);
   };
-  console.log(data);
 
   return (
     <Container maxWidth="lg" className={classes.container}>
@@ -746,9 +719,7 @@ export default function InteractiveList() {
                                     // handleRemoteFiles(row, sample);
                                     downloadFiles(row, sample, tracks)
                                 : () => {
-                                    console.log(sample);
                                     const path = `${row.outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
-                                    console.log(path);
                                     createBrowserWindow(path);
                                   }
                             }

@@ -2,8 +2,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
     const yaml = require("js-yaml");
     const fs = require("fs");
     const path = require("path");
-    console.log(body);
-    console.log("creating profile1");
+    console.log("creating profile");
 
     if (!fs.existsSync(path.join(uniqueDir, "config"))) {
         fs.mkdirSync(path.join(uniqueDir, "config/profiles/slurmComparison"), {

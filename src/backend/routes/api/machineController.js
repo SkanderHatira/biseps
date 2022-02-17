@@ -14,7 +14,6 @@ const User = require("../../models/User");
 // @desc Run
 // @access Public
 router.post("/machine", (req, res) => {
-    console.log(req.body);
     // Form validation
     const { errors, isValid } = validateConfigurationInput(req.body);
     // Check validation

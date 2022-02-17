@@ -97,7 +97,6 @@ export default function GlobalConfig() {
 
     fetchData();
   }, []);
-  console.log(data);
   const handleRunState = (e) => {
     setRunState({
       ...runState,
@@ -111,16 +110,12 @@ export default function GlobalConfig() {
     });
   };
   const handleSlider = (e, newValue) => {
-    console.log(e.target);
     setRunState({
       ...runState,
       [e.target.id]: newValue,
     });
   };
 
-  console.log(runState.remoteDir);
-  console.log(value);
-  console.log(runState);
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -369,7 +364,6 @@ export default function GlobalConfig() {
                   value={runState.remoteDir}
                   onChange={(event, newValue) => {
                     if (typeof newValue === "string") {
-                      console.log(newValue);
                       setRunState({
                         ...runState,
                         remoteDir: newValue,

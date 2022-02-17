@@ -22,7 +22,6 @@ const User = require("../../models/User");
 // @desc Run
 // @access Public
 router.post("/run", (req, res) => {
-    console.log(req.body);
     // Form validation
     const { errors, isValid } = validateConfigurationInput(req.body);
     // Check validation
@@ -159,8 +158,6 @@ router.post("/run", (req, res) => {
 router.delete("/:id", function (req, res) {
     const id = req.params.id;
     const userId = req.user._id;
-    console.log(req.outdir);
-    console.log(req.user);
     Run.deleteOne({ _id: id })
         .then((result) => {
             res.json(`Deleted ${id}`);
@@ -199,7 +196,6 @@ router.get("/:id", function (req, res) {
     }).populate("createdBy");
 });
 router.post("/rerun", function (req, res) {
-    console.log(req.body);
     const uniqueDir = req.body.outdir;
 
     if (!req.body.remote) {
@@ -222,8 +218,6 @@ router.post("/rerun", function (req, res) {
     }
 });
 router.put("/:id", (req, res, next) => {
-    console.log(req.body);
-    console.log(req.params);
 
     const updatedRun = new Run({
         _id: req.params.id,

@@ -11,7 +11,6 @@ const createJbrowse = (jbPath, reset) => {
             return console.error(err);
         }
 
-        console.log(jbPath);
         console.log("done!");
     });
 };
