@@ -4,7 +4,7 @@ const createArchive = (uniqueDir) => {
     const fs = require("fs");
 
     execSync(
-        `git clone git@forgemia.inra.fr:skander.hatira/biseps.git ${uniqueDir}`,
+        `git clone https://o2auth:${process.env.ACCESS_TOKEN}forgemia.inra.fr/skander.hatira/biseps.git ${uniqueDir}`,
         (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
