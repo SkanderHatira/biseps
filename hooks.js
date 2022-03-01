@@ -36,14 +36,14 @@ module.exports = {
     );
   },
   postStart: async (forgeConfig, options) => {
-    chmodr(scripts, 0o777, (err) => {
+    chmodr(scripts, 0o755, (err) => {
       if (err) {
         console.log("Failed to execute chmod", err);
       } else {
         console.log("Successful");
       }
     });
-    chmodr(resources, 0o777, (err) => {
+    chmodr(resources, 0o755, (err) => {
       if (err) {
         console.log("Failed to execute chmod", err);
       } else {
@@ -64,7 +64,7 @@ module.exports = {
             "resources/app/.webpack/main/resources/"
           );
 
-    chmodr(resources, 0o777, (err) => {
+    chmodr(resources, 0o755, (err) => {
       if (err) {
         console.log("Failed to execute chmod", err);
       } else {
