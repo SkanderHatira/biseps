@@ -34,7 +34,6 @@ const mongodLock = path.join(
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 
-
 exec(
   `${
     process.platform == "win32"
@@ -113,7 +112,14 @@ execSync(
 if (fs.existsSync(mongodLock)) {
   fs.stat(mongodLock, function (err, stats) {
     if (stats.size === 0) {
-      mongod(unixSocket);
+      mongod(unixSocket).then(
+        (data) => {
+          console.log("async result:\n" + data);
+        },
+        (err) => {
+          console.error("async error:\n" + err);
+        }
+      );
     } else {
       fs.readFile(mongodLock, "utf8", function (err, data) {
         if (err) {
@@ -125,19 +131,40 @@ if (fs.existsSync(mongodLock)) {
           );
         } else {
           fs.unlinkSync(mongodLock);
-          mongod(unixSocket);
+          mongod(unixSocket).then(
+            (data) => {
+              console.log("async result:\n" + data);
+            },
+            (err) => {
+              console.error("async error:\n" + err);
+            }
+          );
         }
       });
     }
   });
 } else {
-  mongod(unixSocket);
+  mongod(unixSocket).then(
+    (data) => {
+      console.log("async result:\n" + data);
+    },
+    (err) => {
+      console.error("async error:\n" + err);
+    }
+  );
 }
 
 const server = require("../src/backend/spawnServer.js");
 
 // setTimeout(function () {
-server(sock, unixSocket);
+server(sock, unixSocket).then(
+  (data) => {
+    console.log("async result:\n" + data);
+  },
+  (err) => {
+    console.error("async error:\n" + err);
+  }
+);
 // }, 4000);
 // const sock = "/tmp/bissprop.sock";
 
@@ -200,6 +227,7 @@ const createWindow = () => {
     // icon: __dirname + "/public/logo2.png",
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       preload: __dirname + "/preload.js",
       enableRemoteModule: true,
       devTools: true,

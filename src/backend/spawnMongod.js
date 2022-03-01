@@ -21,7 +21,7 @@ const spawnChild = async (unixSocket) => {
 
     const port = 27017;
     const dbpath = path.join(__dirname, "resources/database/data/db");
-    const child = await spawn(
+    const child = spawn(
         command,
         [
             "run",
