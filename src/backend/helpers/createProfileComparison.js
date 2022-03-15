@@ -22,6 +22,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
         "use-conda": true,
         snakefile: "workflow/comparison/Snakefile",
         "rerun-incomplete": true,
+        "conda-prefix": "~/.biseps/conda",
         "latency-wait": 200,
         "keep-going": true,
         cores: body.cpu || "all",
@@ -36,6 +37,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
             ? "config/configComparison.yaml"
             : path.join(uniqueDir, "config/configComparison.yaml"),
         "use-conda": true,
+        "conda-prefix": "~/.biseps/conda",
         "latency-wait": 200,
         "rerun-incomplete": true,
         "keep-going": true,

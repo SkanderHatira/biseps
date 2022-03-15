@@ -18,9 +18,11 @@ const spawnChild = async (unixSocket) => {
                 : `${process.env.SHELL}`,
         stdio: ["inherit", output, output],
     };
-
     const port = 27017;
-    const dbpath = path.join(__dirname, "resources/database/data/db");
+    const dbpath = path.join(homedir, ".biseps", "database", "data", "db");
+    if (!fs.existsSync(dbpath)) {
+        fs.mkdirSync(dbpath, { recursive: true });
+    }
     const child = spawn(
         command,
         [

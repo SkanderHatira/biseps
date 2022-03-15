@@ -2,6 +2,8 @@
 
 const path = require("path");
 const { execSync } = require("child_process");
+const fs = require("fs");
+
 const scripts = path.join(
   __dirname,
   ".webpack",
@@ -16,24 +18,30 @@ const chmodr = require("chmodr");
 
 module.exports = {
   generateAssets: async (forgeConfig, options) => {
-    execSync(
-      `npx @jbrowse/cli  create ${path.join(
-        __dirname,
-        "resources",
-        "jbrowse2"
-      )} -f`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
+    fs.access(path.join(resources, "jbrowse2"), function (error) {
+      if (error) {
+        execSync(
+          `npx @jbrowse/cli  create ${path.join(
+            __dirname,
+            "resources",
+            "jbrowse2"
+          )} -f`,
+          (error, stdout, stderr) => {
+            if (error) {
+              console.log(`error: ${error.message}`);
+              return;
+            }
+            if (stderr) {
+              console.log(`stderr: ${stderr}`);
+              return;
+            }
+            console.log(`stdout: ${stdout}`);
+          }
+        );
+      } else {
+        console.log("Jbrowse present, moving on...");
       }
-    );
+    });
   },
   postStart: async (forgeConfig, options) => {
     chmodr(scripts, 0o755, (err) => {

@@ -19,6 +19,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
             : path.join(uniqueDir, "config/config.yaml"),
         "use-conda": true,
         "dry-run": body.subsample,
+        "conda-prefix": "~/.biseps/conda",
         "rerun-incomplete": true,
         "latency-wait": 200,
         "keep-going": true,
@@ -34,6 +35,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
             ? "config/config.yaml"
             : path.join(uniqueDir, "config/config.yaml"),
         "use-conda": true,
+        "conda-prefix": "~/.biseps/conda",
         "latency-wait": 200,
         "rerun-incomplete": true,
         "keep-going": true,

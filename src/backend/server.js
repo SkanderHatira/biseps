@@ -10,6 +10,7 @@ const machines = require("../backend/routes/api/machineController");
 const runs = require("../backend/routes/api/runController");
 const views = require("../backend/routes/api/viewController");
 const comparisons = require("../backend/routes/api/comparisonController");
+const querystring = require("querystring");
 
 const cors = require("cors");
 // const http = require("http");
@@ -26,10 +27,13 @@ app.use(
     })
 );
 app.use(bodyParser.json());
-
+console.log(encodeURIComponent(unixSocket));
 const connectWithRetry = () => {
     return mongoose.connect(
-        process.platform == "win32" ? unixSocket : process.env.DATABASE,
+        process.platform == "win32"
+            ? unixSocket
+            : process.env.DATABASE ||
+                  `mongodb://${encodeURIComponent(unixSocket)}`,
         { useNewUrlParser: true },
         function (err) {
             if (err) {

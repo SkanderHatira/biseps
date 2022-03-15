@@ -11,6 +11,8 @@ const mongod = require("./backend/spawnMongod.js");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
+const homedir = require("os").homedir();
+
 const sock =
   process.platform == "win32"
     ? path.join("\\\\?\\pipe", `biseps${uid}`)
@@ -18,7 +20,7 @@ const sock =
 const unixSocket =
   process.platform == "win32"
     ? "mongodb://localhost:27017"
-    : `/tmp/bisepsmongodb.sock`;
+    : path.join(homedir, ".biseps", "bisepsmongodb.sock");
 
 const running = require("is-running");
 import installExtension, {
@@ -27,11 +29,14 @@ import installExtension, {
 const isDev = require("electron-is-dev");
 const { exec, execSync } = require("child_process");
 const mongodLock = path.join(
-  __dirname,
-  "resources/database/data/db/mongod.lock"
+  homedir,
+  ".biseps",
+  "database",
+  "data",
+  "db",
+  "mongod.lock"
 );
 
-const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".bisepsTemp/");
 
 exec(
