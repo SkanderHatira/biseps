@@ -6,6 +6,7 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
+
 const uid = uuidv4();
 const mongod = require("./backend/spawnMongod.js");
 const os = require("os");
@@ -58,14 +59,13 @@ exec(
         conda: false,
         prop1: sock,
       });
-    } else {
-      console.log(`stdout: ${stdout}`);
-      return (global.sharedObj = {
-        platform: process.platform,
-        conda: true,
-        prop1: sock,
-      });
     }
+    console.log(`stdout: ${stdout}`);
+    return (global.sharedObj = {
+      platform: process.platform,
+      conda: true,
+      prop1: sock,
+    });
   }
 );
 execSync(
