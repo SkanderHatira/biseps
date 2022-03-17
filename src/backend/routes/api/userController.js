@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const fs = require("fs");
+const homedir = require("os").homedir();
 const portastic = require("portastic");
 const handler = require("serve-handler");
 const http = require("http");
@@ -32,10 +34,7 @@ router.post("/register", (req, res) => {
                 .status(400)
                 .json({ name: "Account Name already exists" });
         } else {
-            const jbPath = path.join(
-                __dirname,
-                `../../../resources/users/${req.body.name}`
-            );
+            const jbPath = path.join(homedir, ".biseps", req.body.name);
             createJB(jbPath);
             const newUser = new User({
                 name: req.body.name,

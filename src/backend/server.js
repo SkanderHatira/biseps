@@ -10,11 +10,13 @@ const machines = require("../backend/routes/api/machineController");
 const runs = require("../backend/routes/api/runController");
 const views = require("../backend/routes/api/viewController");
 const comparisons = require("../backend/routes/api/comparisonController");
-const querystring = require("querystring");
+const bisepsConfig = require(path.join(
+    require("os").homedir(),
+    ".biseps",
+    "biseps.json"
+));
 
 const cors = require("cors");
-// const http = require("http");
-// const https = require("https");
 require("dotenv").config({ path: path.join(__dirname, "../backend/.env") });
 const sock = process.argv[2];
 const unixSocket = process.argv[3];
@@ -32,8 +34,9 @@ const connectWithRetry = () => {
     return mongoose.connect(
         process.platform == "win32"
             ? unixSocket
-            : process.env.DATABASE ||
-                  `mongodb://${encodeURIComponent(unixSocket)}`,
+            : bisepsConfig.database !== ""
+            ? bisepsConfig.database
+            : `mongodb://${encodeURIComponent(unixSocket)}`,
         { useNewUrlParser: true },
         function (err) {
             if (err) {

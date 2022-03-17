@@ -40,7 +40,7 @@ const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
 const http = require("http");
 const homedir = require("os").homedir();
-const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+const bisepsTemp = path.join(homedir, ".biseps", "tmp");
 
 let Client = require("ssh2-sftp-client");
 

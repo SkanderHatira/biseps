@@ -12,7 +12,10 @@ const os = require("os");
 const path = require("path");
 const fs = require("fs");
 const homedir = require("os").homedir();
-
+const bisepsConfigFile = path.join(homedir, ".biseps", "biseps.json");
+const rawConfig = fs.readFileSync(bisepsConfigFile);
+const bisepsConfig = JSON.parse(rawConfig);
+console.log(bisepsConfig.conda);
 const sock =
   process.platform == "win32"
     ? path.join("\\\\?\\pipe", `biseps${uid}`)
@@ -37,13 +40,15 @@ const mongodLock = path.join(
   "mongod.lock"
 );
 
-const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+// stringify JSON Object
+
+const bisepsTemp = path.join(homedir, ".biseps", "tmp");
 
 exec(
   `${
     process.platform == "win32"
-      ? "(Get-command conda).path"
-      : "command -v conda"
+      ? `(Get-command conda).path`
+      : `command -v ${bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda}`
   }`,
   (error, stdout, stderr) => {
     if (error) {
@@ -64,7 +69,9 @@ exec(
   }
 );
 execSync(
-  `conda env create -f ${path.join(
+  `${
+    bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
+  } env create -f ${path.join(
     __dirname,
     "resources",
     process.platform == "darwin"
@@ -89,7 +96,9 @@ execSync(
   }
 );
 execSync(
-  `conda env create -f ${path.join(
+  `${
+    bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
+  } env create -f ${path.join(
     __dirname,
     "resources",
     process.platform == "darwin"

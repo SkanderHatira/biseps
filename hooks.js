@@ -3,29 +3,20 @@
 const path = require("path");
 const { execSync } = require("child_process");
 const fs = require("fs");
-
-const scripts = path.join(
-  __dirname,
-  ".webpack",
-  "main",
-  "resources",
-  "biseps",
-  "workflow",
-  "scripts"
+const homedir = require("os").homedir();
+const resources = path.join(__dirname, "resources");
+const jsonContent = JSON.stringify(
+  { database: "", port: "", conda: "" },
+  null,
+  2
 );
-const resources = path.join(__dirname, ".webpack", "main", "resources");
-const chmodr = require("chmodr");
-
+const bisepsConfigFile = path.join(homedir, ".biseps", "biseps.json");
 module.exports = {
   generateAssets: async (forgeConfig, options) => {
     fs.access(path.join(resources, "jbrowse2"), function (error) {
       if (error) {
         execSync(
-          `npx @jbrowse/cli  create ${path.join(
-            __dirname,
-            "resources",
-            "jbrowse2"
-          )} -f`,
+          `npx @jbrowse/cli  create ${path.join(resources, "jbrowse2")} -f`,
           (error, stdout, stderr) => {
             if (error) {
               console.log(`error: ${error.message}`);
@@ -42,42 +33,14 @@ module.exports = {
         console.log("Jbrowse present, moving on...");
       }
     });
-  },
-  postStart: async (forgeConfig, options) => {
-    chmodr(scripts, 0o755, (err) => {
-      if (err) {
-        console.log("Failed to execute chmod", err);
-      } else {
-        console.log("Successful");
-      }
-    });
-    chmodr(resources, 0o755, (err) => {
-      if (err) {
-        console.log("Failed to execute chmod", err);
-      } else {
-        console.log("Successful");
-      }
-    });
-  },
 
-  postPackage: async (forgeConfig, options) => {
-    const resources =
-      process.platform == "darwin"
-        ? path.join(
-            options.outputPaths[0],
-            "biseps.app/Contents/Resources/app/.webpack/main/resources/"
-          )
-        : path.join(
-            options.outputPaths[0],
-            "resources/app/.webpack/main/resources/"
-          );
-
-    chmodr(resources, 0o755, (err) => {
-      if (err) {
-        console.log("Failed to execute chmod", err);
-      } else {
-        console.log("Successful");
-      }
-    });
+    if (!fs.existsSync(bisepsConfigFile)) {
+      fs.writeFileSync(bisepsConfigFile, jsonContent);
+    } else {
+      console.log("Config file already exists, moving on ...");
+    }
   },
+  postStart: async (forgeConfig, options) => {},
+
+  postPackage: async (forgeConfig, options) => {},
 };

@@ -35,7 +35,7 @@ const path = require("path");
 const fs = require("fs");
 const http = require("http");
 const homedir = require("os").homedir();
-const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+const bisepsTemp = path.join(homedir, ".biseps", "tmp");
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {

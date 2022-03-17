@@ -76,65 +76,6 @@ router.post("/machine", (req, res) => {
                 console.log("Exit", code);
             });
         });
-        // const conn = new Client();
-        // conn.on("ready", () => {
-        //     console.log("Client :: ready");
-        //     conn.exec("uptime", (err, stream) => {
-        //         if (err) {
-        //             return res.status(400).json({
-        //                 error: "Cannot connect to remote machine, make sure your logging credentials are correct",
-        //             });
-        //         }
-
-        //         stream
-        //             .on("close", (code, signal) => {
-        //                 console.log(
-        //                     "Stream :: close :: code: " +
-        //                         code +
-        //                         ", signal: " +
-        //                         signal
-        //                 );
-
-        //                 conn.end();
-        //             })
-        //             .on("data", (data) => {
-        //                 console.log(
-        //                     "STDOUT: " + data + "host " + host + " is alive"
-        //                 );
-        //                 newMachine
-        //                     .save()
-        //                     .then((machine) => {
-        //                         res.json(machine);
-        //                         User.findByIdAndUpdate(
-        //                             machine.createdBy,
-        //                             { $push: { machines: machine._id } },
-        //                             { safe: true, upsert: true, new: true },
-        //                             function (err, model) {
-        //                                 console.log(err);
-        //                             }
-        //                         );
-        //                     })
-        //                     .catch((err) => console.log(err));
-
-        //                 console.log("POST method");
-        //             })
-        //             .stderr.on("data", (data) => {
-        //                 console.log(
-        //                     "STDERR: " + data + "host " + host + " is dead"
-        //                 );
-        //             });
-        //     });
-        // }).connect({
-        //     host: req.body.hostname,
-        //     port: req.body.port,
-        //     username: req.body.username,
-        //     ...(req.body.privateKey !== "" && {
-        //         privateKey: readFileSync(req.body.privateKey),
-        //     }),
-        //     ...(req.body.password !== "" && {
-        //         password: req.body.password,
-        //     }),
-        // });
     }
 });
 router.delete("/:id", function (req, res) {

@@ -2,8 +2,14 @@ const spawnChild = async (unixSocket) => {
     const { spawn } = require("child_process");
     const path = require("path");
     const fs = require("fs");
-
     const homedir = require("os").homedir();
+    const bisepsConfig = require(path.join(
+        require("os").homedir(),
+        ".biseps",
+        "biseps.json"
+    ));
+    console.log("HAHAHAHAHAHAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+    console.log(bisepsConfig.database);
     const logfile = path.join(homedir, "mongoWindow.txt");
     const output = fs.openSync(logfile, "a");
     const command = process.platform == "win32" ? "conda" : "conda";
@@ -11,7 +17,8 @@ const spawnChild = async (unixSocket) => {
 
     const options = {
         slient: false,
-        detached: process.platform == "win32" ? false : true,
+        // detached: process.platform == "win32" ? false : true,
+        detached: false,
         shell:
             process.platform == "win32"
                 ? "powershell.exe"

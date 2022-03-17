@@ -42,7 +42,7 @@ const remote = electron.remote;
 const { BrowserWindow, shell } = remote;
 const http = require("http");
 const homedir = require("os").homedir();
-const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+const bisepsTemp = path.join(homedir, ".biseps", "tmp");
 let Client = require("ssh2-sftp-client");
 
 function Alert(props) {
@@ -121,8 +121,6 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(() => {
-
-
         return sftp.fastGet(
           remotePath.split(path.sep).join(path.posix.sep),
           path.join(bisepsTemp, localPath).split(path.sep).join(path.posix.sep)
@@ -159,8 +157,6 @@ export default function InteractiveList() {
   };
   const downloadFiles = (row, sample, tracks) => {
     let sftp = new Client();
-
-
 
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);

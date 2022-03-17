@@ -24,7 +24,7 @@ const http = require("http");
 const path = require("path");
 const portastic = require("portastic");
 const homedir = require("os").homedir();
-const bisepsTemp = path.join(homedir, ".bisepsTemp/");
+const bisepsTemp = path.join(homedir, ".biseps", "tmp");
 
 let Client = require("ssh2-sftp-client");
 
@@ -189,7 +189,6 @@ export default function VisualizationFill() {
 
     console.log("download files");
 
-
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
@@ -336,7 +335,6 @@ export default function VisualizationFill() {
     return r;
   }, []);
 
-
   const handleServe = () => {
     // const server = http.createServer(async (request, response) => {
     //   handler(request, response, {
@@ -366,7 +364,6 @@ export default function VisualizationFill() {
           });
         });
         server.listen(port[0], () => {
-
           shell.openExternal(`http://localhost:${port[0]}`);
         });
         server.on("error", (err) => {
@@ -509,7 +506,6 @@ export default function VisualizationFill() {
                   ""
                 );
                 const associatedGenome = path.parse(associatedGenomePath).name;
-       
 
                 const sampleExist = fileExist(
                   row.remote ? samplePathLocal : samplePath
