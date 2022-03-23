@@ -10,6 +10,7 @@ const jsonContent = JSON.stringify(
   null,
   2
 );
+const bisepsHidden = path.join(homedir, ".biseps");
 const bisepsConfigFile = path.join(homedir, ".biseps", "biseps.json");
 module.exports = {
   generateAssets: async (forgeConfig, options) => {
@@ -33,8 +34,8 @@ module.exports = {
         console.log("Jbrowse present, moving on...");
       }
     });
-
     if (!fs.existsSync(bisepsConfigFile)) {
+      fs.mkdirSync(bisepsHidden, { recursive: true });
       fs.writeFileSync(bisepsConfigFile, jsonContent);
     } else {
       console.log("Config file already exists, moving on ...");

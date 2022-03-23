@@ -33,7 +33,8 @@ import LockOpenIcon from "@material-ui/icons/LockOpen";
 import LockIcon from "@material-ui/icons/Lock";
 import IconButton from "@material-ui/core/IconButton";
 import GetAppIcon from "@material-ui/icons/GetApp";
-
+import LinearProgress from "@material-ui/core/LinearProgress";
+import CircularProgress from "@material-ui/core/CircularProgress";
 const { clipboard } = require("electron");
 const fs = require("fs");
 const path = require("path");
@@ -86,6 +87,8 @@ export default function InteractiveList() {
   const [selectedRow, setSelectedRow] = useState({});
   const [refresh, setRefresh] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [showPercent, setShowPercent] = useState(false);
 
   const [selected, setSelected] = useState([]);
 
@@ -138,7 +141,19 @@ export default function InteractiveList() {
       });
   };
   const downloadCX = (row, sample, cx) => {
+    if (!fs.existsSync(bisepsTemp)) {
+      fs.mkdirSync(bisepsTemp);
+    }
+    setShowPercent(true);
+    const options = {
+      step: (step, chunk, total) => {
+        const percent = Math.floor((step / total) * 100);
+        setProgress(percent);
+      },
+    };
     let sftp = new Client();
+    const local = path.join(bisepsTemp, path.basename(cx));
+    const localtmp = local + ".tmp";
     sftp
       .connect({
         host: row.machine.hostname,
@@ -150,9 +165,21 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(async () => {
-        if (!fs.existsSync(path.join(bisepsTemp, path.basename(cx)))) {
-          return sftp.fastGet(cx, path.join(bisepsTemp, path.basename(cx)));
+        if (!fs.existsSync(local)) {
+          return sftp.fastGet(cx, localtmp, options);
         }
+      })
+      .then(() => {
+        fs.rename(localtmp, local, function (err) {
+          if (err) console.log("ERROR: " + err);
+        });
+        setShowPercent(false);
+        setProgress(0);
+        sftp.end();
+      })
+      .catch((err) => {
+        console.error(err.message);
+        sftp.end();
       });
   };
   const downloadFiles = (row, sample, tracks) => {
@@ -173,18 +200,12 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(async () => {
-        // return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
-        // tracks.map((track) => {
-        //   console.log(track);
         for (const track in tracks) {
-          if (
-            !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
-          ) {
+          const localtmp = local + ".tmp";
+          const local = path.join(bisepsTemp, path.basename(tracks[track]));
+          if (!fs.existsSync(local)) {
             try {
-              await sftp.fastGet(
-                tracks[track],
-                path.join(bisepsTemp, path.basename(tracks[track]))
-              );
+              await sftp.fastGet(tracks[track], localtmp);
             } catch (err) {
               console.log(err);
             }
@@ -193,6 +214,12 @@ export default function InteractiveList() {
 
         // });
       })
+      .then(() => {
+        fs.rename(localtmp, local, function (err) {
+          if (err) console.log("ERROR: " + err);
+        });
+      })
+
       .finally(() => {
         createBrowserWindow(
           path.join(
@@ -430,12 +457,13 @@ export default function InteractiveList() {
   };
 
   const createBrowserWindow = (path) => {
-    const win = new BrowserWindow({
-      height: 720,
-      width: 1080,
-    });
-
-    win.loadURL(`file://${path}`);
+    if (fileExist(path)) {
+      const win = new BrowserWindow({
+        height: 720,
+        width: 1080,
+      });
+      win.loadURL(`file://${path}`);
+    }
   };
 
   const openInFolder = (path) => {
@@ -677,7 +705,15 @@ export default function InteractiveList() {
                 </div>
                 <div className={classes.demo}>
                   <List dense={dense}>
-                    {row.samples.map((sample) => {
+                    {showPercent && (
+                      <Box sx={{ width: "100%" }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={progress}
+                        />
+                      </Box>
+                    )}{" "}
+                    {row.samples.map((sample, idx) => {
                       const outdir = row.remote
                         ? `${row.remoteDir}`
                         : row.outdir;
@@ -727,7 +763,7 @@ export default function InteractiveList() {
                               edge="end"
                               disabled={sampleExist}
                               aria-label="files"
-                              onClick={() => downloadCX(row, sample, CX)}
+                              onClick={() => downloadCX(row, sample, CX, idx)}
                             >
                               <GetAppIcon
                                 style={{

@@ -6,17 +6,27 @@ const {
   session,
   ipcRenderer,
 } = require("electron");
-
-const uid = uuidv4();
-const mongod = require("./backend/spawnMongod.js");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
+
 const homedir = require("os").homedir();
+const jsonContent = JSON.stringify(
+  { database: "", port: "", conda: "" },
+  null,
+  2
+);
+const bisepsHidden = path.join(homedir, ".biseps");
 const bisepsConfigFile = path.join(homedir, ".biseps", "biseps.json");
-const rawConfig = fs.readFileSync(bisepsConfigFile);
-const bisepsConfig = JSON.parse(rawConfig);
-console.log(bisepsConfig.conda);
+if (!fs.existsSync(bisepsConfigFile)) {
+  fs.mkdirSync(bisepsHidden, { recursive: true });
+  fs.writeFileSync(bisepsConfigFile, jsonContent);
+} else {
+  console.log("Config file already exists, moving on ...");
+}
+const uid = uuidv4();
+const mongod = require("./backend/spawnMongod.js");
+
 const sock =
   process.platform == "win32"
     ? path.join("\\\\?\\pipe", `biseps${uid}`)
@@ -44,7 +54,9 @@ const mongodLock = path.join(
 // stringify JSON Object
 
 const bisepsTemp = path.join(homedir, ".biseps", "tmp");
-
+const rawConfig = fs.readFileSync(bisepsConfigFile);
+const bisepsConfig = JSON.parse(rawConfig);
+console.log(bisepsConfig.conda);
 exec(
   `${
     process.platform == "win32"
@@ -68,6 +80,7 @@ exec(
     });
   }
 );
+// Install Mongodb if it's not
 execSync(
   `${
     bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
@@ -95,6 +108,8 @@ execSync(
     console.log(`stdout: ${stdout}`);
   }
 );
+
+// Install snakemake if it's not
 execSync(
   `${
     bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
@@ -186,53 +201,12 @@ try {
   require("electron-reloader")(module);
 } catch (_) {}
 
-async function createJB(port) {
-  // Create the browser window.
-  // const newWindow = new BrowserWindow({
-  //   width: 1080,
-  //   height: 720,
-  //   webPreferences: {
-  //     nodeIntegration: true,
-  //     enableRemoteModule: true,
-  //     webSecurity: false,
-  //   },
-  // });
-  // Load app
-  // newWindow.webContents.loadURL(SECOND_WINDOW_WEBPACK_ENTRY);
-  // rest of code..
-}
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
 }
-// ipcMain.on("ping", (event, port) => {
-//   // console.log(port);
-//   // createJB(port);
-//   const newWindow = new BrowserWindow({
-//     width: 1080,
-//     height: 720,
-//     webPreferences: {
-//       preload: __dirname + "/preloadJB.js",
-//       nodeIntegration: false,
-//       nativeWindowOpen: true,
-//       nodeIntegrationInSubFrames: true,
-//       webSecurity: false,
-//     },
-//   });
-//   const dirname = "/home/Bureau/jbrowse2";
-//   // const url = require("url").format({
-//   //   protocol: "file",
-//   //   slashes: true,
-//   //   pathname: path.join(dirname, "worker.html"),
-//   // });
-//   // newWindow.loadURL(url);
 
-//   newWindow.loadURL(`http:///localhost:${port}`);
-//   newWindow.once("ready-to-show", () => {
-//     newWindow.show();
-//   });
-// });
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -248,10 +222,6 @@ const createWindow = () => {
     },
   });
 
-  // mainWindow.webContents.on("did-finish-load", () => {
-  //   console.log("this is where the ping is happening");
-  //   mainWindow.webContents.send("ping", sock);
-  // });
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   // Open the DevTools.
@@ -291,6 +261,3 @@ app.on("activate", () => {
     createWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

@@ -37,15 +37,6 @@ const http = require("http");
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".biseps", "tmp");
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -363,7 +354,7 @@ export default function ComparisonForm() {
     row.samples.map((sample) => {
       if (row.remote) {
         result.push(
-          `${bisepsTemp}${sample.samplePath}.deduplicated.CX_report.txt`
+          `${bisepsTemp}/${sample.samplePath}.deduplicated.CX_report.txt`
         );
       } else {
         result.push(

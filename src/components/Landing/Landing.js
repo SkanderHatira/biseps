@@ -52,7 +52,7 @@ const Landing = () => {
             >
               {sessionStorage.Conda == "true" ? (
                 <>
-                  <b>Run</b> our Snakemake DMR Identification Pipeline{" "}
+                  <b>Run</b> a Snakemake DMR Identification Pipeline{" "}
                   <b>
                     <span style={{ fontFamily: "monospace" }}>BiSePS</span>
                   </b>{" "}

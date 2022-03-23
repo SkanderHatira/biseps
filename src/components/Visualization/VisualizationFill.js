@@ -43,7 +43,8 @@ export default function VisualizationFill() {
   const classes = useStyles();
   const [checked, setChecked] = useState([]);
   const [checkedComp, setCheckedComp] = useState([]);
-
+  const [progress, setProgress] = useState(0);
+  const [showPercent, setShowPercent] = useState(false);
   const [checkedTrack, setCheckedTrack] = useState([]);
   const [refresh, setRefresh] = useState(0);
 
@@ -192,7 +193,13 @@ export default function VisualizationFill() {
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
-
+    setShowPercent(true);
+    const options = {
+      step: (step, chunk, total) => {
+        const percent = Math.floor((step / total) * 100);
+        setProgress(percent);
+      },
+    };
     sftp
       .connect({
         host: row.machine.hostname,
@@ -205,17 +212,16 @@ export default function VisualizationFill() {
       })
       .then(async () => {
         console.log("made it all the way here?");
-        // return sftp.fastGet(remotePath, path.join(bisepsTemp, localPath));
-        // tracks.map((track) => {
-        //   console.log(track);
         for (const track in tracks) {
+          const local = path.join(bisepsTemp, path.basename(tracks[track]));
+          const localtmp = local + ".tmp";
           if (
             !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
           ) {
             try {
               await sftp.fastGet(
                 tracks[track].split(path.sep).join(path.posix.sep),
-                path.join(bisepsTemp, path.basename(tracks[track]))
+                localtmp
               );
             } catch (err) {
               console.log(err);
@@ -223,6 +229,16 @@ export default function VisualizationFill() {
           }
         }
         // });
+      })
+      .then(() => {
+        for (const track in tracks) {
+          const local = path.join(bisepsTemp, path.basename(tracks[track]));
+          const localtmp = local + ".tmp";
+          fs.rename(localtmp, local, function (err) {
+            if (err) console.log("ERROR: " + err);
+          });
+        }
+        sftp.end();
       })
       .finally((data) => {
         console.log("done done done");
@@ -423,7 +439,8 @@ export default function VisualizationFill() {
               key={idx}
               button
               disabled={
-                !fileExist(path.join(user.user.jbPath, genome.genome))
+                !fileExist(path.join(user.user.jbPath, genome.genome)) &&
+                !fileExist(path.join(user.user.jbPath, genome.genome) + ".fai")
                   ? false
                   : true
               }
