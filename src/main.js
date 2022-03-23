@@ -242,10 +242,6 @@ app.on("ready", createWindow);
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
-    console.log(os.tmpdir());
-    fs.rmdirSync(bisepsTemp, {
-      recursive: true,
-    });
     if (process.platform !== "win32") {
       fs.unlinkSync(sock);
     }

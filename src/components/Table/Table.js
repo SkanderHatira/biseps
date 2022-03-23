@@ -19,6 +19,8 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";
 import Icon from "@material-ui/core/Icon";
 import { useAuth } from "../../hooks/useAuth";
+import { useDownloads } from "../../hooks/useDownloads";
+
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -33,7 +35,6 @@ import LockOpenIcon from "@material-ui/icons/LockOpen";
 import LockIcon from "@material-ui/icons/Lock";
 import IconButton from "@material-ui/core/IconButton";
 import GetAppIcon from "@material-ui/icons/GetApp";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import CircularProgress from "@material-ui/core/CircularProgress";
 const { clipboard } = require("electron");
 const fs = require("fs");
@@ -87,8 +88,7 @@ export default function InteractiveList() {
   const [selectedRow, setSelectedRow] = useState({});
   const [refresh, setRefresh] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
-  const [progress, setProgress] = useState(0);
-  const [showPercent, setShowPercent] = useState(false);
+  const { loading, setLoading } = useDownloads();
 
   const [selected, setSelected] = useState([]);
 
@@ -140,17 +140,12 @@ export default function InteractiveList() {
         sftp.end();
       });
   };
-  const downloadCX = (row, sample, cx) => {
+  const downloadCX = async (row, sample, cx, idx) => {
+    console.log(idx);
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
-    setShowPercent(true);
-    const options = {
-      step: (step, chunk, total) => {
-        const percent = Math.floor((step / total) * 100);
-        setProgress(percent);
-      },
-    };
+
     let sftp = new Client();
     const local = path.join(bisepsTemp, path.basename(cx));
     const localtmp = local + ".tmp";
@@ -166,15 +161,16 @@ export default function InteractiveList() {
       })
       .then(async () => {
         if (!fs.existsSync(local)) {
-          return sftp.fastGet(cx, localtmp, options);
+          setLoading((prevState) => ({ ...prevState, [idx]: true }));
+          return sftp.fastGet(cx, localtmp);
         }
       })
       .then(() => {
+        console.log(loading);
         fs.rename(localtmp, local, function (err) {
           if (err) console.log("ERROR: " + err);
         });
-        setShowPercent(false);
-        setProgress(0);
+        setLoading((prevState) => ({ ...prevState, [idx]: false }));
         sftp.end();
       })
       .catch((err) => {
@@ -543,6 +539,7 @@ export default function InteractiveList() {
           data.map((row, idx) => {
             const reports = [];
             row.samples.map((sample) => {
+              console.log(sample);
               reports.push(
                 `${row.remoteDir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`
               );
@@ -705,15 +702,8 @@ export default function InteractiveList() {
                 </div>
                 <div className={classes.demo}>
                   <List dense={dense}>
-                    {showPercent && (
-                      <Box sx={{ width: "100%" }}>
-                        <LinearProgress
-                          variant="determinate"
-                          value={progress}
-                        />
-                      </Box>
-                    )}{" "}
-                    {row.samples.map((sample, idx) => {
+                    {row.samples.map((sample) => {
+                      const idx = `${sample._id}-align`;
                       const outdir = row.remote
                         ? `${row.remoteDir}`
                         : row.outdir;
@@ -765,6 +755,11 @@ export default function InteractiveList() {
                               aria-label="files"
                               onClick={() => downloadCX(row, sample, CX, idx)}
                             >
+                              {loading[idx] && (
+                                <Box sx={{ width: "100%" }}>
+                                  <CircularProgress />
+                                </Box>
+                              )}{" "}
                               <GetAppIcon
                                 style={{
                                   color: sampleExist ? "green" : "gray",

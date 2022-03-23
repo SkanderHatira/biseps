@@ -3,6 +3,8 @@ import { hot } from "react-hot-loader";
 import React from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import { ProvideAuth } from "./hooks/useAuth";
+import { ProvideDownloads } from "./hooks/useDownloads";
+
 import { ProvideConfig } from "./hooks/useConfig";
 import Landing from "./components/Landing/Landing";
 import Register from "./components/Register/Register";
@@ -21,32 +23,38 @@ function App() {
   return (
     <ProvideAuth>
       <ProvideConfig>
-        <Router>
-          <div className="App">
-            <Switch>
-              <Route exact path="/" component={Landing} />
-              <Route exact path="/register" component={Register} />
-              <Route exact path="/login" component={Login} />
-              <PrivateRoute exact path="/newrun" component={RunBoard} />
-              <PrivateRoute exact path="/comparison" component={Comparisons} />
-              <PrivateRoute exact path="/machines" component={Profile} />
-              <PrivateRoute exact path="/profile" component={EditProfile} />
-              <PrivateRoute
-                exact
-                path="/newcomparison"
-                component={Comparison}
-              />
-              <PrivateRoute
-                exact
-                path="/visualization"
-                component={Visualization}
-              />
+        <ProvideDownloads>
+          <Router>
+            <div className="App">
+              <Switch>
+                <Route exact path="/" component={Landing} />
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/login" component={Login} />
+                <PrivateRoute exact path="/newrun" component={RunBoard} />
+                <PrivateRoute
+                  exact
+                  path="/comparison"
+                  component={Comparisons}
+                />
+                <PrivateRoute exact path="/machines" component={Profile} />
+                <PrivateRoute exact path="/profile" component={EditProfile} />
+                <PrivateRoute
+                  exact
+                  path="/newcomparison"
+                  component={Comparison}
+                />
+                <PrivateRoute
+                  exact
+                  path="/visualization"
+                  component={Visualization}
+                />
 
-              <PrivateRoute exact path="/alignment" component={Dashboard} />
-              <Route component={NotFound} />
-            </Switch>
-          </div>
-        </Router>
+                <PrivateRoute exact path="/alignment" component={Dashboard} />
+                <Route component={NotFound} />
+              </Switch>
+            </div>
+          </Router>
+        </ProvideDownloads>
       </ProvideConfig>
     </ProvideAuth>
   );

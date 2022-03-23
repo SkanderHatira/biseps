@@ -16,6 +16,10 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Container from "@material-ui/core/Container";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { useDownloads } from "../../hooks/useDownloads";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const handler = require("serve-handler");
 const { shell } = window.require("electron");
@@ -38,15 +42,20 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
 }));
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function VisualizationFill() {
   const classes = useStyles();
   const [checked, setChecked] = useState([]);
   const [checkedComp, setCheckedComp] = useState([]);
-  const [progress, setProgress] = useState(0);
-  const [showPercent, setShowPercent] = useState(false);
   const [checkedTrack, setCheckedTrack] = useState([]);
   const [refresh, setRefresh] = useState(0);
+  const { loading, setLoading } = useDownloads();
+  const [openAlert, setOpenAlert] = useState(false);
+  const [errors, setErrors] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const { user } = useAuth();
 
@@ -85,7 +94,15 @@ export default function VisualizationFill() {
 
       setCheckedTrack(newChecked);
     };
-
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+  };
+  const handleOpenAlert = () => {
+    setOpenAlert(true);
+  };
   const handleToggleComp = (bed, bedtbi, associatedGenome, id) => () => {
     const currentIndex = checkedComp.findIndex((x) => x.id === id);
     const newChecked = [...checkedComp];
@@ -185,7 +202,7 @@ export default function VisualizationFill() {
       return false;
     }
   };
-  const downloadFiles = (row, tracks) => {
+  const downloadFiles = (row, tracks, idx) => {
     let sftp = new Client();
 
     console.log("download files");
@@ -193,13 +210,7 @@ export default function VisualizationFill() {
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
-    setShowPercent(true);
-    const options = {
-      step: (step, chunk, total) => {
-        const percent = Math.floor((step / total) * 100);
-        setProgress(percent);
-      },
-    };
+
     sftp
       .connect({
         host: row.machine.hostname,
@@ -219,11 +230,16 @@ export default function VisualizationFill() {
             !fs.existsSync(path.join(bisepsTemp, path.basename(tracks[track])))
           ) {
             try {
+              setLoading((prevState) => ({ ...prevState, [idx]: true }));
               await sftp.fastGet(
                 tracks[track].split(path.sep).join(path.posix.sep),
                 localtmp
               );
             } catch (err) {
+              setErrors(
+                "An unexpected error occurred, please make sure that this sample has been correctly processed"
+              );
+              handleOpenAlert();
               console.log(err);
             }
           }
@@ -232,6 +248,7 @@ export default function VisualizationFill() {
       })
       .then(() => {
         for (const track in tracks) {
+          setLoading((prevState) => ({ ...prevState, [idx]: false }));
           const local = path.join(bisepsTemp, path.basename(tracks[track]));
           const localtmp = local + ".tmp";
           fs.rename(localtmp, local, function (err) {
@@ -389,6 +406,19 @@ export default function VisualizationFill() {
   };
   return (
     <Container maxWidth="lg" className={classes.container} gutterbottom>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={openAlert}
+        autoHideDuration={10000}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          onClose={handleCloseAlert}
+          severity={errors && errors.length > 0 ? "error" : "success"}
+        >
+          {errors && errors.length > 0 ? `Error : ${errors}` : successMessage}
+        </Alert>
+      </Snackbar>
       <Grid container direction="column" alignItems="center" gutterBottom>
         <Box m={sessionStorage.Platform == "linux" ? 3 : 10}>
           {" "}
@@ -536,6 +566,7 @@ export default function VisualizationFill() {
                     `${associatedGenome}/${sample.samplePath}.deduplicated.bw`
                   )
                 );
+                const ident = `${sample._id}-viz`;
                 return (
                   <ListItem
                     key={`${sample._id}-${idx}`}
@@ -589,8 +620,13 @@ export default function VisualizationFill() {
                           edge="end"
                           disabled={sampleExist}
                           aria-label="files"
-                          onClick={() => downloadFiles(row, tracks)}
+                          onClick={() => downloadFiles(row, tracks, ident)}
                         >
+                          {loading[ident] && (
+                            <Box sx={{ width: "100%" }}>
+                              <CircularProgress />
+                            </Box>
+                          )}{" "}
                           <GetAppIcon
                             style={{
                               color: sampleExist ? "green" : "gray",
@@ -650,25 +686,23 @@ export default function VisualizationFill() {
                         bisepsTemp,
                         path.basename(bed)
                       );
+                      const fileDownloaded = fileExist(bedPathLocal);
                       const debExist = fileExist(
                         path.join(
                           user.user.jbPath,
-                          `${associatedGenome}/${comparison.id}-${context}.bed.gz`
+                          `${associatedGenome}/${comparison.id}-${context}-overallMethylation.bed.gz`
                         )
                       );
                       const tracks = [bed, bedtbi];
+                      const ident = `${comparison._id}-${context}-viz`;
+
                       return (
                         <ListItem
                           key={`${comparison._id}-${idx}-${context}`}
                           button
                           disabled={
                             fileExist(row.remote ? bedPathLocal : bed) &&
-                            !fileExist(
-                              path.join(
-                                user.user.jbPath,
-                                `${associatedGenome}/${comparison.id}-${context}.bed.gz`
-                              )
-                            ) &&
+                            !debExist &&
                             genomExist
                               ? false
                               : true
@@ -726,10 +760,25 @@ export default function VisualizationFill() {
                             {row.remote ? (
                               <IconButton
                                 edge="end"
+                                disabled={fileDownloaded}
                                 aria-label="files"
-                                onClick={() => downloadFiles(row, tracks)}
+                                onClick={() =>
+                                  downloadFiles(row, tracks, ident)
+                                }
                               >
-                                <GetAppIcon />
+                                <GetAppIcon
+                                  style={{
+                                    color: fileDownloaded ? "green" : "gray",
+                                  }}
+                                />
+                                {fileDownloaded
+                                  ? "Comparison files available"
+                                  : "Download comparison files"}
+                                {loading[ident] && (
+                                  <Box sx={{ width: "100%" }}>
+                                    <CircularProgress />
+                                  </Box>
+                                )}{" "}
                               </IconButton>
                             ) : (
                               ""

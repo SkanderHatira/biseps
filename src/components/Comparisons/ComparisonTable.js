@@ -324,8 +324,6 @@ export default function InteractiveList() {
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
-    const local = path.join(bisepsTemp, localPath);
-    const localtmp = local + "tmp";
     let sftp = new Client();
 
     let remotePath = `${row.remoteDir}/${filePath}`;
@@ -347,18 +345,12 @@ export default function InteractiveList() {
       .then(() => {
         return sftp.fastGet(
           remotePath.split(path.sep).join(path.posix.sep),
-          localtmp
+          path.join(bisepsTemp, localPath)
         );
       })
       .then((data) => {
         console.log("done done done");
         createBrowserWindow(path.join(bisepsTemp, localPath));
-        sftp.end();
-      })
-      .then(() => {
-        fs.rename(localtmp, local, function (err) {
-          if (err) console.log("ERROR: " + err);
-        });
         sftp.end();
       })
       .catch((err) => {

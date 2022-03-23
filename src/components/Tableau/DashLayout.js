@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -10,6 +10,8 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+
 import { mainListItems, secondaryListItems } from "./listItems";
 import { useAuth } from "../../hooks/useAuth";
 import { makeStyles } from "@material-ui/core/styles";
@@ -25,6 +27,14 @@ import Fade from "@material-ui/core/Fade";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import EditIcon from "@material-ui/icons/Edit";
+import { useDownloads } from "../../hooks/useDownloads";
+
+const fs = require("fs");
+const path = require("path");
+const fastFolderSize = require("fast-folder-size");
+const homedir = require("os").homedir();
+const bisepsTemp = path.join(homedir, ".biseps", "tmp");
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -125,11 +135,27 @@ function Copyright() {
 }
 const DashLayout = ({ Filling }) => {
   const classes = useStyles();
+  const { cache, setCache } = useDownloads();
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const auth = useAuth();
   const { openDrawer, setOpenDrawer } = useConfig();
+  useEffect(() => {
+    console.log("cache is empty");
+    fastFolderSize(bisepsTemp, (err, bytes) => {
+      if (err) {
+        throw err;
+      }
 
+      setCache((bytes / 1e9).toFixed(2));
+    });
+  }, []);
+  const clearCache = () => {
+    fs.rmdirSync(bisepsTemp, {
+      recursive: true,
+    });
+    setCache(0);
+  };
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
   };
@@ -233,6 +259,14 @@ const DashLayout = ({ Filling }) => {
                     <ExitToAppIcon />
                   </ListItemIcon>
                   <Typography variant="inherit">Logout </Typography>
+                </MenuItem>
+                <MenuItem onClick={clearCache} to="/profile">
+                  <ListItemIcon>
+                    <DeleteForeverIcon />
+                  </ListItemIcon>
+                  <Typography variant="inherit">
+                    Flush cache : {cache} Gb{" "}
+                  </Typography>
                 </MenuItem>
               </Menu>
             </>
