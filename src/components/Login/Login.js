@@ -83,7 +83,7 @@ const Login = () => {
     signup(userData, dispatch, history);
   };
   const { errors } = state;
-
+  console.log(errors);
   return (
     <Container component="main" maxWidth="md">
       <CssBaseline />
@@ -99,7 +99,7 @@ const Login = () => {
             onChange={onChange}
             value={state.name}
             error={errors.name === ""}
-            helperText={errors.name === "" ? "Empty!" : errors.name}
+            helperText={errors.name === "" ? "Empty!" : errors.namenotfound}
             className={classnames("", {
               invalid: errors.name || errors.namenotfound,
             })}
@@ -118,7 +118,9 @@ const Login = () => {
             onChange={onChange}
             value={state.password}
             error={errors.password === ""}
-            helperText={errors.password === "" ? "Empty!" : errors.password}
+            helperText={
+              errors.password === "" ? "Empty!" : errors.passwordincorrect
+            }
             className={classnames("", {
               invalid: errors.password || errors.passwordincorrect,
             })}

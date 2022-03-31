@@ -172,6 +172,7 @@ export default function InteractiveList() {
         sftp.end();
       })
       .catch((err) => {
+        setLoading((prevState) => ({ ...prevState, [idx]: false }));
         console.error(err.message);
         sftp.end();
       });

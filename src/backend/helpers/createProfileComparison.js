@@ -29,9 +29,11 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
     };
     const slurmProfile = {
         jobs: parseInt(body.jobs),
-        cluster:
-            "sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards} --mail-type=FAIL,END --mail-user=" +
-            body.email,
+        cluster: body.notification
+            ? "sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards}" +
+              "--mail-type=FAIL,END --mail-user=" +
+              body.email
+            : "sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{wildcards} -e logs_slurm/{rule}_{wildcards}",
         "default-resources": ["cpus=1", "mem_mb=10000", "time_min=5440"],
         configfile: body.remote
             ? "config/configComparison.yaml"

@@ -609,6 +609,20 @@ export default function GlobalConfig() {
                 label="SLURM Cluster"
               ></FormControlLabel>
             </Grid>
+            <Grid item xs={12} sm={4}>
+              <FormControlLabel
+                className={classes.formControl}
+                control={
+                  <Checkbox
+                    onChange={handleCheckBox}
+                    color="secondary"
+                    name="notification"
+                    checked={compState.notification}
+                  />
+                }
+                label="Send Email Notification"
+              ></FormControlLabel>
+            </Grid>
           </Grid>
         ) : (
           <Grid item xs={12} sm={4}>
