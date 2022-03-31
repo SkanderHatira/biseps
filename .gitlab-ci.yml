@@ -62,4 +62,4 @@ make-mac:
     paths:
       - $CI_PROJECT_DIR/out/make/*.dmg
   only:
-    - master
+    - rebase
