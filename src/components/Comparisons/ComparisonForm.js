@@ -354,11 +354,11 @@ export default function ComparisonForm() {
     row.samples.map((sample) => {
       if (row.remote) {
         result.push(
-          `${bisepsTemp}/${sample.samplePath}.deduplicated.CX_report.txt`
+          `${bisepsTemp}/${sample.samplePath}.deduplicated.bismark.cov.gz`
         );
       } else {
         result.push(
-          `${row.outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`
+          `${row.outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.bismark.cov.gz`
         );
       }
     });

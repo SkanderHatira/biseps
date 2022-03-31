@@ -306,6 +306,7 @@ export default function GlobalConfig() {
                   id="stepsize"
                   name="stepsize"
                   type="number"
+                  InputProps={{ inputProps: { min: 0, max: 64 } }}
                   onChange={handleCompState}
                   value={compState.stepsize}
                 />
@@ -494,9 +495,7 @@ export default function GlobalConfig() {
               />
             }
             label={
-              data.length > 0
-                ? "Toggle this to choose a remote machine"
-                : "add a remote machine first"
+              data.length > 0 ? "Remote Machine" : "add a remote machine first"
             }
           ></FormControlLabel>
         </Grid>
@@ -507,7 +506,6 @@ export default function GlobalConfig() {
               <FormControl className={classes.formControl}>
                 <InputLabel>Machine</InputLabel>
                 <Select
-                  defaultValue={compState.machine}
                   labelId="machine"
                   id="machine"
                   name="machine"
@@ -608,12 +606,29 @@ export default function GlobalConfig() {
                     checked={compState.cluster}
                   />
                 }
-                label="Toggle this option to execute in SLURM Cluster mode"
+                label="SLURM Cluster"
               ></FormControlLabel>
             </Grid>
           </Grid>
         ) : (
-          ""
+          <Grid item xs={12} sm={4}>
+            <FormControl className={classes.formControl}>
+              <Typography gutterBottom>Cores</Typography>
+
+              <TextField
+                value={compState.cpu}
+                type="number"
+                labelId="cpu"
+                InputProps={{ inputProps: { min: 0, max: 64 } }}
+                id="cpu"
+                name="cpu"
+                onChange={handleCompState}
+              ></TextField>
+              <FormHelperText>
+                Set the number of cores, 0 will use all available cores
+              </FormHelperText>
+            </FormControl>
+          </Grid>
         )}
       </Grid>
     </React.Fragment>

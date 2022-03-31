@@ -141,7 +141,6 @@ export default function InteractiveList() {
       });
   };
   const downloadCX = async (row, sample, cx, idx) => {
-    console.log(idx);
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
@@ -166,7 +165,6 @@ export default function InteractiveList() {
         }
       })
       .then(() => {
-        console.log(loading);
         fs.rename(localtmp, local, function (err) {
           if (err) console.log("ERROR: " + err);
         });
@@ -180,7 +178,6 @@ export default function InteractiveList() {
   };
   const downloadFiles = (row, sample, tracks) => {
     let sftp = new Client();
-
     if (!fs.existsSync(bisepsTemp)) {
       fs.mkdirSync(bisepsTemp);
     }
@@ -201,7 +198,11 @@ export default function InteractiveList() {
           const local = path.join(bisepsTemp, path.basename(tracks[track]));
           if (!fs.existsSync(local)) {
             try {
-              await sftp.fastGet(tracks[track], localtmp);
+              await sftp.fastGet(tracks[track], localtmp).then(() => {
+                fs.rename(localtmp, local, function (err) {
+                  if (err) console.log("ERROR: " + err);
+                });
+              });
             } catch (err) {
               console.log(err);
             }
@@ -209,11 +210,6 @@ export default function InteractiveList() {
         }
 
         // });
-      })
-      .then(() => {
-        fs.rename(localtmp, local, function (err) {
-          if (err) console.log("ERROR: " + err);
-        });
       })
 
       .finally(() => {
@@ -364,7 +360,6 @@ export default function InteractiveList() {
     }
   };
   const makePublic = (selectedRow) => {
-    console.log(selectedRow);
     const request = {
       ...selectedRow,
       public: !selectedRow.public,
@@ -539,9 +534,8 @@ export default function InteractiveList() {
           data.map((row, idx) => {
             const reports = [];
             row.samples.map((sample) => {
-              console.log(sample);
               reports.push(
-                `${row.remoteDir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`
+                `${row.remoteDir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.bismark.cov.gz`
               );
             });
             return (
@@ -708,7 +702,7 @@ export default function InteractiveList() {
                         ? `${row.remoteDir}`
                         : row.outdir;
                       const Multiqc = `${outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
-                      const CX = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.CX_report.txt`;
+                      const CX = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.bismark.cov.gz`;
                       const sampleExist = fileExist(
                         row.remote
                           ? path.join(bisepsTemp, path.basename(CX))

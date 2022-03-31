@@ -70,6 +70,7 @@ const useProvideConfig = () => {
     cluster: false,
     contexts: ["CpG"],
     jobs: "10",
+    cpu: "1",
   };
   const [runState, setRunState] = useState(initialRun);
   const [units, setUnits] = useState([]);

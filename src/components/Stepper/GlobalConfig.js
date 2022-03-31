@@ -299,7 +299,7 @@ export default function GlobalConfig() {
             Execution Parameters{" "}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <FormControlLabel
             className={classes.formControl}
             control={
@@ -312,13 +312,11 @@ export default function GlobalConfig() {
               />
             }
             label={
-              data.length > 0
-                ? "Toggle this to choose a remote machine"
-                : "add a remote machine first"
+              data.length > 0 ? "Remote Machine" : "add a remote machine first"
             }
           ></FormControlLabel>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <FormControlLabel
             className={classes.formControl}
             control={
@@ -329,9 +327,10 @@ export default function GlobalConfig() {
                 checked={runState.subsample}
               />
             }
-            label="Toggle this option to execute a minimal run"
+            label="Minimal Run"
           ></FormControlLabel>
         </Grid>
+
         {runState.remote === true ? (
           <Grid container>
             <Grid item xs={4}>
@@ -439,111 +438,30 @@ export default function GlobalConfig() {
                     checked={runState.cluster}
                   />
                 }
-                label="Toggle this option to execute in SLURM Cluster mode"
+                label="SLURM Cluster"
               ></FormControlLabel>
             </Grid>
           </Grid>
         ) : (
-          ""
-        )}
+          <Grid item xs={12} sm={4}>
+            <FormControl className={classes.formControl}>
+              <Typography gutterBottom>Cores</Typography>
 
-        {/* {runState.cluster === true ? (
-          <Grid item xs={12} xm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>CPUs</InputLabel>
-              <Select
+              <TextField
+                value={runState.cpu}
+                type="number"
+                InputProps={{ inputProps: { min: 0, max: 64 } }}
                 labelId="cpu"
                 id="cpu"
                 name="cpu"
                 onChange={handleRunState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
-              </Select>
+              ></TextField>
               <FormHelperText>
-                Specify CPUs available. Default: 1
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Memory</InputLabel>
-              <Select
-                defaultValue="10000"
-                labelId="memMb"
-                id="memMb"
-                name="memMb"
-                onChange={handleRunState}
-              >
-                <MenuItem value="10000">10G</MenuItem>
-                <MenuItem value="50000">50G</MenuItem>
-                <MenuItem value="150000">150G</MenuItem>
-                <MenuItem value="300000">300G</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Memory available. Default: All
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>Jobs</InputLabel>
-              <Select
-                defaultValue="5"
-                labelId="jobs"
-                id="jobs"
-                name="jobs"
-                onChange={handleRunState}
-              >
-                <MenuItem value="1">1</MenuItem>
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="15">15</MenuItem>
-                <MenuItem value="25">25</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Maximum number of Parallel Jobs. Default: 5
-              </FormHelperText>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <InputLabel>MaxTime</InputLabel>
-              <Select
-                defaultValue="1440"
-                labelId="minTime"
-                id="minTime"
-                name="minTime"
-                onChange={handleRunState}
-              >
-                <MenuItem value="240">240</MenuItem>
-                <MenuItem value="1440">1440</MenuItem>
-                <MenuItem value="2880">2880</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify Maximum Time before a job is terminated. Default: 1 day
+                Set the number of cores, 0 will use all available cores
               </FormHelperText>
             </FormControl>
           </Grid>
-        ) : (
-          <Grid item xs={12} sm={6}>
-            <FormControl className={classes.formControl}>
-              <InputLabel>CPUs</InputLabel>
-              <Select
-                labelId="cpu"
-                id="cpu"
-                name="cpu"
-                onChange={handleRunState}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="2">2</MenuItem>
-                <MenuItem value="4">4</MenuItem>
-                <MenuItem value="6">6</MenuItem>
-                <MenuItem value="8">8</MenuItem>
-              </Select>
-              <FormHelperText>
-                Specify CPUs available. Default: All
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-        )} */}
+        )}
       </Grid>
     </React.Fragment>
   );

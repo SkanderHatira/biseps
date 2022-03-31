@@ -91,18 +91,7 @@ fs.stat(sock, function (err) {
         fs.unlinkSync(sock);
     }
     app.listen(sock, (err) => {
-        fs.chmodSync(sock, "775");
+        // fs.chmodSync(sock, "755");
         console.log("Express server listening on " + sock);
     });
 });
-
-// app.listen(sock, (err) => {
-//     fs.chmodSync(sock, "775");
-//     console.log("Express server listening on " + sock);
-// });
-// app.listen("/tmp/bisspropSocket", function () {
-//     console.log(`Server up and running !`);
-//     fs.chmodSync("/tmp/bisspropSocket", 0777);
-// });
-// http.createServer(app).listen(80);
-// https.createServer(app).listen(443);

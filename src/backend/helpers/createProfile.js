@@ -23,7 +23,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
         "rerun-incomplete": true,
         "latency-wait": 200,
         "keep-going": true,
-        cores: body.cpu || "all",
+        cores: body.cpu != "1" ? body.cpu : "all",
     };
     const slurmProfile = {
         jobs: parseInt(body.jobs),
