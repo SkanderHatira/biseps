@@ -10,7 +10,7 @@ variables:
 make-linux:
   tags:
     - openstack-runner
-  image: node:lts
+  image: node:14.19.0
   stage: build
   script:
     - node --version
