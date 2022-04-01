@@ -9,7 +9,7 @@ variables:
 
 make-linux:
   tags:
-    - docker
+    - openstack-runner
   image: node:lts
   stage: build
   script:
