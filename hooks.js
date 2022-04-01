@@ -10,6 +10,7 @@ const jsonContent = JSON.stringify(
   null,
   2
 );
+
 const bisepsHidden = path.join(homedir, ".biseps");
 const bisepsConfigFile = path.join(homedir, ".biseps", "biseps.json");
 module.exports = {
