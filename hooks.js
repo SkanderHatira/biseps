@@ -17,7 +17,7 @@ module.exports = {
     fs.access(path.join(resources, "jbrowse2"), function (error) {
       if (error) {
         execSync(
-          `npx -y @jbrowse/cli  create ${path.join(resources, "jbrowse2")} -f`,
+          `npx  @jbrowse/cli  create ${path.join(resources, "jbrowse2")} -f`,
           (error, stdout, stderr) => {
             if (error) {
               console.log(`error: ${error.message}`);
