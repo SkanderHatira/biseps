@@ -3,10 +3,10 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     let Client = require("ssh2-sftp-client");
     const fs = require("fs");
     const path = require("path");
-
+    const homedir = require("os").homedir();
     const logfile = path.join(uniqueDir, "biseps.txt");
     const output = fs.openSync(logfile, "a");
-    const workflow = path.join(__dirname, "../resources/biseps/");
+    const workflow = path.join(homedir, ".biseps", "biseps");
     const base =
         process.platform == "win32"
             ? "conda"

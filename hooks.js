@@ -10,8 +10,10 @@ const jsonContent = JSON.stringify(
   null,
   2
 );
+const pipeline = path.join(homedir, ".biseps", "biseps");
 const bisepsHidden = path.join(homedir, ".biseps");
 const bisepsConfigFile = path.join(homedir, ".biseps", "biseps.json");
+require("dotenv").config({ path: path.join(__dirname, "src/backend/.env") });
 module.exports = {
   generateAssets: async (forgeConfig, options) => {
     fs.access(path.join(resources, "jbrowse2"), function (error) {
@@ -39,6 +41,16 @@ module.exports = {
       fs.writeFileSync(bisepsConfigFile, jsonContent);
     } else {
       console.log("Config file already exists, moving on ...");
+    }
+
+    if (!fs.existsSync(pipeline)) {
+      console.log(process.env.ACCESS_TOKEN);
+      execSync(
+        `git clone https://o2auth:${process.env.ACCESS_TOKEN}@forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
+        (error, stdout, stderr) => {}
+      );
+    } else {
+      console.log("Pipeline is already installed");
     }
   },
   postStart: async (forgeConfig, options) => {},

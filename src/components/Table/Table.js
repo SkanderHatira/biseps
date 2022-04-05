@@ -702,7 +702,12 @@ export default function InteractiveList() {
                       const outdir = row.remote
                         ? `${row.remoteDir}`
                         : row.outdir;
-                      const Multiqc = `${outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
+                      const Multiqc = path.join(
+                        outdir,
+                        "results",
+                        sample.samplePath,
+                        sample.samplePath + "-multiqc_report.html"
+                      );
                       const CX = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.bismark.cov.gz`;
                       const sampleExist = fileExist(
                         row.remote
