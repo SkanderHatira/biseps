@@ -61,7 +61,9 @@ process.platform == "darwin" || process.platform == "linux"
       `${
         process.platform == "win32"
           ? "(Get-command conda).path"
-          : "command -v conda"
+          : `command -v ${
+              bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
+            }`
       }`,
       (error, stdout, stderr) => {
         if (error) {
