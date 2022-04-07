@@ -27,7 +27,8 @@ const spawnChild = (body) => {
     body.genomes != [] &&
         body.genomes.map((genome) => {
             console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
-
+            console.log(genome)
+            console.log(body.jbPath)
             fork(
                 jbrowse,
                 [

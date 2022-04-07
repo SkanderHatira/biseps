@@ -7,7 +7,6 @@ const createUnits = require("../../helpers/createUnits");
 const createSymlink = require("../../helpers/createSymlink");
 const cloneBiseps = require("../../helpers/cloneBiseps");
 const createArchive = require("../../helpers/createArchive");
-
 const spawnChild = require("../../snakemake");
 const fs = require("fs");
 
@@ -97,7 +96,7 @@ router.post("/run", (req, res) => {
                 : path.join(uniqueDir, "config/profiles/local");
             const newRun = new Run({
                 outdir: uniqueDir,
-                remoteDir: uniqueDirRemote,
+                remoteDir: uniqueDirRemote.split(path.sep).join(path.posix.sep),
                 cluster: req.body.cluster,
                 params: {
                     trimmomatic: {

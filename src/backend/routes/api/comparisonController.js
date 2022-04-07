@@ -7,7 +7,6 @@ const createProfileComparison = require("../../helpers/createProfileComparison")
 const createSymlinkComparison = require("../../helpers/createSymlinkComparison");
 const cloneBiseps = require("../../helpers/cloneBiseps");
 const spawnChild = require("../../snakemake");
-
 // Load input validation
 const validateConfigurationInput = require("../../validation/comparisonConfiguration");
 // Load Run model
@@ -117,7 +116,7 @@ router.post("/comparison", (req, res) => {
                 outdir: uniqueDir,
                 profile: profile,
                 genome: req.body.genome,
-                remoteDir: uniqueDirRemote,
+                remoteDir: uniqueDirRemote.split(path.sep).join(path.posix.sep),
                 bins: req.body.bins,
                 windowSize: req.body.binsize,
                 stepSize: req.body.stepsize,

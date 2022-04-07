@@ -327,7 +327,7 @@ export default function InteractiveList() {
     let sftp = new Client();
 
     let remotePath = `${row.remoteDir}/${filePath}`;
-    let localPath = row.date + path.basename(filePath);
+    let localPath = row._id + path.basename(filePath);
     console.log(remotePath);
     console.log(localPath);
 
@@ -386,7 +386,6 @@ export default function InteractiveList() {
         <Box m={sessionStorage.Platform == "linux" ? 3 : 10}>
           <Button
             variant="contained"
-            variant="outlined"
             color="primary"
             component={Link}
             to="/newcomparison"
@@ -462,13 +461,13 @@ export default function InteractiveList() {
                   onClick={
                     row.remote
                       ? () => {
-                          openInFolder(`${row.outdir}/config`);
+                          openInFolder(path.join(row.outdir,"config"));
                           setSuccessMessage("Remote path copied To clipboard!");
                           setErrors("");
                           handleOpenAlert();
                           clipboard.writeText(`${row.remoteDir}`);
                         }
-                      : () => openInFolder(`${row.outdir}/config`)
+                      : () => openInFolder(path.join(row.outdir,"config"))
                   }
                   className={classes.button}
                   endIcon={row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>}
