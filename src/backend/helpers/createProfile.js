@@ -52,7 +52,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
     );
     const yamlStrLocal = yaml.dump(localProfile);
     fs.writeFileSync(
-        path.join(uniqueDir, "config/profiles/local/config.yaml"),
+        path.join(uniqueDir, "config", "profiles", "local", "config.yaml"),
         yamlStrLocal,
         "utf8"
     );

@@ -9,14 +9,14 @@ const createUnits = (body, uniqueDir) => {
     if (body.remote) {
         try {
             const csv = parse(body.remoteunits, opts);
-            fs.writeFileSync(path.join(uniqueDir, "config/units.tsv"), csv);
+            fs.writeFileSync(path.join(uniqueDir, "config", "units.tsv"), csv);
         } catch (err) {
             console.error(err);
         }
     } else {
         try {
             const csv = parse(body.units, opts);
-            fs.writeFileSync(path.join(uniqueDir, "config/units.tsv"), csv);
+            fs.writeFileSync(path.join(uniqueDir, "config", "units.tsv"), csv);
         } catch (err) {
             console.error(err);
         }

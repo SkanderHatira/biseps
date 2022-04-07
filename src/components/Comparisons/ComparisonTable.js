@@ -461,7 +461,7 @@ export default function InteractiveList() {
                   onClick={
                     row.remote
                       ? () => {
-                          openInFolder(path.join(row.outdir,"config"));
+                          openInFolder(path.join(row.outdir, "config"));
                           setSuccessMessage("Remote path copied To clipboard!");
                           setErrors("");
                           handleOpenAlert();

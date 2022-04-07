@@ -25,14 +25,15 @@ const createSymlinkComparison = (body, uniqueDir) => {
     });
     createSymlinkSync(
         body.genome,
-        path.join(uniqueDir, "resources/genome", path.basename(body.genome))
+        path.join(uniqueDir, "resources", "genome", path.basename(body.genome))
     );
     body.annot !== ""
         ? createSymlinkSync(
               body.annot,
               path.join(
                   uniqueDir,
-                  "resources/annotation",
+                  "resources",
+                  "annotation",
                   path.basename(body.annot)
               )
           )

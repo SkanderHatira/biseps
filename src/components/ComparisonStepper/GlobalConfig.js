@@ -302,11 +302,10 @@ export default function GlobalConfig() {
             <Grid item xs={12} sm={4}>
               <FormControl className={classes.formControl}>
                 <Typography gutterBottom>Step Size</Typography>
-                <Input
+                <TextField
                   id="stepsize"
                   name="stepsize"
                   type="number"
-                  InputProps={{ inputProps: { min: 0, max: 64 } }}
                   onChange={handleCompState}
                   value={compState.stepsize}
                 />
@@ -359,18 +358,16 @@ export default function GlobalConfig() {
             <Typography gutterBottom>
               Minimum Proportion Difference In Methylation
             </Typography>
-            <Slider
+            <TextField
               id="minProportionDifference"
               name="minProportionDifference"
+              type="number"
               onChange={handleSlider}
               value={compState.minProportionDifference}
-              step={0.1}
-              min={0}
-              max={1}
-              valueLabelDisplay="auto"
+              InputProps={{ inputProps: { min: 1, max: 100 } }}
             />
             <FormHelperText>
-              p-Value threshold. See{" "}
+              Difference of methylation levels. See{" "}
               <Link
                 onClick={() =>
                   createBrowserWindow(
@@ -384,32 +381,6 @@ export default function GlobalConfig() {
             </FormHelperText>
           </FormControl>
         </Grid>
-
-        {/* <Grid item xs={12} sm={4}>
-          <FormControl className={classes.formControl}>
-            <Typography gutterBottom>Minimum Size</Typography>
-            <Input
-              id="minSize"
-              name="minSize"
-              value={compState.minSize}
-              type="number"
-              onChange={handleCompState}
-            />
-            <FormHelperText>
-              DMRs with a size smaller than minSize are discarded. See{" "}
-              <Link
-                onClick={() =>
-                  createBrowserWindow(
-                    "https://bioconductor.org/packages/release/bioc/manuals/methylKit/man/methylKit.pdf"
-                  )
-                }
-              >
-                docs
-              </Link>
-              .
-            </FormHelperText>
-          </FormControl>
-        </Grid> */}
 
         <Grid item sm={12}>
           <FormControl className={classes.formControl}>
