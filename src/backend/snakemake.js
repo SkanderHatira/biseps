@@ -11,7 +11,12 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         process.platform == "win32"
             ? "conda"
             : `$(head -n 1 $HOME/.conda/environments.txt)`;
-    const command = process.platform == "win32" ? "conda" : "conda";
+    const command =
+        process.platform == "win32"
+            ? "conda"
+            : bisepsConfig.conda === ""
+            ? "conda"
+            : bisepsConfig.conda;
     const options = {
         slient: false,
         detached: false,
