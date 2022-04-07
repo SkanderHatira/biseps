@@ -13,7 +13,7 @@ const createSymlink = (body, uniqueDir) => {
     });
     createSymlinkSync(
         body.genome,
-        path.join(uniqueDir, "resources/genome", path.basename(body.genome))
+        path.join(uniqueDir, "resources", "genome", path.basename(body.genome))
     );
     body.customAdapters == ""
         ? ""
@@ -21,7 +21,8 @@ const createSymlink = (body, uniqueDir) => {
               body.adapters,
               path.join(
                   uniqueDir,
-                  "resources/adapters",
+                  "resources",
+                  "adapters",
                   path.basename(body.adapters)
               )
           );

@@ -9,7 +9,7 @@ const createUnitsComparison = (body, uniqueDir) => {
         try {
             const csv = parse(body.remotecomparisons, opts);
             fs.writeFileSync(
-                path.join(uniqueDir, "config/comparison.tsv"),
+                path.join(uniqueDir, "config", "comparison.tsv"),
                 csv
             );
         } catch (err) {
@@ -19,7 +19,7 @@ const createUnitsComparison = (body, uniqueDir) => {
         try {
             const csv = parse(body.comparisons, opts);
             fs.writeFileSync(
-                path.join(uniqueDir, "config/comparison.tsv"),
+                path.join(uniqueDir, "config", "comparison.tsv"),
                 csv
             );
         } catch (err) {

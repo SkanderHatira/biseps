@@ -2,7 +2,7 @@ const createJbrowse = (jbPath, reset) => {
     const fs = require("fs");
     const ncp = require("ncp").ncp;
     const path = require("path");
-    const source = path.join(__dirname, "../../resources/jbrowse2");
+    const source = path.join(__dirname, "..", "..", "resources", "jbrowse2");
     if (reset) {
         fs.rmdirSync(jbPath, { recursive: true });
     }

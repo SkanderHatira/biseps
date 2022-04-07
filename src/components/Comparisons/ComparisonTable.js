@@ -462,13 +462,13 @@ export default function InteractiveList() {
                   onClick={
                     row.remote
                       ? () => {
-                          openInFolder(`${row.outdir}/config`);
+                          openInFolder(path.join(row.outdir, "config"));
                           setSuccessMessage("Remote path copied To clipboard!");
                           setErrors("");
                           handleOpenAlert();
                           clipboard.writeText(`${row.remoteDir}`);
                         }
-                      : () => openInFolder(`${row.outdir}/config`)
+                      : () => openInFolder(path.join(row.outdir, config))
                   }
                   className={classes.button}
                   endIcon={row.remote ? <Icon>cloud</Icon> : <Icon>send</Icon>}

@@ -464,7 +464,6 @@ export default function GlobalConfig() {
               <TextField
                 value={runState.cpu}
                 type="number"
-                InputProps={{ inputProps: { min: 0, max: 64 } }}
                 labelId="cpu"
                 id="cpu"
                 name="cpu"

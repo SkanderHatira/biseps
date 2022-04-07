@@ -102,7 +102,7 @@ const createConfig = (body, uniqueDir) => {
 
     const yamlStr = yaml.dump(config);
     fs.writeFileSync(
-        path.join(uniqueDir, "config/config.yaml"),
+        path.join(uniqueDir, "config", "config.yaml"),
         yamlStr,
         "utf8"
     );

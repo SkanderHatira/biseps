@@ -60,7 +60,7 @@ const useProvideConfig = () => {
     overdispersion: "none",
     pValueThreshold: 0.01,
     minReadsPerCytosine: 10,
-    minProportionDifference: 0.25,
+    minProportionDifference: 25,
     contexts: ["CpG"],
     genome: "",
     species: "",

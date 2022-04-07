@@ -50,7 +50,7 @@ const createConfigComparison = (body, uniqueDir, uniqueDirRemote) => {
     };
     const yamlStr = yaml.dump(config);
     fs.writeFileSync(
-        path.join(uniqueDir, "config/configComparison.yaml"),
+        path.join(uniqueDir, "config", "configComparison.yaml"),
         yamlStr,
         "utf8"
     );

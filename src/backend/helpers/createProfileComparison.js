@@ -49,13 +49,25 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
 
     const yamlStrSlurm = yaml.dump(slurmProfile);
     fs.writeFileSync(
-        path.join(uniqueDir, "config/profiles/slurmComparison/config.yaml"),
+        path.join(
+            uniqueDir,
+            "config",
+            "profiles",
+            "slurmComparison",
+            "config.yaml"
+        ),
         yamlStrSlurm,
         "utf8"
     );
     const yamlStrLocal = yaml.dump(localProfile);
     fs.writeFileSync(
-        path.join(uniqueDir, "config/profiles/localComparison/config.yaml"),
+        path.join(
+            uniqueDir,
+            "config",
+            "profiles",
+            "localComparison",
+            "config.yaml"
+        ),
         yamlStrLocal,
         "utf8"
     );
