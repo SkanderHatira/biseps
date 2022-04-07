@@ -1,3 +1,5 @@
+const { dirname } = require("path");
+
 const spawnChild = (body) => {
     const { fork } = require("child_process");
     const path = require("path");
@@ -8,42 +10,54 @@ const spawnChild = (body) => {
         "@jbrowse",
         "cli",
         "bin",
-        "run",
-        `${process.platform == "win32" ? ".cmd" : ""}`
+        "run" 
     );
 
     const options = {
         slient: false,
         detached: false,
-        cwd: __dirname,
     };
 
     body.genomes != [] &&
         body.genomes.map((genome) => {
             console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
+            console.log(process.platform)
             console.log(genome)
             console.log(body.jbPath)
+            const dirName = path.dirname(genome)
+            console.log(dirName)
+            const fileName= path.basename(genome)
+            console.log(jbrowse,"add-assembly",
+            fileName,
+            "--load",
+            "copy",
+            "--out",
+            body.jbPath)
             fork(
                 jbrowse,
                 [
                     "add-assembly",
-                    genome,
+                    fileName,
                     "--load",
                     "copy",
+                    "--overwrite",
                     "--out",
-                    body.jbPath,
+                    body.jbPath
                 ],
-                options
+                { cwd : dirName,
+                windowsVerbatimArguments: true }
             );
         });
     body.tracks != [] &&
         body.tracks.map((track) => {
+            const dirName = path.dirname(track.track)
+            const fileName= path.basename(track.track)
             // import bam
             fork(
                 jbrowse,
                 [
                     "add-track",
-                    track.track,
+                    fileName,
                     "--load",
                     "copy",
                     "--assemblyNames",
@@ -57,7 +71,9 @@ const spawnChild = (body) => {
                     "--subDir",
                     track.associatedGenome,
                 ],
-                options
+                {...options ,     
+                    cwd: dirName,
+                }
             );
 
             // import bigwig_cg
