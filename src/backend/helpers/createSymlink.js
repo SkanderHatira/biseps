@@ -1,30 +1,34 @@
 const createSymlink = (body, uniqueDir) => {
-    const { createSymlinkSync } = require("fs-extra");
+    const fs = require("fs-extra");
     const path = require("path");
     body.units.map((unit) => {
-        createSymlinkSync(
+        fs.symlinkSync(
             unit.fq1,
-            path.join(uniqueDir, "data", path.basename(unit.fq1))
+            path.join(uniqueDir, "data", path.basename(unit.fq1)),
+            process.platform == "win32" ? "juncton" : "file"
         );
-        createSymlinkSync(
+        fs.symlinkSync(
             unit.fq2,
-            path.join(uniqueDir, "data", path.basename(unit.fq2))
+            path.join(uniqueDir, "data", path.basename(unit.fq2)),
+            process.platform == "win32" ? "juncton" : "file"
         );
     });
-    createSymlinkSync(
+    fs.symlinkSync(
         body.genome,
-        path.join(uniqueDir, "resources", "genome", path.basename(body.genome))
+        path.join(uniqueDir, "resources", "genome", path.basename(body.genome)),
+        process.platform == "win32" ? "juncton" : "file"
     );
     body.customAdapters == ""
         ? ""
-        : createSymlinkSync(
+        : fs.symlinkSync(
               body.adapters,
               path.join(
                   uniqueDir,
                   "resources",
                   "adapters",
                   path.basename(body.adapters)
-              )
+              ),
+              process.platform == "win32" ? "juncton" : "file"
           );
 };
 module.exports = createSymlink;

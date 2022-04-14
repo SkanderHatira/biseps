@@ -690,7 +690,8 @@ export default function VisualizationFill() {
                       const debExist = fileExist(
                         path.join(
                           user.user.jbPath,
-                          associatedGenome,`${comparison.id}-${context}-overallMethylation.bed.gz`
+                          associatedGenome,
+                          `${comparison.id}-${context}-overallMethylation.bed.gz`
                         )
                       );
                       const tracks = [bed, bedtbi];
@@ -741,7 +742,8 @@ export default function VisualizationFill() {
                                 fileExist(
                                   path.join(
                                     user.user.jbPath,
-                                    "associatedGenome",`${comparison.id}-${context}.bed.gz`
+                                    "associatedGenome",
+                                    `${comparison.id}-${context}.bed.gz`
                                   )
                                 ) &&
                                 genomExist
