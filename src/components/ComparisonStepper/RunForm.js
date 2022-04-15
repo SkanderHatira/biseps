@@ -31,9 +31,11 @@ function Copyright() {
       {"Copyright © "}
       <Link
         color="inherit"
-        onClick={shell.openExternal(
-          "https://sasalab.herokuapp.com/pages/landing-pages/author"
-        )}
+        onClick={() =>
+          shell.openExternal(
+            "https://forgemia.inra.fr/skander.hatira/bisepsgui"
+          )
+        }
       >
         Biseps
       </Link>{" "}

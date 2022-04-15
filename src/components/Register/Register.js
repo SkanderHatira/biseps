@@ -17,6 +17,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+const { shell } = window.require("electron");
 
 function Copyright() {
   return (
@@ -24,7 +25,11 @@ function Copyright() {
       {"Copyright © "}
       <Link
         color="inherit"
-        to="https://sasalab.herokuapp.com/pages/landing-pages/author"
+        onClick={() =>
+          shell.openExternal(
+            "https://forgemia.inra.fr/skander.hatira/bisepsgui"
+          )
+        }
       >
         Biseps
       </Link>{" "}

@@ -28,6 +28,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import { useDownloads } from "../../hooks/useDownloads";
+const { shell } = window.require("electron");
 
 const fs = require("fs");
 const path = require("path");
@@ -127,7 +128,11 @@ function Copyright() {
       {"Copyright © "}
       <Link
         color="inherit"
-        to="https://sasalab.herokuapp.com/pages/landing-pages/author"
+        onClick={() =>
+          shell.openExternal(
+            "https://forgemia.inra.fr/skander.hatira/bisepsgui"
+          )
+        }
       >
         Biseps
       </Link>{" "}
@@ -144,13 +149,18 @@ const DashLayout = ({ Filling }) => {
   const auth = useAuth();
   const { openDrawer, setOpenDrawer } = useConfig();
   useEffect(() => {
-    console.log("cache is empty");
-    fastFolderSize(bisepsTemp, (err, bytes) => {
-      if (err) {
-        throw err;
-      }
+    fs.access(bisepsTemp, function (error) {
+      if (!error) {
+        fastFolderSize(bisepsTemp, (err, bytes) => {
+          if (err) {
+            throw err;
+          }
 
-      setCache((bytes / 1e9).toFixed(2));
+          setCache((bytes / 1e9).toFixed(2));
+        });
+      } else {
+        console.log("cache is empty");
+      }
     });
   }, []);
   const clearCache = () => {

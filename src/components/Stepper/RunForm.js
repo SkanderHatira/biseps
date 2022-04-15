@@ -18,6 +18,7 @@ import { useHistory } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import CircularProgress from "@material-ui/core/CircularProgress";
+const { shell } = window.require("electron");
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -31,7 +32,11 @@ function Copyright() {
       {"Copyright © "}
       <Link
         color="inherit"
-        to="https://sasalab.herokuapp.com/pages/landing-pages/author"
+        onClick={() =>
+          shell.openExternal(
+            "https://forgemia.inra.fr/skander.hatira/bisepsgui"
+          )
+        }
       >
         Biseps
       </Link>{" "}
