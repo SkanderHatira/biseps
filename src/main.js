@@ -1,10 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
-const { app, BrowserWindow, Menu, ipcMain, win } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
 const { exec, execSync } = require("child_process");
 const homedir = require("os").homedir();
+const configPath = path.join(homedir, ".biseps/biseps.json");
+const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+
 require("dotenv").config({ path: path.join(__dirname, "src/backend/.env") });
 const uid = uuidv4();
 const mongod = require("./backend/spawnMongod.js");
@@ -37,9 +40,7 @@ process.platform == "darwin" || process.platform == "linux"
       `${
         process.platform == "win32"
           ? "(Get-command conda).path"
-          : `command -v ${
-              process.env.BISEPSCONDA === "" ? "conda" : process.env.BISEPSCONDA
-            }`
+          : `command -v ${config.conda === "" ? "conda" : config.conda}`
       }`,
       (error, stdout, stderr) => {
         if (error) {
@@ -75,9 +76,7 @@ process.platform == "darwin" || process.platform == "linux"
     });
 // Install Mongodb if it's not
 execSync(
-  `${
-    process.env.BISEPSCONDA === "" ? "conda" : process.env.BISEPSCONDA
-  } env create -f ${path.join(
+  `${config.conda === "" ? "conda" : config.conda} env create -f ${path.join(
     __dirname,
     "resources",
     process.platform == "darwin"
@@ -104,9 +103,7 @@ execSync(
 
 // Install snakemake if it's not
 execSync(
-  `${
-    process.env.BISEPSCONDA === "" ? "conda" : process.env.BISEPSCONDA
-  } env create -f ${path.join(
+  `${config.conda === "" ? "conda" : config.conda} env create -f ${path.join(
     __dirname,
     "resources",
     process.platform == "darwin"
@@ -199,7 +196,7 @@ if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
 }
-
+console.log(config);
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -214,10 +211,11 @@ const createWindow = () => {
       devTools: true,
     },
   });
-  ipcMain.on("ping-good", (event) => {
-    console.log("GOOD finshed!");
-    // Send reply to a renderer
+  ipcMain.on("ping-good", (event, message) => {
+    fs.writeFileSync(configPath, JSON.stringify(message)); // Send reply to a renderer
     event.sender.send("ping-good-reply", "pong");
+    console.log("App Successfully Terminated");
+    app.quit();
   });
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -325,9 +323,7 @@ const createWindow = () => {
         {
           label: "Parameters",
           click: async () => {
-            mainWindow.webContents.send("ping-good-reply", {
-              SAVED: "File Saved",
-            });
+            mainWindow.webContents.send("ping-good-reply", "Parameters Menu");
           },
         },
       ],

@@ -6,7 +6,7 @@ const NotFound = () => {
   return (
     <>
       <NotFoundHeader />
-      <NotFoundSVG className="not-found-svg z-index-2" />
+      <NotFoundSVG />
     </>
   );
 };

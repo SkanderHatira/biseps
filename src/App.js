@@ -18,6 +18,7 @@ import Profile from "./pages/Profile/Profile";
 import EditProfile from "./components/EditProfile/EditProfile";
 import RunBoard from "./components/RunBoard/RunBoard";
 import NotFound from "./pages/NotFound";
+import MenuParams from "./components/MenuParams";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <div className="App">
               <Switch>
                 <Route exact path="/" component={Landing} />
+                <Route exact path="/parameters" component={MenuParams} />
                 <Route exact path="/register" component={Register} />
                 <Route exact path="/login" component={Login} />
                 <PrivateRoute exact path="/newrun" component={RunBoard} />

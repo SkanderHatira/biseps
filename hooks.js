@@ -36,10 +36,11 @@ module.exports = {
         console.log("Jbrowse present, moving on...");
       }
     });
-    if (!fs.existsSync(bisepsHidden)) {
+    if (!fs.existsSync(bisepsConfigFile)) {
       fs.mkdirSync(bisepsHidden, { recursive: true });
+      fs.writeFileSync(bisepsConfigFile, jsonContent);
     } else {
-      console.log("Config folder already exists, moving on ...");
+      console.log("Config file already exists, moving on ...");
     }
 
     if (!fs.existsSync(pipeline)) {

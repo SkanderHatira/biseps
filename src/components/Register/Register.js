@@ -22,8 +22,11 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" to="https://material-ui.com/">
-        Your Website
+      <Link
+        color="inherit"
+        to="https://sasalab.herokuapp.com/pages/landing-pages/author"
+      >
+        Biseps
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

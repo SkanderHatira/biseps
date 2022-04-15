@@ -125,8 +125,11 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://www.google.fr/">
-        biseps{" "}
+      <Link
+        color="inherit"
+        to="https://sasalab.herokuapp.com/pages/landing-pages/author"
+      >
+        Biseps
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

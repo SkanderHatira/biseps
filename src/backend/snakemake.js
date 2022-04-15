@@ -4,15 +4,15 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const fs = require("fs");
     const path = require("path");
     const homedir = require("os").homedir();
-    const logfile = path.join(uniqueDir, "biseps.txt");
-    const output = fs.openSync(logfile, "a");
+    const configPath = path.join(homedir, ".biseps/biseps.json");
+    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
     const workflow = path.join(homedir, ".biseps", "biseps");
     const command =
         process.platform == "win32"
             ? "conda"
-            : process.env.BISEPSCONDA === ""
+            : config.conda && config.conda === ""
             ? "conda"
-            : process.env.BISEPSCONDA;
+            : config.conda;
     const options = {
         slient: false,
         detached: false,

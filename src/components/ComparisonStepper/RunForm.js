@@ -20,6 +20,8 @@ import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 const path = require("path");
 const http = require("http");
+const { shell } = window.require("electron");
+
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
@@ -27,15 +29,19 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link
+        color="inherit"
+        onClick={shell.openExternal(
+          "https://sasalab.herokuapp.com/pages/landing-pages/author"
+        )}
+      >
+        Biseps
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
   );
 }
-
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",

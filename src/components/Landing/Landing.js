@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Button from "@material-ui/core/Button";
@@ -27,25 +27,24 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
 }));
-ipcRenderer.on("ping-good-reply", (event, response) => {
-  console.log(response);
-});
+
 const Landing = () => {
   const history = useHistory();
   const { checkauth } = useAuth();
   const classes = useStyles();
-
+  const [response, setResponse] = useState("");
   useEffect(() => {
     checkauth(history, "/alignment");
   }, [checkauth, history]);
 
-  const pingpong = () => {
-    ipcRenderer.send("ping-good", "ping");
-  };
+  ipcRenderer.on("ping-good-reply", (event, res) => {
+    event.preventDefault;
+    history.push("/Parameters");
+  });
+
   return (
     <React.Fragment>
       <CssBaseline />
-      <Button onClick={pingpong}>BIG</Button>
       <Box height="100%">
         <div className={classes.paper}>
           <Container maxWidth="sm">
@@ -78,8 +77,14 @@ const Landing = () => {
                         )
                       }
                     >
-                      link
+                      Link
                     </Linky>{" "}
+                    Or{" "}
+                    <Linky onClick={() => history.push("/parameters")}>
+                      Edit
+                    </Linky>{" "}
+                    your app parameters to include the correct path to conda
+                    binaries
                   </div>
                 </>
               )}
