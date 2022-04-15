@@ -3,19 +3,15 @@ const spawnChild = async (unixSocket) => {
     const path = require("path");
     const fs = require("fs");
     const homedir = require("os").homedir();
-    const bisepsConfig = require(path.join(
-        require("os").homedir(),
-        ".biseps",
-        "biseps.json"
-    ));
+
     const logfile = path.join(homedir, ".biseps", "mongodb.out.txt");
     const output = fs.openSync(logfile, "a");
     const command =
         process.platform == "win32"
             ? "conda"
-            : bisepsConfig.conda === ""
+            : process.env.BISEPSCONDA === ""
             ? "conda"
-            : bisepsConfig.conda;
+            : process.env.BISEPSCONDA;
     // : `$(head -n 1 $HOME/.conda/environments.txt)/bin/conda`;
 
     const options = {

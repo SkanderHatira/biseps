@@ -1,30 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-const {
-  app,
-  BrowserWindow,
-  ipcMain,
-  session,
-  ipcRenderer,
-} = require("electron");
+const { app, BrowserWindow, Menu, ipcMain, win } = require("electron");
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
 const { exec, execSync } = require("child_process");
 const homedir = require("os").homedir();
-const jsonContent = JSON.stringify(
-  { database: "", port: "", conda: "" },
-  null,
-  2
-);
-const bisepsHidden = path.join(homedir, ".biseps");
-const bisepsConfigFile = path.join(homedir, ".biseps", "biseps.json");
-if (!fs.existsSync(bisepsConfigFile)) {
-  fs.mkdirSync(bisepsHidden, { recursive: true });
-  fs.writeFileSync(bisepsConfigFile, jsonContent);
-} else {
-  console.log("Config file already exists, moving on ...");
-}
-
+require("dotenv").config({ path: path.join(__dirname, "src/backend/.env") });
 const uid = uuidv4();
 const mongod = require("./backend/spawnMongod.js");
 
@@ -51,18 +32,13 @@ const mongodLock = path.join(
   "mongod.lock"
 );
 
-// stringify JSON Object
-
-const bisepsTemp = path.join(homedir, ".biseps", "tmp");
-const rawConfig = fs.readFileSync(bisepsConfigFile);
-const bisepsConfig = JSON.parse(rawConfig);
 process.platform == "darwin" || process.platform == "linux"
   ? exec(
       `${
         process.platform == "win32"
           ? "(Get-command conda).path"
           : `command -v ${
-              bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
+              process.env.BISEPSCONDA === "" ? "conda" : process.env.BISEPSCONDA
             }`
       }`,
       (error, stdout, stderr) => {
@@ -100,7 +76,7 @@ process.platform == "darwin" || process.platform == "linux"
 // Install Mongodb if it's not
 execSync(
   `${
-    bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
+    process.env.BISEPSCONDA === "" ? "conda" : process.env.BISEPSCONDA
   } env create -f ${path.join(
     __dirname,
     "resources",
@@ -129,7 +105,7 @@ execSync(
 // Install snakemake if it's not
 execSync(
   `${
-    bisepsConfig.conda === "" ? "conda" : bisepsConfig.conda
+    process.env.BISEPSCONDA === "" ? "conda" : process.env.BISEPSCONDA
   } env create -f ${path.join(
     __dirname,
     "resources",
@@ -238,7 +214,11 @@ const createWindow = () => {
       devTools: true,
     },
   });
-
+  ipcMain.on("ping-good", (event) => {
+    console.log("GOOD finshed!");
+    // Send reply to a renderer
+    event.sender.send("ping-good-reply", "pong");
+  });
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   // Open the DevTools.
@@ -248,6 +228,115 @@ const createWindow = () => {
   installExtension(REACT_DEVELOPER_TOOLS)
     .then((name) => console.log(`Added Extension:  ${name}`))
     .catch((err) => console.log("An error occurred: ", err));
+
+  const isMac = process.platform === "darwin";
+  const template = [
+    // { role: 'appMenu' }
+    ...(isMac
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              { role: "about" },
+              { type: "separator" },
+              { role: "services" },
+              { type: "separator" },
+              { role: "hide" },
+              { role: "hideOthers" },
+              { role: "unhide" },
+              { type: "separator" },
+              { role: "quit" },
+            ],
+          },
+        ]
+      : []),
+    // { role: 'fileMenu' }
+    {
+      label: "File",
+      submenu: [isMac ? { role: "close" } : { role: "quit" }],
+    },
+    // { role: 'editMenu' }
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        ...(isMac
+          ? [
+              { role: "pasteAndMatchStyle" },
+              { role: "delete" },
+              { role: "selectAll" },
+              { type: "separator" },
+              {
+                label: "Speech",
+                submenu: [{ role: "startSpeaking" }, { role: "stopSpeaking" }],
+              },
+            ]
+          : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
+      ],
+    },
+    // { role: 'viewMenu' }
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" },
+        { role: "forceReload" },
+        { role: "toggleDevTools" },
+        { type: "separator" },
+        { role: "resetZoom" },
+        { role: "zoomIn" },
+        { role: "zoomOut" },
+        { type: "separator" },
+        { role: "togglefullscreen" },
+      ],
+    },
+    // { role: 'windowMenu' }
+    {
+      label: "Window",
+      submenu: [
+        { role: "minimize" },
+        { role: "zoom" },
+        ...(isMac
+          ? [
+              { type: "separator" },
+              { role: "front" },
+              { type: "separator" },
+              { role: "window" },
+            ]
+          : [{ role: "close" }]),
+      ],
+    },
+    {
+      role: "help",
+      submenu: [
+        {
+          label: "Learn More",
+          click: async () => {
+            const { shell } = require("electron");
+            await shell.openExternal(
+              "https://forgemia.inra.fr/skander.hatira/bisepsgui"
+            );
+          },
+        },
+        {
+          label: "Parameters",
+          click: async () => {
+            mainWindow.webContents.send("ping-good-reply", {
+              SAVED: "File Saved",
+            });
+          },
+        },
+      ],
+    },
+  ];
+
+  // stringify JSON Object
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 };
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

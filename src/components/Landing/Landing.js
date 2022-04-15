@@ -10,7 +10,7 @@ import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import Linky from "@material-ui/core/Link";
 
-const { shell } = window.require("electron");
+const { shell, ipcRenderer } = window.require("electron");
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -27,7 +27,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
 }));
-
+ipcRenderer.on("ping-good-reply", (event, response) => {
+  console.log(response);
+});
 const Landing = () => {
   const history = useHistory();
   const { checkauth } = useAuth();
@@ -36,10 +38,14 @@ const Landing = () => {
   useEffect(() => {
     checkauth(history, "/alignment");
   }, [checkauth, history]);
+
+  const pingpong = () => {
+    ipcRenderer.send("ping-good", "ping");
+  };
   return (
     <React.Fragment>
       <CssBaseline />
-
+      <Button onClick={pingpong}>BIG</Button>
       <Box height="100%">
         <div className={classes.paper}>
           <Container maxWidth="sm">
