@@ -6,11 +6,34 @@ const fs = require("fs");
 const { exec, execSync } = require("child_process");
 const homedir = require("os").homedir();
 const configPath = path.join(homedir, ".biseps/biseps.json");
-const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+const bisepsHidden = path.join(homedir, ".biseps");
+const jsonContent = JSON.stringify(
+  { database: "", port: "", conda: "" },
+  null,
+  2
+);
+const pipeline = path.join(homedir, ".biseps", "biseps");
+require("dotenv").config({ path: path.join(__dirname, "backend", ".env") });
 
-require("dotenv").config({ path: path.join(__dirname, "src/backend/.env") });
+if (!fs.existsSync(pipeline)) {
+  execSync(
+    `git clone https://o2auth:${process.env.ACCESS_TOKEN}@forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
+    (error, stdout, stderr) => {
+      console.log(error);
+    }
+  );
+} else {
+  console.log("Pipeline is already installed");
+}
+if (!fs.existsSync(configPath)) {
+  fs.mkdirSync(bisepsHidden, { recursive: true });
+  fs.writeFileSync(configPath, jsonContent);
+} else {
+  console.log("Config file already exists, moving on ...");
+}
 const uid = uuidv4();
 const mongod = require("./backend/spawnMongod.js");
+const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
 const sock =
   process.platform == "win32"

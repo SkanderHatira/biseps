@@ -10,7 +10,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const command =
         process.platform == "win32"
             ? "conda"
-            : config.conda && config.conda === ""
+            : config.conda === ""
             ? "conda"
             : config.conda;
     const options = {
