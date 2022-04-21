@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
-const os = require("os");
 const path = require("path");
 const fs = require("fs");
 const { exec, execSync } = require("child_process");

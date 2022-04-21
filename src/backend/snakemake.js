@@ -4,7 +4,9 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const fs = require("fs");
     const path = require("path");
     const homedir = require("os").homedir();
-    const configPath = path.join(homedir, ".biseps/biseps.json");
+    const logfile = path.join(homedir, ".biseps", "snakemake.txt");
+    const output = fs.openSync(logfile, "a");
+    const configPath = path.join(homedir, ".biseps", "biseps.json");
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
     const workflow = path.join(homedir, ".biseps", "biseps");
     const command =
@@ -18,7 +20,7 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
         detached: false,
         shell:
             process.platform == "win32" ? "powershell.exe" : process.env.SHELL,
-        // stdio: ["ignore", output, output],
+        stdio: ["ignore", output, output],
     };
     const failedArchive = `${uniqueDir}/failed.archive.lock`;
 
