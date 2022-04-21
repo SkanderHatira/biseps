@@ -1,26 +1,26 @@
 const createSymlink = (body, uniqueDir) => {
-    const fs = require("fs-extra");
+    const fs = require("fs");
     const path = require("path");
     body.units.map((unit) => {
-        fs.symlinkSync(
+        fs.symlink(
             unit.fq1,
             path.join(uniqueDir, "data", path.basename(unit.fq1)),
             "file"
         );
-        fs.symlinkSync(
+        fs.symlink(
             unit.fq2,
             path.join(uniqueDir, "data", path.basename(unit.fq2)),
             "file"
         );
     });
-    fs.symlinkSync(
+    fs.symlink(
         body.genome,
         path.join(uniqueDir, "resources", "genome", path.basename(body.genome)),
         "file"
     );
     body.customAdapters == ""
         ? ""
-        : fs.symlinkSync(
+        : fs.symlink(
               body.adapters,
               path.join(
                   uniqueDir,
