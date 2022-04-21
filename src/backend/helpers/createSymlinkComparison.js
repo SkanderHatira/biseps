@@ -1,19 +1,32 @@
 const createSymlinkComparison = (body, uniqueDir) => {
     const fs = require("fs");
     const path = require("path");
+    if (!fs.existsSync(path.join(uniqueDir, "data"))) {
+        fs.mkdirSync(path.join(uniqueDir, "data"), { recursive: true });
+    }
+    if (!fs.existsSync(path.join(uniqueDir, "resources", "genome"))) {
+        fs.mkdirSync(path.join(uniqueDir, "resources", "genome"), {
+            recursive: true,
+        });
+    }
+    if (!fs.existsSync(path.join(uniqueDir, "resources", "annotation"))) {
+        fs.mkdirSync(path.join(uniqueDir, "resources", "annotation"), {
+            recursive: true,
+        });
+    }
     body.comparisons.map((comparison) => {
         const controlFiles = comparison.control.split(",");
         const treatmentFiles = comparison.treatment.split(",");
 
         for (const file in controlFiles) {
-            fs.symlink(
+            fs.symlinkSync(
                 controlFiles[file],
                 path.join(uniqueDir, "data", path.basename(controlFiles[file])),
                 "file"
             );
         }
         for (const file in treatmentFiles) {
-            fs.symlink(
+            fs.symlinkSync(
                 treatmentFiles[file],
 
                 path.join(
@@ -25,13 +38,13 @@ const createSymlinkComparison = (body, uniqueDir) => {
             );
         }
     });
-    fs.symlink(
+    fs.symlinkSync(
         body.genome,
         path.join(uniqueDir, "resources", "genome", path.basename(body.genome)),
         "file"
     );
     body.annot !== ""
-        ? fs.symlink(
+        ? fs.symlinkSync(
               body.annot,
               path.join(
                   uniqueDir,
