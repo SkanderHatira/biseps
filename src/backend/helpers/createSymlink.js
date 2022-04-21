@@ -1,14 +1,6 @@
 const createSymlink = (body, uniqueDir) => {
     const fs = require("fs");
     const path = require("path");
-    if (!fs.existsSync(path.join(uniqueDir, "data"))) {
-        fs.mkdirSync(path.join(uniqueDir, "data"), { recursive: true });
-    }
-    if (!fs.existsSync(path.join(uniqueDir, "resources", "genome"))) {
-        fs.mkdirSync(path.join(uniqueDir, "resources", "genome"), {
-            recursive: true,
-        });
-    }
     body.units.map((unit) => {
         fs.symlinkSync(
             unit.fq1,
