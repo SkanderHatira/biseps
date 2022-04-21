@@ -46,7 +46,7 @@ function createProfile(body, uniqueDir, uniqueDirRemote) {
 
     const yamlStrSlurm = yaml.dump(slurmProfile);
     fs.writeFileSync(
-        path.join(uniqueDir, "config/profiles/slurm/config.yaml"),
+        path.join(uniqueDir, "config", "profiles", "slurm", "config.yaml"),
         yamlStrSlurm,
         "utf8"
     );

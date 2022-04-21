@@ -32,7 +32,7 @@ router.post("/run", (req, res) => {
                 req.body.outdir,
                 new Date().getTime().toString()
             );
-            const profile = path.join(uniqueDir, "config/profiles/local");
+            const profile = path.join(uniqueDir, "config", "profiles", "local");
             const newRun = new Run({
                 params: {
                     trimmomatic: {
@@ -92,8 +92,8 @@ router.post("/run", (req, res) => {
             const homeDir = path.join(req.body.remoteDir, date);
             console.log(homeDir);
             const profile = req.body.cluster
-                ? path.join(uniqueDir, "config/profiles/slurm")
-                : path.join(uniqueDir, "config/profiles/local");
+                ? path.join(uniqueDir, "config", "profiles", "slurm")
+                : path.join(uniqueDir, "config", "profiles", "local");
             const newRun = new Run({
                 outdir: uniqueDir,
                 remoteDir: uniqueDirRemote.split(path.sep).join(path.posix.sep),
@@ -198,13 +198,20 @@ router.post("/rerun", function (req, res) {
     const uniqueDir = req.body.outdir;
 
     if (!req.body.remote) {
-        const profile = path.join(req.body.outdir, "config/profiles/local");
+        const profile = path.join(
+            req.body.outdir,
+            "config",
+            "profiles",
+            "local"
+        );
         spawnChild(req.body, profile, uniqueDir, "", req.body.unlock);
         console.log("Rerun Snakemake", profile);
     } else {
         const profile = path.join(
             req.body.remoteDir,
-            req.body.cluster ? "config/profiles/slurm" : "config/profiles/local"
+            "config",
+            "profiles",
+            req.body.cluster ? "slurm" : "local"
         );
         const uniqueDirRemote = req.body.remoteDir;
         spawnChild(
@@ -217,7 +224,6 @@ router.post("/rerun", function (req, res) {
     }
 });
 router.put("/:id", (req, res, next) => {
-
     const updatedRun = new Run({
         _id: req.params.id,
         ...req.body,
