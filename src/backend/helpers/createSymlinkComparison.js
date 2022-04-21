@@ -9,7 +9,7 @@ const createSymlinkComparison = (body, uniqueDir) => {
             fs.symlinkSync(
                 controlFiles[file],
                 path.join(uniqueDir, "data", path.basename(controlFiles[file])),
-                process.platform == "win32" ? "juncton" : "file"
+                "file"
             );
         }
         for (const file in treatmentFiles) {
@@ -21,14 +21,14 @@ const createSymlinkComparison = (body, uniqueDir) => {
                     "data",
                     path.basename(treatmentFiles[file])
                 ),
-                process.platform == "win32" ? "juncton" : "file"
+                "file"
             );
         }
     });
     fs.symlinkSync(
         body.genome,
         path.join(uniqueDir, "resources", "genome", path.basename(body.genome)),
-        process.platform == "win32" ? "juncton" : "file"
+        "file"
     );
     body.annot !== ""
         ? fs.symlinkSync(
@@ -39,7 +39,7 @@ const createSymlinkComparison = (body, uniqueDir) => {
                   "annotation",
                   path.basename(body.annot)
               ),
-              process.platform == "win32" ? "juncton" : "file"
+              "file"
           )
         : console.log("no annotation file to symlink");
 };

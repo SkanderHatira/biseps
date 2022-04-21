@@ -5,18 +5,18 @@ const createSymlink = (body, uniqueDir) => {
         fs.symlinkSync(
             unit.fq1,
             path.join(uniqueDir, "data", path.basename(unit.fq1)),
-            process.platform == "win32" ? "juncton" : "file"
+            "file"
         );
         fs.symlinkSync(
             unit.fq2,
             path.join(uniqueDir, "data", path.basename(unit.fq2)),
-            process.platform == "win32" ? "juncton" : "file"
+            "file"
         );
     });
     fs.symlinkSync(
         body.genome,
         path.join(uniqueDir, "resources", "genome", path.basename(body.genome)),
-        process.platform == "win32" ? "juncton" : "file"
+        "file"
     );
     body.customAdapters == ""
         ? ""
@@ -28,7 +28,7 @@ const createSymlink = (body, uniqueDir) => {
                   "adapters",
                   path.basename(body.adapters)
               ),
-              process.platform == "win32" ? "juncton" : "file"
+              "file"
           );
 };
 module.exports = createSymlink;
