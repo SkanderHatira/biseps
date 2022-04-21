@@ -8,8 +8,7 @@ const spawnChild = (body) => {
         "@jbrowse",
         "cli",
         "bin",
-        "run",
-        `${process.platform == "win32" ? ".cmd" : ""}`
+        "run"
     );
 
     const options = {
@@ -21,8 +20,8 @@ const spawnChild = (body) => {
     body.genomes != [] &&
         body.genomes.map((genome) => {
             console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
-            console.log(genome)
-            console.log(body.jbPath)
+            console.log(genome);
+            console.log(body.jbPath);
             fork(
                 jbrowse,
                 [
