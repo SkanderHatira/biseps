@@ -9,18 +9,10 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
     const configPath = path.join(homedir, ".biseps", "biseps.json");
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
     const workflow = path.join(homedir, ".biseps", "biseps");
-    const command =
-        process.platform == "win32"
-            ? "conda"
-            : config.conda === ""
-            ? "conda"
-            : config.conda;
+    const command = config.conda === "" ? "conda" : config.conda;
     const options = {
         slient: false,
         detached: false,
-        shell:
-            process.platform == "win32" ? "powershell.exe" : process.env.SHELL,
-        stdio: ["ignore", output, output],
     };
     const failedArchive = `${uniqueDir}/failed.archive.lock`;
 

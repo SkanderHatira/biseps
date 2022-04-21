@@ -6,8 +6,6 @@ const spawnServer = async (sock, unixSocket) => {
     const options = {
         slient: false,
         detached: false,
-        shell:
-            process.platform == "win32" ? "powershell.exe" : process.env.SHELL,
     };
     // const child = spawn(
     //     "node",
