@@ -1,0 +1,55 @@
+name: BiSePS Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.19.0]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "yarn"
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y cmake rpm fakeroot dpkg
+      - run: yarn install
+        working-directory: ./src/backend
+      - run: yarn install
+      - run: sudo mkdir ./resources/jbrowse2
+      - run: yarn make
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: biseps.deb
+          path: ./out/make/deb/x64/*.deb
+      - name: Create Release
+        id: create-new-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          body: |
+            $${ github.event.head_commit.message }}
+      - name: Upload asset to GitHub release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
+          asset_path: ./out/make/deb/x64/biseps_1.0.3_amd64.deb
+          asset_name: BiSePS-v${{ github.run_number }}.deb
+          asset_content_type: application/octet-stream
