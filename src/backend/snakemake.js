@@ -1,4 +1,5 @@
 const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
+    console.log(unlock);
     const { exec } = require("child_process");
     let Client = require("ssh2-sftp-client");
     const fs = require("fs");

@@ -8,11 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         node-version: [14.19.0]
+        os: [ubuntu-latest, windows-latest, macos-11]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -22,18 +23,33 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
+      - name: set yarn timeout
+        run: yarn config set network-timeout 600000
       - run: sudo apt-get update -y
+        if: ${{ matrix.os == 'ubuntu-latest' }}
       - run: sudo apt-get install -y cmake rpm fakeroot dpkg
+        if: ${{ matrix.os == 'ubuntu-latest' }}
       - run: yarn install
         working-directory: ./src/backend
       - run: yarn install
       - run: sudo mkdir ./resources/jbrowse2
+        if: ${{ matrix.os != 'windows-latest' }}
+      - run: md resources\jbrowse2
+        if: ${{ matrix.os == 'windows-latest' }}
       - run: yarn make
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: biseps.deb
-          path: ./out/make/deb/x64/*.deb
+          name: biseps-binaries-latest.zip
+          path: ./out/make/*
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3.0.0
+        with:
+          name: biseps-binaries-latest.zip
+          skip-unpack: true
       - name: Create Release
         id: create-new-release
         uses: actions/create-release@v1
@@ -50,6 +66,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: ./out/make/deb/x64/biseps_1.0.3_amd64.deb
-          asset_name: BiSePS-v${{ github.run_number }}.deb
-          asset_content_type: application/octet-stream
+          asset_path: ./biseps-binaries-latest.zip
+          asset_name: biseps-binaries-v${{ github.run_number }}.zip
+          asset_content_type: application/zip

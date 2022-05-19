@@ -208,6 +208,7 @@ export default function RunForm() {
 
     const request = {
       rerun: false,
+      unlock: false,
       ...runState,
       adapters:
         runState.customAdapters != ""
@@ -247,6 +248,7 @@ export default function RunForm() {
 
         const jsbody = JSON.parse(body);
         if (res.statusCode !== 200) {
+          setLoading(false);
           console.log("failed post request");
         } else {
           console.log("successful post request");

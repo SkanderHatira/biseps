@@ -15,6 +15,7 @@ export const useConfig = () => {
 
 const useProvideConfig = () => {
   const initialRun = {
+    unlock: false,
     aligner: "bowtie2",
     adapters: "TruSeq2-SE",
     customAdapters: "",
@@ -44,6 +45,7 @@ const useProvideConfig = () => {
     minTime: "2880",
   };
   const initialComp = {
+    unlock: false,
     machine: {
       hostname: "",
       username: "",
