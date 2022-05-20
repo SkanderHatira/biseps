@@ -8,8 +8,8 @@ lerna-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-jbrowse2/
-jbrowse2/**
+# jbrowse2/
+# jbrowse2/** keep jbrowse in source
 # Runtime data
 pids
 *.pid
