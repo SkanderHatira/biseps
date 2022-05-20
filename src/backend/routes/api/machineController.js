@@ -36,6 +36,7 @@ router.post("/machine", (req, res) => {
                 function (err, stdout, stderr) {
                     console.log(stdout);
                     const newMachine = new Machine({
+                        createdBy: req.body.userId,
                         ...req.body,
                         homepath: stdout.trim(),
                     });
@@ -95,8 +96,8 @@ router.delete("/:id", function (req, res) {
         }
     );
 });
-router.get("/", function (req, res) {
-    Machine.find({}, function (err, machines) {
+router.get("/:userId", function (req, res) {
+    Machine.find({ createdBy: [req.params.userId] }, function (err, machines) {
         if (err)
             return res
                 .status(500)

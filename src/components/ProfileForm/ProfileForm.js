@@ -69,6 +69,7 @@ const blankMachine = {
 
 const ProfileForm = () => {
   const { user, handleEditProfile, signin } = useAuth();
+  console.log(user);
   const [data, setData] = useState([]);
   const [machine, setMachine] = useState(blankMachine);
   const [showPassword, setShowPassword] = useState(false);
@@ -94,6 +95,7 @@ const ProfileForm = () => {
       payload: {},
     });
     const request = {
+      createdBy: user.user.id,
       ...machine,
     };
     const token = sessionStorage.jwtToken;
@@ -186,7 +188,7 @@ const ProfileForm = () => {
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/machines/",
+        path: `http://localhost/api/machines/${user.user.id}`,
         socketPath: Sock,
         port: null,
         headers: {
@@ -268,55 +270,6 @@ const ProfileForm = () => {
             Available Machines{" "}
           </Typography>
           <Grid container spacing={2}>
-            {/* <Grid item xs={12}>
-                <TextField
-                  onChange={onChange}
-                  value={state.name}
-                  error={errors.name === ""}
-                  helperText={errors.name === "" ? "Empty!" : errors.name}
-                  className={classnames("", {
-                    invalid: errors.name,
-                  })}
-                  id="name"
-                  type="text"
-                  autoComplete="name"
-                  name="name"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid> */}
-
-            {/* <Grid item xs={12}>
-                <TextField
-                  value={state.email}
-                  onChange={onChange}
-                  error={errors.email === ""}
-                  helperText={errors.email === "" ? "Empty!" : errors.email}
-                  className={classnames("", {
-                    invalid: errors.email,
-                  })}
-                  id="email"
-                  type="email"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                />
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  onClick={onSubmit}
-                >
-                  Submit Changes{" "}
-                </Button>
-              </Grid> */}
             <Snackbar
               open={open}
               autoHideDuration={10000}

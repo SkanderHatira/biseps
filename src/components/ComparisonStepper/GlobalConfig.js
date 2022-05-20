@@ -5,8 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import axios from "axios";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
@@ -20,6 +19,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Autocomplete, {
   createFilterOptions,
 } from "@material-ui/lab/Autocomplete";
+import { useAuth } from "../../hooks/useAuth";
+
 const filter = createFilterOptions();
 const http = require("http");
 
@@ -44,6 +45,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function GlobalConfig() {
+  const { user } = useAuth();
+
   const { compState, setCompState } = useConfig();
   const [data, setData] = useState([]);
   const createBrowserWindow = (path) => {
@@ -61,7 +64,7 @@ export default function GlobalConfig() {
       const Sock = await sessionStorage.Sock;
       const options = {
         method: "GET",
-        path: "http://localhost/api/machines/",
+        path: `http://localhost/api/machines/${user.user.id}`,
         socketPath: Sock,
         port: null,
         headers: {
