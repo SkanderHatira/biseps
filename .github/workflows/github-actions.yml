@@ -3,8 +3,6 @@ name: BiSePS Build
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
 
 jobs:
   build:
@@ -50,6 +48,8 @@ jobs:
         with:
           name: biseps-binaries-latest.zip
           skip-unpack: true
+      - run: tree ./
+      - run: pwd
       - name: Create Release
         id: create-new-release
         uses: actions/create-release@v1
@@ -60,12 +60,30 @@ jobs:
           release_name: Release ${{ github.run_number }}
           body: |
             $${ github.event.head_commit.message }}
-      - name: Upload asset to GitHub release
+      - name: Upload Debian asset to GitHub release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: ./biseps-binaries-latest.zip
-          asset_name: biseps-binaries-v${{ github.run_number }}.zip
+          asset_path: ./deb/x64/biseps_1.0.3_amd64.deb
+          asset_name: biseps-Debian-v${{ github.run_number }}.deb
+          asset_content_type: application/zip
+      - name: Upload Windows asset to GitHub release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
+          asset_path: ./squirrel.windows/x64/biseps-1.0.3 Setup.exe
+          asset_name: biseps-Windows-v${{ github.run_number }}.exe
+          asset_content_type: application/zip
+      - name: Upload Mac asset to GitHub release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
+          asset_path: ./biseps-1.0.3-x64.dmg
+          asset_name: biseps-Macos-v${{ github.run_number }}.dmg
           asset_content_type: application/zip

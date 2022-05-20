@@ -1,3 +1,3 @@
 [submodule "resources/biseps"]
 	path = resources/biseps
-	url = git@forgemia.inra.fr:skander.hatira/bisepsgui.git
+	url = git@forgemia.inra.fr:skander.hatira/biseps.git
