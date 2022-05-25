@@ -14,25 +14,21 @@ const spawnChild = (body) => {
     const options = {
         slient: false,
         detached: false,
-        cwd: __dirname,
     };
 
     body.genomes != [] &&
         body.genomes.map((genome) => {
-            console.log(`Current directory: ${process.cwd()} | ${__dirname}`);
-            console.log(genome);
-            console.log(body.jbPath);
             fork(
                 jbrowse,
                 [
                     "add-assembly",
-                    genome,
+                    path.basename(genome),
                     "--load",
                     "copy",
                     "--out",
                     body.jbPath,
                 ],
-                options
+                { ...options, cwd: path.dirname(genome) }
             );
         });
     body.tracks != [] &&
@@ -42,7 +38,7 @@ const spawnChild = (body) => {
                 jbrowse,
                 [
                     "add-track",
-                    track.track,
+                    path.basename(track.track),
                     "--load",
                     "copy",
                     "--assemblyNames",
@@ -56,7 +52,7 @@ const spawnChild = (body) => {
                     "--subDir",
                     track.associatedGenome,
                 ],
-                options
+                { ...options, cwd: path.dirname(track.track) }
             );
 
             // import bigwig_cg
@@ -65,7 +61,7 @@ const spawnChild = (body) => {
                 jbrowse,
                 [
                     "add-track",
-                    track.cgbw,
+                    path.basename(track.cgbw),
                     "--load",
                     "copy",
                     "--assemblyNames",
@@ -79,7 +75,7 @@ const spawnChild = (body) => {
                     "--subDir",
                     track.associatedGenome,
                 ],
-                options
+                { ...options, cwd: path.dirname(track.cgbw) }
             );
 
             // import bigwig_chg
@@ -87,7 +83,7 @@ const spawnChild = (body) => {
                 jbrowse,
                 [
                     "add-track",
-                    track.chgbw,
+                    path.basename(track.chgbw),
                     "--load",
                     "copy",
                     "--assemblyNames",
@@ -101,7 +97,7 @@ const spawnChild = (body) => {
                     "--subDir",
                     track.associatedGenome,
                 ],
-                options
+                { ...options, cwd: path.dirname(track.chgbw) }
             );
 
             // import bigwig_chh
@@ -110,7 +106,7 @@ const spawnChild = (body) => {
                 jbrowse,
                 [
                     "add-track",
-                    track.chhbw,
+                    path.basename(track.chhbw),
                     "--load",
                     "copy",
                     "--assemblyNames",
@@ -124,7 +120,7 @@ const spawnChild = (body) => {
                     "--subDir",
                     track.associatedGenome,
                 ],
-                options
+                { ...options, cwd: path.dirname(track.chhbw) }
             );
 
             // import bigwig_bedgraph
@@ -132,7 +128,7 @@ const spawnChild = (body) => {
                 jbrowse,
                 [
                     "add-track",
-                    track.bedbw,
+                    path.basename(track.bedbw),
                     "--load",
                     "copy",
                     "--assemblyNames",
@@ -146,7 +142,7 @@ const spawnChild = (body) => {
                     "--subDir",
                     track.associatedGenome,
                 ],
-                options
+                { ...options, cwd: path.dirname(track.bedbw) }
             );
         });
     body.comparisons != [] &&
@@ -156,7 +152,7 @@ const spawnChild = (body) => {
                 jbrowse,
                 [
                     "add-track",
-                    comparison.bed,
+                    path.basename(comparison.bed),
                     "--load",
                     "copy",
                     "--assemblyNames",
@@ -170,7 +166,7 @@ const spawnChild = (body) => {
                     "--subDir",
                     comparison.associatedGenome,
                 ],
-                options
+                { ...options, cwd: path.dirname(comparison.bed) }
             );
         });
 };
