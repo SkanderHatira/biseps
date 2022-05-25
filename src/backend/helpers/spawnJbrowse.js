@@ -8,7 +8,7 @@ const spawnChild = (body) => {
         "@jbrowse",
         "cli",
         "bin",
-        "run"
+        process.platform == "win32" ? "run.cmd" : "run"
     );
 
     const options = {
