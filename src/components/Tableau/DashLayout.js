@@ -32,7 +32,6 @@ const { shell } = window.require("electron");
 
 const fs = require("fs");
 const path = require("path");
-const fastFolderSize = require("fast-folder-size");
 const homedir = require("os").homedir();
 const bisepsTemp = path.join(homedir, ".biseps", "tmp");
 
@@ -151,12 +150,12 @@ const DashLayout = ({ Filling }) => {
   useEffect(() => {
     fs.access(bisepsTemp, function (error) {
       if (!error) {
-        fastFolderSize(bisepsTemp, (err, bytes) => {
+        fs.stat(bisepsTemp, (err, stats) => {
           if (err) {
-            throw err;
+            console.error(err);
           }
-
-          setCache((bytes / 1e9).toFixed(2));
+          // we have access to the file stats in `stats`
+          setCache((stats.size / 1e9).toFixed(2));
         });
       } else {
         console.log("cache is empty");
