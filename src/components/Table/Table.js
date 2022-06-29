@@ -112,7 +112,7 @@ export default function InteractiveList() {
       fs.mkdirSync(bisepsTemp);
     }
     let remotePath = `${row.remoteDir}/${filePath}`;
-    let localPath = row._id  + filePath;
+    let localPath = row._id + filePath;
     sftp
       .connect({
         host: row.machine.hostname,
@@ -124,7 +124,7 @@ export default function InteractiveList() {
         password: row.machine.password,
       })
       .then(() => {
-        console.log(row)
+        console.log(row);
         return sftp.fastGet(
           remotePath.split(path.sep).join(path.posix.sep),
           path.join(bisepsTemp, localPath).split(path.sep).join(path.posix.sep)
@@ -196,12 +196,12 @@ export default function InteractiveList() {
       })
       .then(async () => {
         for (const track in tracks) {
-          const local =  path.join(
+          const local = path.join(
             bisepsTemp,
             `${sample.samplePath}-multiqc_report.html`
           );
           const localtmp = local + ".tmp";
-          console.log("this is: ",tracks)
+          console.log("this is: ", tracks);
           if (!fs.existsSync(local)) {
             try {
               await sftp.fastGet(tracks[track], localtmp).then(() => {
@@ -220,10 +220,7 @@ export default function InteractiveList() {
 
       .finally(() => {
         createBrowserWindow(
-          path.join(
-            bisepsTemp,
-            `${sample.samplePath}-multiqc_report.html`
-          )
+          path.join(bisepsTemp, `${sample.samplePath}-multiqc_report.html`)
         );
         sftp.end();
       })
@@ -575,7 +572,7 @@ export default function InteractiveList() {
                     onClick={
                       row.remote
                         ? () => {
-                            openInFolder(path.join(row.outdir,"config"));
+                            openInFolder(path.join(row.outdir, "config"));
                             setSuccessMessage(
                               "Remote path copied To clipboard!"
                             );
@@ -583,7 +580,7 @@ export default function InteractiveList() {
                             handleOpenAlert();
                             clipboard.writeText(`${row.remoteDir}`);
                           }
-                        : () => openInFolder(path.join(row.outdir,"config"))
+                        : () => openInFolder(path.join(row.outdir, "config"))
                     }
                     className={classes.button}
                     endIcon={
@@ -639,7 +636,7 @@ export default function InteractiveList() {
                     disabled={
                       row.remote
                         ? false
-                        : fileExist(path.join(row.outdir,"report.html"))
+                        : fileExist(path.join(row.outdir, "report.html"))
                         ? false
                         : true
                     }
@@ -703,9 +700,7 @@ export default function InteractiveList() {
                   <List dense={dense}>
                     {row.samples.map((sample) => {
                       const idx = `${sample._id}-align`;
-                      const outdir = row.remote
-                        ? row.remoteDir
-                        : row.outdir;
+                      const outdir = row.remote ? row.remoteDir : row.outdir;
                       const Multiqc = `${outdir}/results/${sample.samplePath}/${sample.samplePath}-multiqc_report.html`;
                       const CX = `${outdir}/results/${sample.samplePath}/methylation_extraction_bismark/${sample.samplePath}.deduplicated.bismark.cov.gz`;
                       const sampleExist = fileExist(
@@ -720,12 +715,13 @@ export default function InteractiveList() {
                           disabled={
                             row.remote
                               ? false
-                              : fileExist(path.join(
-                                outdir,
-                                "results",
-                                sample.samplePath,
-                                sample.samplePath + "-multiqc_report.html"
-                              )
+                              : fileExist(
+                                  path.join(
+                                    outdir,
+                                    "results",
+                                    sample.samplePath,
+                                    sample.samplePath + "-multiqc_report.html"
+                                  )
                                 )
                               ? false
                               : true

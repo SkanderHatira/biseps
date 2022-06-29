@@ -1,6 +1,14 @@
 const createSymlinkComparison = (body, uniqueDir) => {
-    const fs = require("fs");
+    const fs = require("fs-extra");
     const path = require("path");
+    async function ensuresymlink(src, dest) {
+        try {
+            await fs.ensureSymlink(src, dest, "file");
+            console.log("success!");
+        } catch (err) {
+            console.error(err);
+        }
+    }
     if (!fs.existsSync(path.join(uniqueDir, "data"))) {
         fs.mkdirSync(path.join(uniqueDir, "data"), { recursive: true });
     }
@@ -14,15 +22,14 @@ const createSymlinkComparison = (body, uniqueDir) => {
             recursive: true,
         });
     }
-    body.comparisons.map((comparison) => {
+    body.comparisons.map(async (comparison) => {
         const controlFiles = comparison.control.split(",");
         const treatmentFiles = comparison.treatment.split(",");
 
         for (const file in controlFiles) {
-            fs.symlinkSync(
+            ensuresymlink(
                 controlFiles[file],
-                path.join(uniqueDir, "data", path.basename(controlFiles[file])),
-                "file"
+                path.join(uniqueDir, "data", path.basename(controlFiles[file]))
             );
         }
         for (const file in treatmentFiles) {
@@ -38,21 +45,20 @@ const createSymlinkComparison = (body, uniqueDir) => {
             );
         }
     });
-    fs.symlinkSync(
+    ensuresymlink(
         body.genome,
-        path.join(uniqueDir, "resources", "genome", path.basename(body.genome)),
-        "file"
+        path.join(uniqueDir, "resources", "genome", path.basename(body.genome))
     );
+
     body.annot !== ""
-        ? fs.symlinkSync(
+        ? ensuresymlink(
               body.annot,
               path.join(
                   uniqueDir,
                   "resources",
                   "annotation",
                   path.basename(body.annot)
-              ),
-              "file"
+              )
           )
         : console.log("no annotation file to symlink");
 };
