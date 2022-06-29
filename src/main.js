@@ -16,7 +16,7 @@ require("dotenv").config({ path: path.join(__dirname, "backend", ".env") });
 
 if (!fs.existsSync(pipeline)) {
   execSync(
-    `git clone https://o2auth:${process.env.ACCESS_TOKEN}@forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
+    `git -c core.autocrlf=false clone https://o2auth:${process.env.ACCESS_TOKEN}@forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
     (error, stdout, stderr) => {
       console.log(error);
     }
