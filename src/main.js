@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
-const { exec, execSync } = require("child_process");
+const { exec, execSync, fork } = require("child_process");
 const homedir = require("os").homedir();
 const configPath = path.join(homedir, ".biseps/biseps.json");
 const bisepsHidden = path.join(homedir, ".biseps");
