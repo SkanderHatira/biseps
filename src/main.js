@@ -13,7 +13,27 @@ const jsonContent = JSON.stringify(
 );
 const pipeline = path.join(homedir, ".biseps", "biseps");
 require("dotenv").config({ path: path.join(__dirname, "backend", ".env") });
-
+const jbpath = path.join(homedir, ".biseps", "jbrowse2");
+const jbrowse = path.join(
+  __dirname,
+  "backend",
+  "node_modules",
+  "@jbrowse",
+  "cli",
+  "bin",
+  "run"
+);
+fs.access(jbpath, function (error) {
+  if (error) {
+    try {
+      fork(jbrowse, ["create", "--nightly", jbpath]);
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    console.log("Jbrowse present, moving on...");
+  }
+});
 if (!fs.existsSync(pipeline)) {
   execSync(
     `git -c core.autocrlf=false clone https://o2auth:${process.env.ACCESS_TOKEN}@forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
