@@ -1,5 +1,5 @@
 const spawnChild = (body) => {
-    const { fork } = require("child_process");
+    const { fork, exec } = require("child_process");
     const path = require("path");
     const jbrowse = path.join(
         __dirname,
@@ -10,7 +10,36 @@ const spawnChild = (body) => {
         "bin",
         "run"
     );
+    async function addTrack(track) {
+        const keys = ["track", "cgbw", "chgbw", "chhbw", "bedbw"];
+        keys.forEach((key) => {
+            console.log(key);
 
+            child = fork(
+                jbrowse,
+                [
+                    "add-track",
+                    path.basename(track[key]),
+                    "--load",
+                    "copy",
+                    "--assemblyNames",
+                    track.associatedGenome,
+                    "--out",
+                    body.jbPath,
+                    "--category",
+                    `Alignment_${track.name}`,
+                    "--name",
+                    `${path.basename(track[key])}`,
+                    "--subDir",
+                    track.associatedGenome,
+                    "--trackId",
+                    `${track.id}_${track[key]}`,
+                ],
+                { ...options, cwd: path.dirname(track[key]) }
+            );
+            child.on("close", () => console.log("success alignment"));
+        });
+    }
     const options = {
         slient: false,
         detached: false,
@@ -38,171 +67,35 @@ const spawnChild = (body) => {
     body.tracks != [] &&
         body.tracks.forEach((track) => {
             // import bam
-            try {
-                fork(
-                    jbrowse,
-                    [
-                        "add-track",
-                        path.basename(track.track),
-                        "--load",
-                        "copy",
-                        "--assemblyNames",
-                        track.associatedGenome,
-                        "--out",
-                        body.jbPath,
-                        "--category",
-                        "Alignments",
-                        "--name",
-                        `${track.name}_bam`,
-                        "--subDir",
-                        track.associatedGenome,
-                    ],
-                    { ...options, cwd: path.dirname(track.track) }
-                );
-            } catch (err) {
-                console.log(err);
-            }
-        });
-    body.tracks != [] &&
-        body.tracks.forEach((track) => {
-            // import bigwig_cg
-            try {
-                fork(
-                    jbrowse,
-                    [
-                        "add-track",
-                        path.basename(track.cgbw),
-                        "--load",
-                        "copy",
-                        "--assemblyNames",
-                        track.associatedGenome,
-                        "--out",
-                        body.jbPath,
-                        "--category",
-                        "Methylation Count In CG Context",
-                        "--name",
-                        `${track.name}_cg`,
-                        "--subDir",
-                        track.associatedGenome,
-                    ],
-                    { ...options, cwd: path.dirname(track.cgbw) }
-                );
-            } catch (err) {
-                console.log(err);
-            }
-        });
-    body.tracks != [] &&
-        body.tracks.forEach((track) => {
-            try {
-                // import bigwig_chg
-                fork(
-                    jbrowse,
-                    [
-                        "add-track",
-                        path.basename(track.chgbw),
-                        "--load",
-                        "copy",
-                        "--assemblyNames",
-                        track.associatedGenome,
-                        "--out",
-                        body.jbPath,
-                        "--category",
-                        "Methylation Count In CHG Context",
-                        "--name",
-                        `${track.name}_chg`,
-                        "--subDir",
-                        track.associatedGenome,
-                    ],
-                    { ...options, cwd: path.dirname(track.chgbw) }
-                );
-            } catch (err) {
-                console.log(err);
-            }
-        });
-    body.tracks != [] &&
-        body.tracks.forEach((track) => {
-            // import bigwig_chh
-            try {
-                fork(
-                    jbrowse,
-                    [
-                        "add-track",
-                        path.basename(track.chhbw),
-                        "--load",
-                        "copy",
-                        "--assemblyNames",
-                        track.associatedGenome,
-                        "--out",
-                        body.jbPath,
-                        "--category",
-                        "Methylation Count In CHH Context",
-                        "--name",
-                        `${track.name}_chh`,
-                        "--subDir",
-                        track.associatedGenome,
-                    ],
-                    { ...options, cwd: path.dirname(track.chhbw) }
-                );
-            } catch (err) {
-                console.log(err);
-            }
-        });
-    body.tracks != [] &&
-        body.tracks.forEach((track) => {
-            try {
-                // import bigwig_bedgraph
-                fork(
-                    jbrowse,
-                    [
-                        "add-track",
-                        path.basename(track.bedbw),
-                        "--load",
-                        "copy",
-                        "--assemblyNames",
-                        track.associatedGenome,
-                        "--out",
-                        body.jbPath,
-                        "--category",
-                        "Global Methylation Profile",
-                        "--name",
-                        `${track.name}_bedgraph`,
-                        "--subDir",
-                        track.associatedGenome,
-                    ],
-                    { ...options, cwd: path.dirname(track.bedbw) }
-                );
-            } catch (err) {
-                console.log(err);
-            }
+
+            addTrack(track);
         });
 
     body.comparisons != [] &&
         body.comparisons.forEach((comparison) => {
             // import import_bedgz and index
-            try {
-                fork(
-                    jbrowse,
-                    [
-                        "add-track",
-                        path.basename(comparison.bed),
-                        "--load",
-                        "copy",
-                        "--assemblyNames",
-                        comparison.associatedGenome,
-                        "--out",
-                        body.jbPath,
-                        "--category",
-                        "Differentially Methylated Regions",
-                        "--name",
-                        `${comparison.id}`,
-                        "--subDir",
-                        comparison.associatedGenome,
-                    ],
-                    { ...options, cwd: path.dirname(comparison.bed) }
-                );
-            } catch (err) {
-                console.log(err);
-            }
+
+            child = fork(
+                jbrowse,
+                [
+                    "add-track",
+                    path.basename(comparison.bed),
+                    "--load",
+                    "copy",
+                    "--assemblyNames",
+                    comparison.associatedGenome,
+                    "--out",
+                    body.jbPath,
+                    "--category",
+                    "Differentially Methylated Regions",
+                    "--name",
+                    `${comparison.id}`,
+                    "--subDir",
+                    comparison.associatedGenome,
+                ],
+                { ...options, cwd: path.dirname(comparison.bed) }
+            );
+            child.on("close", () => console.log("success comparisons"));
         });
 };
 module.exports = spawnChild;

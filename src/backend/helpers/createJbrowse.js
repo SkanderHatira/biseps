@@ -11,6 +11,8 @@ const createJbrowse = (jbPath, reset) => {
         if (err) {
             return console.error(err);
         }
+        fs.rmdirSync(path.join(jbPath, "test_data"), { recursive: true });
+        fs.rmdirSync(path.join(jbPath, "config.json"), { recursive: true });
 
         console.log("done!");
     });

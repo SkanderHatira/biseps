@@ -52,6 +52,9 @@ export default function VisualizationFill() {
   const [checkedComp, setCheckedComp] = useState([]);
   const [checkedTrack, setCheckedTrack] = useState([]);
   const [refresh, setRefresh] = useState(0);
+  const [onSelected, setOnSelect] = useState(null);
+  const [onSelectedComp, setOnSelectComp] = useState(null);
+
   const { loading, setLoading } = useDownloads();
   const [openAlert, setOpenAlert] = useState(false);
   const [errors, setErrors] = useState("");
@@ -88,8 +91,10 @@ export default function VisualizationFill() {
           id,
           name,
         });
+        setOnSelect(id);
       } else {
         newChecked.splice(currentIndex, 1);
+        setOnSelect(null);
       }
 
       setCheckedTrack(newChecked);
@@ -106,7 +111,7 @@ export default function VisualizationFill() {
   const handleToggleComp = (bed, bedtbi, associatedGenome, id) => () => {
     const currentIndex = checkedComp.findIndex((x) => x.id === id);
     const newChecked = [...checkedComp];
-
+    console.log(id);
     if (currentIndex === -1) {
       newChecked.push({
         bed,
@@ -114,10 +119,11 @@ export default function VisualizationFill() {
         associatedGenome,
         id,
       });
+      setOnSelectComp(id);
     } else {
       newChecked.splice(currentIndex, 1);
+      setOnSelectComp(null);
     }
-
     setCheckedComp(newChecked);
   };
 
@@ -572,7 +578,12 @@ export default function VisualizationFill() {
                     key={`${sample._id}-${idx}`}
                     button
                     disabled={
-                      sampleExist && !dedupExist && genomEist ? false : true
+                      !(onSelected && onSelected !== sample._id) &&
+                      sampleExist &&
+                      !dedupExist &&
+                      genomEist
+                        ? false
+                        : true
                     }
                     onClick={handleToggleTrack(
                       row.remote ? samplePathLocal : samplePath,
@@ -702,6 +713,10 @@ export default function VisualizationFill() {
                           key={`${comparison._id}-${idx}-${context}`}
                           button
                           disabled={
+                            !(
+                              onSelectedComp &&
+                              onSelectedComp !== `${comparison.id}-${context}`
+                            ) &&
                             fileExist(row.remote ? bedPathLocal : bed) &&
                             !debExist &&
                             genomExist
