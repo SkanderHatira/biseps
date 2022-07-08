@@ -3,7 +3,7 @@ const spawnChild = (body) => {
     const fs = require("fs");
     const fsPromises = fs.promises;
     const path = require("path");
-
+    const bbPromise = require("bluebird");
     const jbrowse = path.join(
         __dirname,
         "..",
@@ -13,41 +13,10 @@ const spawnChild = (body) => {
         "bin",
         "run"
     );
-    const jbrowsebin = path.join(
-        "./",
-        __dirname,
-        "..",
-        "node_modules",
-        ".bin",
-        "jbrowse"
-    );
-    async function readThenClose() {
-        let filehandle = null;
 
-        try {
-            // Using the filehandle method
-            filehandle = await fsPromises.open(
-                path.join(body.jbPath, "config.json"),
-                "r+"
-            );
-
-            const data = await filehandle.readFile("utf8");
-
-            console.log(data);
-
-            filehandle.close();
-            console.log("File Closed!");
-        } catch (e) {
-            console.log("Error", e);
-        }
-    }
-
-    async function addTrack(track) {
-        const keys = ["track", "cgbw", "chgbw", "chhbw", "bedbw"];
-        keys.forEach((key) => {
-            console.log(key);
-
-            child = fork(
+    function loadTracks(track, key) {
+        return new bbPromise(function (resolve, reject) {
+            const process = fork(
                 jbrowse,
                 [
                     "add-track",
@@ -72,15 +41,20 @@ const spawnChild = (body) => {
                 { ...options, cwd: path.dirname(track[key]) }
             );
 
-            child.on("error", (error) => console.log(console.log(error)));
-            child.on("close", () => {
-                // readThenClose().catch((error) => {
-                //     console.log("Error", error);
-                // });
-                console.log("success alignment");
+            process.stdout.on("data", function (data) {
+                console.log(data.toString());
+            });
+
+            process.stderr.on("data", function (err) {
+                reject(err.toString());
+            });
+
+            process.on("exit", function () {
+                resolve();
             });
         });
     }
+
     const options = {
         silent: true,
         detached: false,
@@ -108,8 +82,26 @@ const spawnChild = (body) => {
     body.tracks != [] &&
         body.tracks.forEach((track) => {
             // import bam
+            const commands = ["track", "cgbw", "chgbw", "chhbw", "bedbw"].map(
+                function (key) {
+                    return loadTracks.bind(null, track, key);
+                }
+            );
 
-            addTrack(track);
+            return bbPromise
+                .map(
+                    commands,
+                    function (command) {
+                        return command();
+                    },
+                    {
+                        concurrency: 1,
+                    }
+                )
+                .then(function () {
+                    console.log("Child Processes Completed");
+                });
+            // addTrack(track);
         });
 
     body.comparisons != [] &&
