@@ -1,6 +1,9 @@
 const spawnChild = (body) => {
-    const { fork, exec } = require("child_process");
+    const { fork } = require("child_process");
+    const fs = require("fs");
+    const fsPromises = fs.promises;
     const path = require("path");
+
     const jbrowse = path.join(
         __dirname,
         "..",
@@ -10,6 +13,35 @@ const spawnChild = (body) => {
         "bin",
         "run"
     );
+    const jbrowsebin = path.join(
+        "./",
+        __dirname,
+        "..",
+        "node_modules",
+        ".bin",
+        "jbrowse"
+    );
+    async function readThenClose() {
+        let filehandle = null;
+
+        try {
+            // Using the filehandle method
+            filehandle = await fsPromises.open(
+                path.join(body.jbPath, "config.json"),
+                "r+"
+            );
+
+            const data = await filehandle.readFile("utf8");
+
+            console.log(data);
+
+            filehandle.close();
+            console.log("File Closed!");
+        } catch (e) {
+            console.log("Error", e);
+        }
+    }
+
     async function addTrack(track) {
         const keys = ["track", "cgbw", "chgbw", "chhbw", "bedbw"];
         keys.forEach((key) => {
@@ -34,14 +66,23 @@ const spawnChild = (body) => {
                     track.associatedGenome,
                     "--trackId",
                     `${track.id}_${track[key]}`,
+                    "--target",
+                    `${path.join(body.jbPath, "config.json")}`,
                 ],
                 { ...options, cwd: path.dirname(track[key]) }
             );
-            child.on("close", () => console.log("success alignment"));
+
+            child.on("error", (error) => console.log(console.log(error)));
+            child.on("close", () => {
+                // readThenClose().catch((error) => {
+                //     console.log("Error", error);
+                // });
+                console.log("success alignment");
+            });
         });
     }
     const options = {
-        slient: false,
+        silent: true,
         detached: false,
     };
 
