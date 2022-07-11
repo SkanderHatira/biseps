@@ -4,7 +4,11 @@ const cloneBiseps = (body, uniqueDir) => {
     const fs = require("fs");
 
     execSync(
-        `git -c core.autocrlf=false  clone https://o2auth:${process.env.ACCESS_TOKEN}@forgemia.inra.fr/skander.hatira/biseps.git ${uniqueDir}`,
+        `git  ${
+            process.platform == "win32" ? "-c core.autocrlf=false" : ""
+        }  clone https://o2auth:${
+            process.env.ACCESS_TOKEN
+        }@forgemia.inra.fr/skander.hatira/biseps.git ${uniqueDir}`,
         (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);

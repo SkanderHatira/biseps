@@ -104,8 +104,8 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                           )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
                             }  && sbatch exec_scripts/${
                                 "contexts" in body
-                                    ? "slurmComparison.sh " + unlock
-                                    : "slurmScript.sh " + unlock
+                                    ? `slurmComparison.sh ${unlock}`
+                                    : `slurmScript.sh ${unlock}`
                             }`,
                             { ssh: ssh },
                             (err, stdout, stderr) => {
@@ -130,8 +130,8 @@ const spawnChild = async (body, profile, uniqueDir, homeDir, unlock) => {
                                           )} && tar -xf workflow.tar.gz  &&  rm -rf .snakemake/`
                             }    &&  bash exec_scripts/${
                                 "contexts" in body
-                                    ? "localComparison.sh " + unlock
-                                    : "localScript.sh " + unlock
+                                    ? `localComparison.sh ${unlock}`
+                                    : `localScript.sh ${unlock}`
                             } `,
                             { ssh: ssh },
                             (err, stdout, stderr) => {
