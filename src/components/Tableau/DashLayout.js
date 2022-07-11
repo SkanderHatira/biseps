@@ -11,7 +11,10 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-
+import ListSubheader from "@material-ui/core/ListSubheader";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 import { mainListItems, secondaryListItems } from "./listItems";
 import { useAuth } from "../../hooks/useAuth";
 import { makeStyles } from "@material-ui/core/styles";
@@ -24,7 +27,6 @@ import Alert from "@material-ui/lab/Alert";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import { useDownloads } from "../../hooks/useDownloads";
@@ -316,7 +318,19 @@ const DashLayout = ({ Filling }) => {
         <Divider />
         <List>{mainListItems}</List>
         <Divider />
-        <List>{secondaryListItems}</List>
+        <List>
+          {auth.browser !== "" ? (
+            <div>
+              <ListSubheader inset>Open Browser</ListSubheader>
+              <ListItem button onClick={() => shell.openExternal(auth.browser)}>
+                <ListItemIcon></ListItemIcon>
+                <ListItemText primary={auth.browser} />
+              </ListItem>
+            </div>
+          ) : (
+            ""
+          )}
+        </List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

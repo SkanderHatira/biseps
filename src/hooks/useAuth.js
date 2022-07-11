@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, createContext } from "react";
+import React, { useReducer, useContext, createContext, useState } from "react";
 import { authReducer } from "../reducers/authReducer";
 import { GET_ERRORS, SET_CURRENT_USER } from "../actions/types";
 import jwt_decode from "jwt-decode";
@@ -21,6 +21,7 @@ const useProvideAuth = () => {
     user: {},
     loading: false,
   };
+  const [browser, setBrowser] = useState("");
   const [user, dispatchUser] = useReducer(authReducer, initialState);
   const signin = async (userData, dispatch, history) => {
     const options = {
@@ -203,5 +204,7 @@ const useProvideAuth = () => {
     checkauth,
     signout,
     handleEditProfile,
+    browser,
+    setBrowser,
   };
 };

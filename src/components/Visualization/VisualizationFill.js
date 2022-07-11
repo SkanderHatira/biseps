@@ -54,13 +54,12 @@ export default function VisualizationFill() {
   const [refresh, setRefresh] = useState(0);
   const [onSelected, setOnSelect] = useState(null);
   const [onSelectedComp, setOnSelectComp] = useState(null);
-
   const { loading, setLoading } = useDownloads();
   const [openAlert, setOpenAlert] = useState(false);
   const [errors, setErrors] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const { user } = useAuth();
+  const { user, browser, setBrowser } = useAuth();
 
   const handleToggle = (genome) => () => {
     const currentIndex = checked.indexOf(genome);
@@ -315,7 +314,7 @@ export default function VisualizationFill() {
     req.write(JSON.stringify(request));
     req.end();
     setRefresh(refresh + 1);
-
+    setBrowser("");
     window.location.reload(false);
   };
   const handleReset = () => {
@@ -356,6 +355,7 @@ export default function VisualizationFill() {
     req.on("error", (err) => console.log(err));
     req.write(JSON.stringify(request));
     req.end();
+    setBrowser("");
     setRefresh(refresh + 1);
 
     window.location.reload(false);
@@ -375,21 +375,6 @@ export default function VisualizationFill() {
   }, []);
 
   const handleServe = () => {
-    // const server = http.createServer(async (request, response) => {
-    //   handler(request, response, {
-    //     public: user.user.jbPath,
-    //   });
-    // });
-
-    // server.listen(user.user.port[0], () => {
-    //   console.log(server.listening);
-
-    //   shell.openExternal(`http:///localhost:${user.user.port[0]}`);
-    // });
-    // server.on("error", (err) => {
-    //   console.log(err);
-    // });
-
     portastic
       .find({
         min: 30000,
@@ -404,6 +389,7 @@ export default function VisualizationFill() {
         });
         server.listen(port[0], () => {
           shell.openExternal(`http://localhost:${port[0]}`);
+          setBrowser(`http://localhost:${port[0]}`);
         });
         server.on("error", (err) => {
           console.log(err);
@@ -437,6 +423,7 @@ export default function VisualizationFill() {
               alignItems="center"
               variant="contained"
               color="default"
+              disabled={browser !== ""}
               onClick={handleServe}
             >
               Start Jbrowse{" "}
