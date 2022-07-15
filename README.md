@@ -1,90 +1,74 @@
-# BiSePS : Bisulfite Sequencing Processing Software Graphical User Interface
+**BiSePS: Bisulfite Sequencing Processing**
 
-Features:
+BiSePS is a desktop application for analyzing Whole Genome Bisulfite Sequencing data. It's a Mongodb/express/React/Nodejs app bundled with webpack and packaged into a desktop app using Electron. It runs a [snakemake pipeline](https://forgemia.inra.fr/skander.hatira/biseps.git) under the hood for processing data locally or on remote machines using ssh credentials.
+It relies on git and conda for workflow retrieval and dependencies management. It also supports SLURM cluster execution.
 
-- Account Creation
-- Run Alignments and Identify DMR's
-- Deploy per-account Jbrowse
-- Remote execution
-- Slurm Cluster Support
-- MacOS, Windows and Linux executable with an app icon
+**Use this app along with the [BiSePS documentation]() for configuration examples to help you get started.**
 
-![Account Creation Menu](screenshots/Account.png)
+You can learn more about each of these components within the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start).
 
-## Requirements
+## Dependencies
 
-These need to be accessible in your $PATH for the software to run properly
+For BiSePS to run you need these dependencies installed on your machine.
 
 - `conda` - [miniconda](https://docs.conda.io/en/latest/miniconda.html) for package management.
-- `git` - [git](https://git-scm.com/). This is necessary to always get the latest version of **BiSePS Pipeline**.
+- `git` - [git](https://git-scm.com/) to get latest release of the workflow.
 
-## Installation
+## To Use
 
-To run this repository as a developper you'll need [Node.js](https://nodejs.org/en/download/) and [yarn](https://yarnpkg.com/) installed on your computer. From your command line:
+To use this app you can either download executables from the [releases page](https://github.com/SkanderHatira/biseps/releases/).
+Or build it on your machine from the command line:
 
 ```bash
-# Install dependencies
-$ yarn
-# Run the app
-$ yarn start
-# Build the packages
-$ yarn make
+# Clone this repository
+git clone https://forgemia.inra.fr/skander.hatira/bisepsgui.git
+# Go into the repository
+cd bisepsgui
 ```
 
-To intall this software on your machine just go to the download menu and click on download artifacts , install the version corresponding to your machine.
+Next, install dependencies with [`yarn`](https://yarnpkg.comg):
 
-### User Guide
+```bash
+# Install Electron dependencies
+yarn
+# Go into the backend folder
+cd src/backend
+# Install dependencies
+yarn
+```
 
-- Create an account : it is recommended to have seperate accounts for each project. Account Names Cannot be duplicate.
-- Once you are logged in :
-- Go ahead and Launch a new alignment
-  - Click on the configuration wheel next to the logout button to add remote machine for you to choose from during execution
+Then start the app:
 
-#### Alignement
+```bash
+# Go into repository folder
+cd ../../
+# Start application
+yarn start
+```
 
-This menu lets you configure your alignement, A genome is necessary, everything else can be left with default values. The reset button puts back default values for all parameters.
+## To Build
 
-![Alignement](screenshots/Alignment.png)
+### Linux
 
-Once you're satisfied with your parameters press next to define your Experimental Design. Each line must represent a unique Sample-Lane-Techrep-Biorep Combination.
+```bash
+apt-get update -y
+apt-get install -y cmake rpm fakeroot dpkg
+yarn make
+```
 
-- Each unique **Sample**-**Techrep**-**Biorep** **Throuple** with different **Lanes** is considered as a unique Sample and files automatically merged.
+### Windows/Macos
 
-![Experimental Design](screenshots/ExperimentalDesign.png)
-
-#### Comparisons
-
-You can configure DMRCaller through this menu:
-
-- **Betareg** statistical test is to be used when you have biological replicates.
-- Noise Filter **method** is useful when there are no biological replicates.
-
-![Experimental Design](screenshots/Comparison.png)
-
-#### Add remote
-
-- You can configure remote machines to have your pipelines executed on through ssh.
-- You can either enter an rsa-key or a password
-- You also have to specify a script :
-
-- **Remember** : This software requires Conda and Snakemake to be in your Path , When you execute on your local machine, you only need Conda as snakemake is intalled automatically, on remote machines you need to have both `Conda` and `Snakemake` in your `$PATH`
-
-![Experimental Design](screenshots/RemoteMachine.png)
-
-#### Jbrowse2
-
-This menu integrates an Account dependant Jbrowse2 instance that you can Populate(Configure) with all the files that have been produced by the tool , Reset or Launch at your will.
-
-![Experimental Design](screenshots/Jbrowse2.png)
+```bash
+yarn make
+```
 
 ## References
 
-Based on:
-
-- [BiSePS Pipeline](https://forgemia.inra.fr/skander.hatira/biseps)
+- [BiSePS Workflow](https://forgemia.inra.fr/skander.hatira/biseps)
 - [Snakemake](https://github.com/snakemake/snakemake)
 - [Bismark](https://www.bioinformatics.babraham.ac.uk/projects/bismark/)
-- [DMRCaller](https://bioconductor.org/packages/release/bioc/html/DMRcaller.html)
+- [Methylkit](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2012-13-10-r87)
+- [Bedtools](https://academic.oup.com/bioinformatics/article/26/6/841/244688)
 - [MultiQC](https://multiqc.info/)
 - [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 - [MethGet](https://github.com/Jason-Teng/MethGET)
@@ -92,4 +76,4 @@ Based on:
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE.md)
