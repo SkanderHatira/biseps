@@ -5,8 +5,6 @@ It relies on git and conda for workflow retrieval and dependencies management. I
 
 **Use this app along with the [BiSePS documentation]() for configuration examples to help you get started.**
 
-You can learn more about each of these components within the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start).
-
 ## Dependencies
 
 For BiSePS to run you need these dependencies installed on your machine.
