@@ -1,5 +1,7 @@
 ## **BiSePS: Bisulfite Sequencing Processing**
 
+[![DOI](https://zenodo.org/badge/494412356.svg)](https://zenodo.org/badge/latestdoi/494412356)
+
 BiSePS is a desktop application for analyzing Whole Genome Bisulfite Sequencing data. It's a Mongodb/express/React/Nodejs app bundled with webpack and packaged into a desktop app using Electron. It runs a [snakemake pipeline](https://forgemia.inra.fr/skander.hatira/biseps.git) under the hood for processing data locally or on remote machines using ssh credentials.
 It relies on git and conda for workflow retrieval and dependencies management. It also supports SLURM cluster execution.
 
