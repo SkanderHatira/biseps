@@ -6,9 +6,7 @@ const createArchive = (uniqueDir) => {
     execSync(
         `git ${
             process.platform == "win32" ? "-c core.autocrlf=false" : ""
-        } clone https://o2auth:${
-            process.env.ACCESS_TOKEN
-        }forgemia.inra.fr/skander.hatira/biseps.git ${uniqueDir}`,
+        } clone https://forgemia.inra.fr/skander.hatira/biseps.git ${uniqueDir}`,
         (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);

@@ -38,9 +38,7 @@ if (!fs.existsSync(pipeline)) {
   execSync(
     `git  ${
       process.platform == "win32" ? "-c core.autocrlf=false" : ""
-    } clone https://o2auth:${
-      process.env.ACCESS_TOKEN
-    }@forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
+    } clone https://forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
     (error, stdout, stderr) => {
       console.log(error);
     }
