@@ -33,9 +33,7 @@ function Copyright() {
       <Link
         color="inherit"
         onClick={() =>
-          shell.openExternal(
-            "https://forgemia.inra.fr/skander.hatira/bisepsgui"
-          )
+          shell.openExternal("https://forgemia.inra.fr/irhs-bioinfo/bisepsgui")
         }
       >
         Biseps

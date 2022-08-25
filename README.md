@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/494412356.svg)](https://zenodo.org/badge/latestdoi/494412356)
 
-BiSePS is a desktop application for analyzing Whole Genome Bisulfite Sequencing data. It's a Mongodb/express/React/Nodejs app bundled with webpack and packaged into a desktop app using Electron. It runs a [snakemake pipeline](https://forgemia.inra.fr/skander.hatira/biseps.git) under the hood for processing data locally or on remote machines using ssh credentials.
+BiSePS is a desktop application for analyzing Whole Genome Bisulfite Sequencing data. It's a Mongodb/express/React/Nodejs app bundled with webpack and packaged into a desktop app using Electron. It runs a [snakemake pipeline](https://forgemia.inra.fr/irhs-bioinfo/biseps.git) under the hood for processing data locally or on remote machines using ssh credentials.
 It relies on git and conda for workflow retrieval and dependencies management. It also supports SLURM cluster execution.
 
 **Use this app along with the [BiSePS documentation]() for configuration examples to help you get started.**
@@ -21,7 +21,7 @@ Or build it on your machine from the command line:
 
 ```bash
 # Clone this repository
-git clone https://forgemia.inra.fr/skander.hatira/bisepsgui.git
+git clone https://forgemia.inra.fr/irhs-bioinfo/bisepsgui.git
 # Go into the repository
 cd bisepsgui
 ```
@@ -64,7 +64,7 @@ yarn make
 
 ## References
 
-- [BiSePS Workflow](https://forgemia.inra.fr/skander.hatira/biseps)
+- [BiSePS Workflow](https://forgemia.inra.fr/irhs-bioinfo/biseps)
 - [Snakemake](https://github.com/snakemake/snakemake)
 - [Bismark](https://www.bioinformatics.babraham.ac.uk/projects/bismark/)
 - [Methylkit](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2012-13-10-r87)

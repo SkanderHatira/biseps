@@ -38,7 +38,7 @@ if (!fs.existsSync(pipeline)) {
   execSync(
     `git  ${
       process.platform == "win32" ? "-c core.autocrlf=false" : ""
-    } clone https://forgemia.inra.fr/skander.hatira/biseps.git ${pipeline}`,
+    } clone https://forgemia.inra.fr/irhs-bioinfo/biseps.git ${pipeline}`,
     (error, stdout, stderr) => {
       console.log(error);
     }
@@ -360,7 +360,7 @@ const createWindow = () => {
           click: async () => {
             const { shell } = require("electron");
             await shell.openExternal(
-              "https://forgemia.inra.fr/skander.hatira/bisepsgui"
+              "https://forgemia.inra.fr/irhs-bioinfo/bisepsgui"
             );
           },
         },
